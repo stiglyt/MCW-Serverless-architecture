@@ -1,13 +1,14 @@
-### Let us know how we’re doing!  
+### Let us know how we’re doing!
+
 Please take a moment to fill out the [Microsoft Cloud Workshop Survey](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbRyEtIpX7sDdChuWsXhzKJXJUNjFBVkROWDhSSVdYT0dSRkY4UVFCVzZBVy4u) and help us improve our offerings.
 
 # Serverless architecture
 
-Contoso is rapidly expanding their toll booth management business to operate in a much larger area. As this is not their primary business, which is online payment services, they are struggling with scaling up to meet the upcoming demand to extract license plate information from a large number of new tollbooths, using photos of vehicles uploaded to cloud storage. Currently, they have a manual process where they send batches of photos to a 3rd-party who manually transcodes the license plates to CSV files that they send back to Contoso to upload to their online processing system.
+Contoso is rapidly expanding its toll booth management business to operate in a much larger area. As this is not their primary business, which is online payment services, they are struggling with scaling up to meet the upcoming demand to extract license plate information from many new tollbooths, using photos of vehicles uploaded to cloud storage. Currently, they have a manual process where they send batches of images to a 3rd-party who manually transcodes the license plates to CSV files that they send back to Contoso to upload to their online processing system.
 
-They want to automate this process in a way that is cost effective and scalable. They believe serverless is the best route for them, but do not have the expertise to build the solution.
+They want to automate this process in a way that is cost-effective and scalable. They believe serverless is the best route for them but do not have the expertise to build the solution.
 
-June 2020
+April 2021
 
 ## Target Audience
 
@@ -17,31 +18,39 @@ Application developers
 
 ### Workshop
 
-In this workshop, you will work as a group to setup and configure a serverless architecture within Azure using a combination of Azure Functions, Logic Apps, Event Grid, Cosmos DB, and Azure Storage. The focus is on removing server management from the equation, breaking down the solution into smaller components that are individually scalable, and allowing the customer to only pay for what they use.
+In this workshop, you learn about setting up and configuring a serverless architecture within Azure using a combination of Azure Functions, Azure Logic Apps, Azure Event Grid, Azure Cosmos DB, and Azure Data Lake Storage. The focus is on removing server management from the equation, breaking down the solution into smaller components that are individually scalable, and allowing the customer to only pay for what they use.
 
-At the end of this workshop, you will have learned how to use a series of Azure Functions that independently scale and break down business logic to discrete components, use computer vision algorithms within an Azure Function to accurately detect license plates in car images at scale, provision and use Cosmos DB as a highly available NoSQL data store for processed data, create a Logic App that contains a workflow to export processed license plates and conditionally send alerts based on successful or unsuccessful operation, use App Insights to monitor the serverless topology, observing how well the solution scales when under load, and implement a Continuous Deployment DevOps process to automatically publish changes to Function Apps.
+At the end of this workshop, you should be able to
+
+- break business logic down into discrete components using a series of Azure Functions that can independently scale,
+- leverage computer vision algorithms within an Azure Function to accurately detect objects and extract text from images at scale,
+- utilize Azure Cosmos DB as a highly available NoSQL data store,
+- build workflows using Azure Logic Apps and conditionally send alerts based on successful or unsuccessful operations,
+- use Application Insights to monitor the serverless topology, observing how well the solution scales when under load,
+- and implement a Continuous Deployment DevOps process to publish changes to Function Apps automatically.
 
 ### Whiteboard Design Session
 
-In this whiteboard design session, you will work with a group to design a solution for processing vehicle photos as they are uploaded to a storage account, using serverless technologies on Azure. The license plate data needs to be extracted and stored in a highly available NoSQL data store for exporting. The data export process will be orchestrated by a serverless Azure component that coordinates exporting new license plate data to file storage and sending notifications as needed. You will also configure a Continuous Deployment process to automatically publish new changes to Function Apps. Finally, the entire processing pipeline will need to be monitored, with particular attention paid to components scaling to meet processing demand.
+In this whiteboard design session, you work with a group to design a solution for processing vehicle photos in near real-time, as they are uploaded to a data lake, using serverless technologies on Azure. The license plate data must be extracted and stored in a highly available NoSQL data store for exporting. The data export process is orchestrated by a serverless Azure component that coordinates exporting new license plate data to file storage and sending notifications as needed. You will also configure a Continuous Deployment process to publish new changes to Function Apps automatically. Finally, the entire processing pipeline will need to be monitored, with particular attention paid to components scaling to meet processing demand.
 
-At the end of this whiteboard design session, you will have gained insight on how best to take advantage of the new serverless wave by designing a highly scalable and cost-effective solution that requires very little code and virtually no infrastructure, compared to traditional hosted web applications and services.
+At the end of this whiteboard design session, you will have greater insight into how best to take advantage of serverless architectures. You will understand better how to design highly scalable and cost-effective solutions that require very little code and virtually no infrastructure compared to traditional hosted web applications and services.
 
 ### Hands-on Lab
 
-In this hand-on lab, you will be challenged to implement an end-to-end scenario using a supplied sample that is based on Microsoft Azure Functions, Azure Cosmos DB, Event Grid, and related services. The scenario will include implementing compute, storage, workflows, and monitoring, using various components of Microsoft Azure. The hands-on lab can be implemented on your own, but it is highly recommended to pair up with other members at the lab to model a real-world experience and to allow each member to share their expertise for the overall solution.
+In this hands-on lab, you implement an end-to-end solution using a supplied sample based on Microsoft Azure Functions, Azure Cosmos DB, Azure Event Grid, and related services. The scenario will include implementing compute, storage, workflows, and monitoring using various components of Microsoft Azure. You can implement the hands-on lab on your own. However, it is highly recommended to pair up with other members at the lab to model a real-world experience and to allow each member to share their expertise for the overall solution.
 
 At the end of the hands-on-lab, you will have confidence in designing, developing, and monitoring a serverless solution that is resilient, scalable, and cost-effective.
 
 ## Azure services and related products
 
-- Azure Functions
-- Azure Cognitive Services
-- Azure Event Grid
-- Application Insights
-- Azure Cosmos DB
-- Logic Apps
-- Visual Studio 2019
+- [Azure Functions](https://docs.microsoft.com/azure/azure-functions/functions-overview)
+- [Azure Cognitive Services](https://docs.microsoft.com/azure/cognitive-services/what-are-cognitive-services)
+- [Azure Event Grid](https://docs.microsoft.com/azure/event-grid/overview)
+- [Azure Data Lake Storage Gen2](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-introduction)
+- [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
+- [Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/introduction)
+- [Azure Logic Apps](https://docs.microsoft.com/azure/logic-apps/logic-apps-overview)
+- [Visual Studio 2019](https://visualstudio.microsoft.com/vs/)
 
 ## Azure solution
 
