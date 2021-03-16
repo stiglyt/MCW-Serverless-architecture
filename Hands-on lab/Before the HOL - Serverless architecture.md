@@ -1,4 +1,4 @@
-![Microsoft Cloud Workshops](https://github.com/Microsoft/MCW-Template-Cloud-Workshop/raw/master/Media/ms-cloud-workshop.png 'Microsoft Cloud Workshops')
+![Microsoft Cloud Workshops](https://github.com/Microsoft/MCW-Template-Cloud-Workshop/raw/master/Media/ms-cloud-workshop.png "Microsoft Cloud Workshops")
 
 <div class="MCWHeader1">
 Serverless architecture
@@ -25,7 +25,8 @@ The names of manufacturers, products, or URLs are provided for informational pur
 - [Serverless architecture before the hands-on lab setup guide](#serverless-architecture-before-the-hands-on-lab-setup-guide)
   - [Requirements](#requirements)
   - [Before the hands-on lab](#before-the-hands-on-lab)
-    - [Task 1: Create a new Azure Resource group](#task-1-create-a-new-azure-resource-group)
+    - [Task 1: Create a resource group](#task-1-create-a-resource-group)
+    - [Task 2: Run ARM template to provision lab resources](#task-2-run-arm-template-to-provision-lab-resources)
     - [Task 2: Set up a development environment](#task-2-set-up-a-development-environment)
     - [Task 3: Disable IE Enhanced Security](#task-3-disable-ie-enhanced-security)
     - [Task 4: Install Microsoft Edge](#task-4-install-microsoft-edge)
@@ -50,21 +51,114 @@ The names of manufacturers, products, or URLs are provided for informational pur
 
 ## Before the hands-on lab
 
-**Duration**: 10 minutes
+**Duration**: 15 minutes
 
-In this exercise, you will set up your environment you will use for the rest of the exercises. This will involve downloading the sample application and creating your Azure resource group for the lab.
+In this exercise, you set up your environment for use in the rest of the hands-on lab. You should follow all steps provided _before_ attending the hands-on lab.
 
-### Task 1: Create a new Azure Resource group
+> **Important**: Many Azure resources require globally unique names. Throughout these steps, the word "SUFFIX" appears as part of resource names. You should replace this with your Microsoft alias, initials, or another value to ensure uniquely named resources.
 
-1. Open the [Azure Portal](https://portal.azure.com).
+### Task 1: Create a resource group
 
-2. Within the Azure Management Portal, open the **Resource groups** tile and select **Add**.
+1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
 
-   ![In the menu of the Azure Portal, Resource groups is selected. In the Resource Groups blade, the Add button is selected.](images/Setup/image9.png 'Azure Portal')
+   ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
 
-3. Specify the name of the resource group as **ServerlessArchitecture**, and choose the Azure region to which you want to deploy the lab. This resource group will be used throughout the rest of the lab. Select **Review + Create**. This will show you a summary of changes. Select **Create** to create the resource group.
+2. On the Resource groups blade, select **+Add**.
 
-   ![In the Create a resource group blade, the Resource group field displays ServerlessArchitecture.](images/Setup/image10.png 'Resource group blade')
+   ![+Add is highlighted in the toolbar on Resource groups blade.](media/resource-groups-add.png "Resource groups")
+
+3. On the Create a resource group **Basics** tab, enter the following:
+
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource group**: Enter `hands-on-lab-SUFFIX` as the name of the new resource group.
+   - **Region**: Select the region you are using for this hands-on lab.
+
+   ![The values specified above are entered into the Create a resource group Basics tab.](media/create-resource-group.png "Create resource group")
+
+4. Select **Review + Create**.
+
+5. On the **Review + create** tab, ensure the Validation passed message is displayed and then select **Create**.
+
+### Task 2: Run ARM template to provision lab resources
+
+In this task, you run an Azure Resource Manager (ARM) template to create the resources required for this hands-on lab. The components are deployed inside a new virtual network (VNet) to facilitate communication between the VMs and SQL MI. The ARM template also adds inbound and outbound security rules to the network security groups associated with SQL MI and the VMs, including opening port 3389 to allow RDP connections to the JumpBox. In addition to creating resources, the ARM template also executes PowerShell scripts on each of the VMs to install software and configure the servers. The resources created by the ARM template include:
+
+- A virtual network with three subnets, ManagedInstance, Management, and a Gateway subnet.
+- A virtual network gateway associated with the Gateway subnet.
+- A route table.
+- Azure SQL Managed Instance (SQL MI), added to the ManagedInstance subnet.
+- A JumpBox with Visual Studio 2019 Community Edition and SQL Server Management Studio (SSMS installed, added to the Management subnet).
+- A SQL Server 2008 R2 VM with the Data Migration Assistant (DMA) installed, added to the Management subnet.
+- Azure Database Migration Service (DMS).
+- Azure App Service Plan and App Service (Web App).
+- Azure Blob Storage account.
+
+> **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](./Manual-resource-setup.md).
+
+1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
+
+   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
+
+2. Before running the ARM template, it is beneficial to quickly verify that you can provision SQL MI in your subscription. In the [Azure portal](https://portal.azure.com), select **+Create a resource**, enter "sql managed instance" into the Search the Marketplace box, and then select **Azure SQL Managed Instance** from the results.
+
+   ![+Create a resource is selected in the Azure navigation pane, and "sql managed instance" is entered into the Search the Marketplace box. Azure SQL Managed Instance is selected in the results.](media/create-resource-sql-mi.png "Create SQL Managed Instance")
+
+3. Select **Create** on the Azure SQL Managed Instance blade.
+
+   ![The Create button is highlighted on the Azure SQL Managed Instance blade.](media/sql-mi-create.png "Create Azure SQL Managed Instance")
+
+4. On the SQL managed instance blade, look for a message stating that "Managed instance creation is not available for the chosen subscription type...", which will be displayed near the bottom of the SQL managed instance blade.
+
+   ![A message is displayed stating that SQL MI creation not available in the selected subscription.](media/sql-mi-creation-not-available.png "SQL MI creation not available")
+
+   > **Note**: If you see the message stating that Managed Instance creation is not available for the chosen subscription type, follow the instructions for [obtaining a larger quota for SQL Managed Instance](https://docs.microsoft.com/azure/sql-database/sql-database-managed-instance-resource-limits#obtaining-a-larger-quota-for-sql-managed-instance) before proceeding with the following steps.
+
+5. You are now ready to begin the ARM template deployment. To open a custom deployment screen in the Azure portal, select the Deploy to Azure button below:
+
+   <a href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FMCW-Migrating-SQL-databases-to-Azure%2Fmaster%2FHands-on%20lab%2Flab-files%2FARM-template%2Fazure-deploy.json" target="_blank" title="Deploy to Azure">
+   <img src="http://azuredeploy.net/deploybutton.png"/>
+   </a>
+
+   > **Note**: Running the ARM template occasionally results in a `ResourceDeploymentFailure` error, with a code of `VnetSubnetConflictedWithIntendedPolicy`. This error is not caused by an issue with the ARM template and appears to be the result of backend resource deployment issues in Azure. At this time, the workaround is first to try the deployment in a different region. If that does not work, try going through the [Manual resource setup guide](./Manual-resource-setup.md) to create the SQL MI database.
+
+6. On the custom deployment screen in the Azure portal, enter the following:
+
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource group**: Select the hands-on-lab-SUFFIX resource group from the dropdown list.
+   - **Region**: Select the region you used for the hands-on-lab-SUFFIX resource group.
+   - **Managed Instance Name**: Accept the default value, **sqlmi**. The actual name must be globally unique, so a unique string is generated from your Resource Group and appended to the name during provisioning.
+   - **Admin Username**: Accept the default value, **sqlmiuser**.
+   - **Admin Password**: Accept the default value, **Password.1234567890**.
+   - **V Cores**: Accept the default value, **4**.
+   - **Storage Size in GB**: Accept the default value, **32**.
+
+   ![The Custom deployment blade is displayed, and the information above is entered on the Custom deployment blade.](media/azure-custom-deployment.png "Custom deployment blade")
+
+7. Select **Review + create** to review the custom deployment.
+
+8. On the Review + create blade, ensure the _Validation passed_ message is displayed and then select **Create** to begin the custom deployment.
+
+   ![On the Review + create blade for the custom deployment, the Validation passed message is highlighted, and the Create button is highlighted.](media/azure-custom-deployment-review-create.png "Review + create custom deployment")
+
+   > **Note**: The deployment of the custom ARM template can take over 4 hours due to the inclusion of SQL MI. However, the deployment of most of the resources completes within a few minutes. The JumpBox and SQL Server 2008 R2 VMs should finish in about 15 minutes.
+
+9. You can monitor the deployment's progress by navigating to the hands-on-lab-SUFFIX resource group in the Azure portal and then selecting **Deployments** from the left-hand menu. The deployment is named **Microsoft.Template**. Select that to view the progress of each item in the template.
+
+   ![The Deployments menu item is selected in the left-hand menu of the hands-on-lab-SUFFIX resource group and the Microsoft.Template deployment is highlighted.](media/resource-group-deployments.png "Resource group deployments")
+
+> Check back in a few hours to monitor the progress of your SQL MI provisioning. If the provisioning goes on for longer than 7 hours, you may need to issue a support ticket in the Azure portal to request the provisioning process be unblocked by Microsoft support.
+
+You should follow all steps provided _before_ attending the Hands-on lab.
+
+
+
+
+
+
+
+
+
+
 
 ### Task 2: Set up a development environment
 
@@ -116,15 +210,15 @@ If you do not have a machine with Visual Studio Community 2019 (or greater) and 
 
 3. Select **Local Server**.
 
-   ![Local Server is selected from the Server Manager menu.](images/Setup/image5.png 'Server Manager menu')
+   ![Local Server is selected from the Server Manager menu.](media/image5.png 'Server Manager menu')
 
 4. On the side of the pane, for **IE Enhanced Security Configuration**, if it displays **On**, select it.
 
-   ![The IE Enhanced Security Configuration setting is set to On. The On item is selected.](images/Setup/image6.png 'IE Enhanced Security Configuration')
+   ![The IE Enhanced Security Configuration setting is set to On. The On item is selected.](media/image6.png 'IE Enhanced Security Configuration')
 
    - Change to **Off** for Administrators and select **OK**.
 
-   ![In the Internet Explorer Enhanced Security Configuration dialog box, under Administrators, the Off button is selected.](images/Setup/image7.png 'Internet Explorer Enhanced Security Configuration dialog box')
+   ![In the Internet Explorer Enhanced Security Configuration dialog box, under Administrators, the Off button is selected.](media/image7.png 'Internet Explorer Enhanced Security Configuration dialog box')
 
 ### Task 4: Install Microsoft Edge
 
@@ -146,13 +240,13 @@ If you do not have a machine with Visual Studio Community 2019 (or greater) and 
 
 ### Task 6: Download and explore the TollBooth starter solution
 
-1. From your LabVM, download the starter files by downloading a .zip copy of the Cosmos DB real-time advanced analytics GitHub repo.
+1. From your LabVM, download the starter files by downloading a .zip copy of the Serverless architecture MCW GitHub repo.
 
 2. In a web browser, navigate to the [MCW Serverless architecture repo](https://github.com/Microsoft/MCW-Serverless-architecture).
 
 3. On the repo page, select **Clone or download**, then select **Download ZIP**.
 
-   ![On the GitHub Repository web page, the Clone or Download drop down is expanded with the Download ZIP button selected.](images/Setup/github-download-repo.png)
+   ![On the GitHub Repository web page, the Clone or Download drop down is expanded with the Download ZIP button selected.](media/github-download-repo.png)
 
 4. Unzip the contents to the folder **C:\\ServerlessMCW\\**
 

@@ -45,6 +45,7 @@ At the end of the hands-on-lab, you will have confidence in designing, developin
 
 - [Azure Functions](https://docs.microsoft.com/azure/azure-functions/functions-overview)
 - [Azure Cognitive Services](https://docs.microsoft.com/azure/cognitive-services/what-are-cognitive-services)
+- [Azure Computer Vision](https://docs.microsoft.com/azure/cognitive-services/custom-vision-service/overview)
 - [Azure Event Grid](https://docs.microsoft.com/azure/event-grid/overview)
 - [Azure Data Lake Storage Gen2](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-introduction)
 - [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
