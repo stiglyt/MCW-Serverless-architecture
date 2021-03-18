@@ -657,7 +657,7 @@
     },
     "ComputerVisionEndpoint": {
       "type": "string",
-      "value": "[reference(concat('Microsoft.CognitiveServices/accounts/', variables('computerVisionName'))).endpoint]"
+      "value": "[concat(reference(concat('Microsoft.CognitiveServices/accounts/', variables('computerVisionName'))).endpoint, 'vision/v3.0/ocr')]"
     },
     "CosmosDbAuthKeySecretUri": {
         "type": "string",
