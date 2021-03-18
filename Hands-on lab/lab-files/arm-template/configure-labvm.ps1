@@ -7,7 +7,7 @@ function Disable-InternetExplorerESC {
     Write-Host "IE Enhanced Security Configuration (ESC) has been disabled." -ForegroundColor Green
 }
 
-# To resolve the error of https://github.com/microsoft/MCW-App-modernization/issues/68. The cause of the error is Powershell by default uses TLS 1.0 to connect to website, but website security requires TLS 1.2. You can change this behavior with running any of the below command to use all protocols. You can also specify single protocol.
+# Resolves an error caused by Powershell defaulting to TLS 1.0 to connect to websites, but website security requires TLS 1.2.
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls, [Net.SecurityProtocolType]::Tls11, [Net.SecurityProtocolType]::Tls12, [Net.SecurityProtocolType]::Ssl3
 [Net.ServicePointManager]::SecurityProtocol = "Tls, Tls11, Tls12, Ssl3"
 
@@ -28,8 +28,3 @@ $msiArgs = @(
     "/L*v C:\edge-install-log.txt"
 )
 Start-Process msiexec.exe -ArgumentList $msiArgs -Wait -NoNewWindow
-
-# Download and install .NET Core 3.1
-#Invoke-WebRequest 'https://download.visualstudio.microsoft.com/download/pr/279de74e-f7e3-426b-94d8-7f31d32a129c/e83e8c4c49bcb720def67a5c8fe0d8df/dotnet-sdk-2.2.207-win-x64.exe' -OutFile 'C:\dotnet-sdk-2.2.207-win-x64.exe'
-#$pathArgs = {C:\dotnet-sdk-2.2.207-win-x64.exe /Install /Quiet /Norestart /Logs log.txt}
-#Invoke-Command -ScriptBlock $pathArgs
