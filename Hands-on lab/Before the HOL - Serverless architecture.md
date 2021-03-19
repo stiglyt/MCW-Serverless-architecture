@@ -28,7 +28,8 @@ The names of manufacturers, products, or URLs are provided for informational pur
     - [Task 1: Create a resource group](#task-1-create-a-resource-group)
     - [Task 2: Run ARM template to provision lab resources](#task-2-run-arm-template-to-provision-lab-resources)
     - [Task 3: Configure application settings on the ToolBoothFunctions Function App](#task-3-configure-application-settings-on-the-toolboothfunctions-function-app)
-    - [Task 4: Create a GitHub account](#task-4-create-a-github-account)
+    - [Task 4: Add your IP address to the Cosmos DB firewall](#task-4-add-your-ip-address-to-the-cosmos-db-firewall)
+    - [Task 5: Create a GitHub account](#task-5-create-a-github-account)
 
 # Serverless architecture before the hands-on lab setup guide
 
@@ -71,7 +72,7 @@ In this exercise, you set up your environment for use in the rest of the hands-o
 
 ### Task 2: Run ARM template to provision lab resources
 
-In this task, you run an Azure Resource Manager (ARM) template to create the resources required for this hands-on lab. In addition to creating resources, the ARM template also executes a PowerShell script on the `LabVM` to install software and configure the server. The resources created by the ARM template include:
+In this task, you run an Azure Resource Manager (ARM) template to create the hands-on lab's resources. In addition to creating resources, the ARM template also executes a PowerShell script on the `LabVM` to install software and configure the server. The resources created by the ARM template include:
 
 - Azure Data Lake Storage Gen2 account
   - Blob and File services
@@ -121,7 +122,7 @@ In this task, you run an Azure Resource Manager (ARM) template to create the res
 
 3. Select **Review + create** to review the custom deployment.
 
-   > **Note**: The ARM template will append a hyphen followed by a 13-digit string at the end of resource names. This is done to ensure globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
+   > **Note**: The ARM template will append a hyphen followed by a 13-digit string at the end of resource names. This suffix ensures globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
 
 4. On the Review + create blade, ensure the _Validation passed_ message is displayed and then select **Create** to begin the custom deployment.
 
@@ -131,23 +132,23 @@ In this task, you run an Azure Resource Manager (ARM) template to create the res
 
 5. You can monitor the deployment's progress on the **Deployment** blade that opens when you start the ARM template deployment. When the deployment completes, select **Outputs** from the left-hand menu.
 
-   ![The Microsoft Template Deployment page is displayed and the Outputs item is highlighted in the left-hand menu.](media/microsoft-template-deployment.png "Template deployment")
+   ![The Microsoft Template Deployment page is displayed, and the Outputs item is highlighted in the left-hand menu.](media/microsoft-template-deployment.png "Template deployment")
 
 6. The deployment **Outputs** page contains the output values from running the deployment, including the endpoints for various services and the **Secret Uris** for the secrets added to Key Vault. Leave this page open for the next task, as you will be copying the **Secret Uri** values into the configuration for one of the Azure Function Apps.
 
-   ![The Outputs page of the template deployment is displayed. Outputs is selected and highlighted in the left-hand menu and the four secret Uri values are highlighted in the list of outputs.](media/microsoft-template-deployment-outputs.png "Deployment outputs")
+   ![The Outputs page of the template deployment is displayed. Outputs is selected and highlighted in the left-hand menu, and the four secret Uri values are highlighted in the list of outputs.](media/microsoft-template-deployment-outputs.png "Deployment outputs")
 
 ### Task 3: Configure application settings on the ToolBoothFunctions Function App
 
-In this task, you copy the Secret Uri values from  the output page of the ARM template deployment and use them to populate the application settings in the Function App configuration.
+In this task, you copy the Secret Uri values from the ARM template deployment's output page and use them to populate the application settings in the Function App configuration.
 
 1. In a new browser tab or window, open the [Azure portal](https://portal.azure.com) and navigate to the **hands-on-lab-SUFFIX** resource group you created above.
 
-   > You can get to the resource group by selecting **Resource groups** under **Azure services** on the Azure portal home page, and then selecting the resource group from the list. If there are many resource groups in your Azure account, you can filter the list for **hands-on-lab** to reduce the resource groups listed.
+   > You can get to the resource group by selecting **Resource groups** under **Azure services** on the Azure portal home page and then select the resource group from the list. If there are many resource groups in your Azure account, you can filter the list for **hands-on-lab** to reduce the resource groups listed.
 
 2. On your resource group blade, select the **TollBoothFunctions** Function App resource in the list of services available in the resource group.
 
-   > **Note**: You will notice that most of the resource names have a hyphen followed by a 13-digit string at the end of their names. This was added by the ARM template to ensure globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
+   > **Note**: You will notice that most of the resource names have a hyphen followed by a 13-digit string at the end of their names. The ARM template added this suffix to ensure globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
 
    ![The TollBoothFunctions resource is highlighted in the list of services in the resource group.](media/resource-group-toll-booth-functions.png "Resources")
 
@@ -155,7 +156,7 @@ In this task, you copy the Secret Uri values from  the output page of the ARM te
 
    ![Configuration is highlighted in the left-hand menu of the Function App blade.](media/function-app-toll-booth-configuration-menu.png "Function App menu")
 
-4. Using the **Secret Uri** values from the deployment outputs page you opened at the end of the previous task, update the application settings values for the function app. Use the table below for the name-value pairs to use when updating the secrets. You only need to update the `{xxxSecretUri}` token with the **Value** field for each secret, and can leave the other fields at their default values.
+4. Using the **Secret Uri** values from the deployment outputs page you opened at the end of the previous task, update the application settings values for the function app. Use the table below for the name-value pairs to use when editing the secrets. You only need to update the `{xxxSecretUri}` token with the **Value** field for each secret and leave the other fields at their default values.
 
    |                          |                         |
    | ------------------------ | ----------------------- |
@@ -165,9 +166,9 @@ In this task, you copy the Secret Uri values from  the output page of the ARM te
    | dataLakeConnection       | Replace `{dataLakeConnectionSecretUri}` with the `dataLakeConnectionSecretUri` value from the outputs page. |
    | eventGridTopicKey        | Replace `{eventGridTopicKeySecretUri}` with the `eventGridTopicKeySecretUri` value from the outputs page. |
 
-   > Each of the settings above use Key Vault references and have a value of `@Microsoft.KeyVault(SecretUri={TOKENIZED_STRING})`, where `{TOKENIZED_STRING}` is the placeholder for the secret URI for the associated Key Vault secret. The `@Microsoft.KeyVault(SecretUri=)` component of the value allows the Function App to read the value of the secret from Key Vault. To learn more, read the [Use Key Vault references for App Service and Azure Functions](https://docs.microsoft.com/azure/app-service/app-service-key-vault-references) document.
+   > Each of the settings above uses Key Vault references and has a value of `@Microsoft.KeyVault(SecretUri={TOKENIZED_STRING})`, where `{TOKENIZED_STRING}` is the placeholder for the secret URI for the associated Key Vault secret. The `@Microsoft.KeyVault(SecretUri=)` component of the value allows the Function App to read the value of the secret from Key Vault. Read the [Use Key Vault references for App Service and Azure Functions](https://docs.microsoft.com/azure/app-service/app-service-key-vault-references) document to learn more.
 
-5. To update the values, you select each one on the **Application settings** tab of the configuration blade and then edit the setting's value. Start by selecting the `computerVisionApiKey` setting in the list of application settings.
+5. To update the values, you select each one on the **Application settings** tab of the configuration blade and then edit the setting's value. Start by choosing the `computerVisionApiKey` setting in the list of application settings.
 
    ![The computerVisionApiKey settings is highlighted in the list of Application settings for the TollBoothFunctions Function App.](media/application-settings-computer-vision.png "Application settings")
 
@@ -179,7 +180,7 @@ In this task, you copy the Secret Uri values from  the output page of the ARM te
 
    ![The secret Uri for the computerVisionApiKey is highlighted in the Value box for the computerVisionApiKey.](media/application-settings-edit-computer-vision-secret-uri.png "Add/Edit application setting")
 
-8. Select **OK** in the Add/Edit application setting dialog.
+8. Select **OK** in the Add/Edit application settings dialog.
 
 9. Repeat steps 5 through 8 for the remaining settings listed in the table above, updating the value of each to insert the secret Uri value from the deployment output page into the Key Vault reference string.
 
@@ -187,7 +188,7 @@ In this task, you copy the Secret Uri values from  the output page of the ARM te
 
     ![The four settings updated above have their values displayed and are highlighted on the application settings blade.](media/application-settings-values.png "Application settings")
 
-11. Select **Save** on the toolbar of the Configuration blade to save the updated application settings.
+11. Select **Save** on the Configuration blade's toolbar to save the updated application settings.
 
     ![The Save button is highlighted on the toolbar of the Configuration blade.](media/application-settings-toolbar-save.png "Save")
 
@@ -195,15 +196,33 @@ In this task, you copy the Secret Uri values from  the output page of the ARM te
 
     ![The Continue button is highlighted on the Save changes dialog.](media/application-settings-save-changes.png "Save changes")
 
-13. After saving, you should see the **Source** for each of the updated settings change to **Key Vault Reference** with a green check mark, which indicates the Function App is successfully reading the secret value from Key Vault.
+13. After saving, you should see the **Source** for each of the updated settings change to **Key Vault Reference** with a green checkmark, which indicates the Function App is successfully reading the secret value from Key Vault.
 
     ![The Source column for each of the settings updated above is highlighted.](media/application-settings-source-key-vault-reference.png "Application settings source")
 
-### Task 4: Create a GitHub account
+### Task 4: Add your IP address to the Cosmos DB firewall
+
+1. In the [Azure portal](https://portal.azure.com), navigate to the **hands-on-lab-SUFFIX** resource group you created above.
+
+   > You can get to the resource group by selecting **Resource groups** under **Azure services** on the Azure portal home page and then select the resource group from the list. If there are many resource groups in your Azure account, you can filter the list for **hands-on-lab** to reduce the resource groups listed.
+
+2. On your resource group blade, select the **cosmosdb** Azure Cosmos DB account resource in the resource group's list of services available.
+
+   ![The Azure Cosmos DB account resource is highlighted in the list of services in the resource group.](media/resource-group-cosmos-db-account.png "Resources")
+
+3. Next, select **Firewall and virtual networks** in the left-hand navigation menu of the Cosmos DB blade.
+
+4. Select **+ Add my current IP** to add your IP address to the IP list under Firewall. Next, check the box next to **Accept connections from within public Azure datacenters**. Checking this box enables Azure services, such as your Function Apps, to access your Azure Cosmos DB account.
+
+    ![The checkbox is highlighted.](media/cosmos-db-firewall.png "Firewall and virtual networks")
+
+5. Select **Save**.
+
+### Task 5: Create a GitHub account
 
 In this task, you sign up for a free GitHub account, which is used for hosting a copy of the sample application used throughout this lab. This account will be integrated into the CI/CD workflow for pushing updates to the Function Apps in Azure.
 
-> **Note**: If you already have a GitHub account, and wish to use that account, you can skip this task.
+> **Note**: If you already have a GitHub account and wish to use that account, you can skip this task.
 
 1. Navigate to <https://github.com> in a web browser.
 
