@@ -269,7 +269,7 @@ Ensure all resources use the same resource group for easier cleanup.
    - **Name:** Enter a globally unique value, such as **eventgridtopic-SUFFIX** (ensure the green checkmark appears).
    - **Location:** Select the region you have been using for resources in this hands-on lab.
 
-   ![In the Create Topic blade, the Name field is set to TollBoothTopic, and the Resource Group selected is ServerlessArchitecture.](media/new-event-grid-topic.png 'Create Topic blade')
+   ![In the Create Topic blade, the Name field is set to eventgridtopic, and the Resource Group selected is hands-on-lab-SUFFIX.](media/new-event-grid-topic.png 'Create Topic blade')
 
 5. Select **Review + Create**, then select **Create** in the screen that follows.
 
@@ -283,7 +283,7 @@ Ensure all resources use the same resource group for easier cleanup.
 
 9. Within the **Access Keys** blade, copy the **Key 1** value and paste it into a text editor, such as Notepad, for later reference.
 
-   ![In the TollBoothTopic blade, in the left menu under Settings, Access keys is selected. In the listing of Access keys, the copy button next to the Key 1 access key is selected.](media/event-grid-access-keys.png 'TollBoothTopic - Access keys blade')
+   ![In the eventgridtopic blade, in the left menu under Settings, Access keys is selected. In the listing of Access keys, the copy button next to the Key 1 access key is selected.](media/event-grid-access-keys.png 'eventgridtopic - Access keys blade')
 
 ## Task 5: Provision and configure an Azure Cosmos DB account
 
