@@ -748,10 +748,10 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 ### Help references
 
-|                                           |                                                                                    |
-| ----------------------------------------- | :--------------------------------------------------------------------------------: |
-| **Description**                           |                                     **Links**                                      |
-| Creating a new GitHub repository          |           <https://help.github.com/articles/creating-a-new-repository/>            |
+|                 |           |
+| --------------- | ----------|
+| **Description** | **Links** |
+| Creating a new GitHub repository | <https://help.github.com/articles/creating-a-new-repository/> |
 | Continuous deployment for Azure Functions | <https://docs.microsoft.com/azure/azure-functions/functions-continuous-deployment> |
 
 ### Task 1: Add git repository to your Visual Studio solution and deploy to GitHub
@@ -924,19 +924,19 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
 **Duration**: 10 minutes
 
-In this exercise, attendees will deprovision any Azure resources that were created in support of the lab.
+In this exercise, attendees will delete any Azure resources created in support of the lab.
 
 ### Task 1: Delete the resource group in which you placed your Azure resources
 
-1. From the Portal, navigate to the blade of your **Resource Group** and select **Delete** in the command bar at the top.
+1. From the Portal, navigate to your **hands-on-lab-SUFFIX** resource group and select **Delete** in the toolbar at the top.
 
 2. Confirm the deletion by re-typing the **resource group name** and selecting **Delete**.
 
-3. If you created a different resource group for your virtual machined, be sure to delete that as well.
-
-4. Optionally, delete the GitHub repository you created for this lab by selecting **settings** and then **Delete this repository** from the GitHub website.
+3. If you created a different resource group for your virtual machine, be sure to delete that as well.
 
 ### Task 2: Delete the GitHub repo
+
+[Optional] In this task, you delete the GitHub repository you created for this lab.
 
 1. Open <https://www.github.com>, then select your profile icon and select **Your repositories**.
 
