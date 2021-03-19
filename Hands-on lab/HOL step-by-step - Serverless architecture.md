@@ -39,15 +39,15 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 4: Publish the Function App from Visual Studio](#task-4-publish-the-function-app-from-visual-studio)
   - [Exercise 2: Create functions in the portal](#exercise-2-create-functions-in-the-portal)
     - [Help references](#help-references-1)
-    - [Task 1: Create function to save license plate data to Azure Cosmos DB](#task-1-create-function-to-save-license-plate-data-to-azure-cosmos-db)
+    - [Task 1: Create a function to save license plate data to Azure Cosmos DB](#task-1-create-a-function-to-save-license-plate-data-to-azure-cosmos-db)
     - [Task 2: Add an Event Grid subscription to the SavePlateData function](#task-2-add-an-event-grid-subscription-to-the-saveplatedata-function)
     - [Task 3: Add an Azure Cosmos DB output to the SavePlateData function](#task-3-add-an-azure-cosmos-db-output-to-the-saveplatedata-function)
-    - [Task 4: Create function to save manual verification info to Azure Cosmos DB](#task-4-create-function-to-save-manual-verification-info-to-azure-cosmos-db)
+    - [Task 4: Create a function to save manual verification info to Azure Cosmos DB](#task-4-create-a-function-to-save-manual-verification-info-to-azure-cosmos-db)
     - [Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function](#task-5-add-an-event-grid-subscription-to-the-queueplateformanualcheckup-function)
     - [Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function](#task-6-add-an-azure-cosmos-db-output-to-the-queueplateformanualcheckup-function)
   - [Exercise 3: Monitor your functions with Application Insights](#exercise-3-monitor-your-functions-with-application-insights)
     - [Help references](#help-references-2)
-    - [Task 1: Use the Live Metrics Stream to monitor functions in real time](#task-1-use-the-live-metrics-stream-to-monitor-functions-in-real-time)
+    - [Task 1: Use the Live Metrics Stream to monitor functions in real-time](#task-1-use-the-live-metrics-stream-to-monitor-functions-in-real-time)
     - [Task 2: Observe your functions dynamically scaling when resource-constrained](#task-2-observe-your-functions-dynamically-scaling-when-resource-constrained)
   - [Exercise 4: Explore your data in Azure Cosmos DB](#exercise-4-explore-your-data-in-azure-cosmos-db)
     - [Help references](#help-references-3)
@@ -109,7 +109,7 @@ The solution begins with vehicle photos being uploaded to an Azure Data Lake Sto
 
 **Duration**: 45 minutes
 
-Use Visual Studio and its integrated Azure Functions tooling to develop and debug the functions locally, and then publish them to Azure. The starter project solution, TollBooths, contains most of the code needed. You will add in the missing code before deploying to Azure.
+Use Visual Studio and its integrated Azure Functions tooling to develop and debug the functions locally and then publish them to Azure. The starter project solution, TollBooths, contains most of the code needed. You will add in the missing code before deploying to Azure.
 
 ### Help references
 
@@ -180,39 +180,37 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
    - `TollBooth`
    - `UploadImages`
 
-   > **Note**: The UploadImages project is used for uploading a handful of car photos for testing scalability of the serverless architecture.
+   > **Note**: The UploadImages project is used for uploading a handful of car photos for testing the scalability of the serverless architecture.
 
    ![The two projects listed above are highlighted in Solution Explorer.](media/visual-studio-solution-explorer-projects.png "Solution Explorer")
 
-7. To validate connectivity to your Azure subscription from Visual Studio, open **Cloud Explorer** from the **View** menu, and ensure that you can connect to your Azure subscription.
+7. To validate connectivity to your Azure subscription from Visual Studio, open **Cloud Explorer** from the **View** menu and ensure that you can connect to your Azure subscription.
 
    ![In Cloud Explorer, the list of Azure subscriptions is shown. A single subscription is highlighted and expanded in the list.](media/vs-cloud-explorer.png 'Cloud Explorer')
 
    > **Note**: You may need to select the account icon and log in with your Azure account before seeing the resources below your subscription.
 
-TODO: Remove this next step?
-
-8. Return to the open File Explorer window and navigate back to the **src** subfolder. From there, open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the photos is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The **copyfrom** folder is used by the UploadImages project as a basis for the 1,000 photo upload option for testing scalability.
+8. Return to the open File Explorer window and navigate back to the **src** subfolder. From there, open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the images is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The UploadImages project uses the **copyfrom** folder as a basis for the 1,000 photo upload option for testing scalability.
 
 ### Task 3: Finish the ProcessImage function
 
-There are a few components within the starter project that must be completed, which are marked as `TODO` in the code. The first set of `TODO` items we address are in the `ProcessImage` function. We will make updates to the `FindLicensePlateText` class that calls the Computer Vision service and the `SendToEventGrid` class, which is responsible for sending processing results to the Event Grid topic you created earlier.
+A few components within the starter project must be completed, which are marked as `TODO` in the code. The first set of `TODO` items we address are in the `ProcessImage` function. We will update the `FindLicensePlateText` class that calls the Computer Vision service and the `SendToEventGrid` class, which is responsible for sending processing results to the Event Grid topic you created earlier.
 
 > **Note:** Do **NOT** update the version of any NuGet package. This solution is built to function with the NuGet package versions currently defined within. Updating these packages to newer versions could cause unexpected results.
 
-> **Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as  `C:\Users\workshop\Downloads\`, then you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters.`
+> **Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as  `C:\Users\workshop\Downloads\`, you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters.`
 
 1. From the Visual Studio **View** menu, select **Task List**.
 
     ![The Visual Studio Menu displays, with View and Task List selected.](media/vs-task-list-link.png 'Visual Studio Menu')
 
-2. There you will see a list of `TODO` tasks, where each task represents one line of code that needs to be completed.
+2. There, you will see a list of `TODO` tasks, where each task represents one line of code that needs to be completed.
 
     ![A list of TODO tasks, including their description, project, file, and line number are displayed.](media/vs-task-list.png 'TODO tasks')
 
-3. In the Visual Studio Solution Explorer, expand the **TollBooth** project, and double-click `ProcessImage.cs` to open the file.
+3. In the Visual Studio Solution Explorer, expand the **TollBooth** project and double-click `ProcessImage.cs` to open the file.
 
-    > Notice the Run method is decorated with the FunctionName attribute, which sets the name of the Azure Function to "ProcessImage". This is triggered by HTTP requests sent to it from the Event Grid service. You tell Event Grid that you want to get these notifications at your function's URL by creating an event subscription, which you will do in a later task, in which you subscribe to blob-created events. The function's trigger watches for new blobs being added to the images container of the data lake storage account that was created by the ARM template in the Before the hands-on lab guide. The data passed to the function from the Event Grid notification includes the URL of the blob. That URL is in turn passed to the input binding to obtain the uploaded image from data lake storage.
+    > Notice the Run method is decorated with the FunctionName attribute, which sets the name of the Azure Function to "ProcessImage." This is triggered by HTTP requests sent to it from the Event Grid service. You tell Event Grid that you want to get these notifications at your function's URL by creating an event subscription, which you will do in a later task, in which you subscribe to blob-created events. The function's trigger watches for new blobs being added to the images container of the data lake storage account that was created by the ARM template in the Before the hands-on lab guide. The data passed to the function from the Event Grid notification includes the URL of the blob. That URL is, in turn, passed to the input binding to obtain the uploaded image from data lake storage.
 
     ![The ProcessImage.cs file is highlighted within the TollBooth project in the Visual Studio Solution Explorer.](media/visual-studio-solution-explorer-process-image.png "Solution Explorer")
 
@@ -229,7 +227,7 @@ There are a few components within the starter project that must be completed, wh
 
 6. Double-click `TODO 2` in the Task List to open the `FindLicensePlateText.cs` file.
 
-    > This class is responsible for contacting the Computer Vision service's Read API to find and extract the license plate text from the photo, using OCR. Notice that this class also shows how you can implement a resilience pattern using [Polly](https://github.com/App-vNext/Polly), an open source .NET library that helps you handle transient errors. This is useful for ensuring that you do not overload downstream services, in this case, the Computer Vision service. This will be demonstrated later on when visualizing the Function's scalability.
+    > This class is responsible for contacting the Computer Vision service's Read API to find and extract the license plate text from the photo using OCR. Notice that this class also shows how you can implement a resilience pattern using [Polly](https://github.com/App-vNext/Polly), an open-source .NET library that helps you handle transient errors. This is useful for ensuring that you do not overload downstream services, in this case, the Computer Vision service. This will be demonstrated later on when visualizing the Function's scalability.
 
     ![TODO 2 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-2.png "Task List")
 
@@ -243,7 +241,7 @@ There are a few components within the starter project that must be completed, wh
 
 8. Double-click `TODO 3` in the Task List to open `SendToEventGrid.cs`.
 
-    > This class is responsible for sending an Event to the Event Grid topic, including the event type and license plate data. Event listeners will use the event type to filter and act on the events they need to process. Make note of the event types defined here (the first parameter passed into the Send method), as they will be used later on when creating new functions in the second Function App you provisioned earlier.
+    > This class is responsible for sending an Event to the Event Grid topic, including the event type and license plate data. Event listeners will use the event type to filter and act on the events they need to process. Please make a note of the event types defined here (the first parameter passed into the Send method), as they will be used later on when creating new functions in the second Function App you provisioned earlier.
 
     ![TODO 3 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-3.png "Task List")
 
@@ -265,41 +263,41 @@ In this task, you will publish the Function App from the starter project in Visu
 
 1. Navigate to the **TollBooth** project using the Solution Explorer of Visual Studio.
 
-2. Right-click the **TollBooth** project and select **Publish** from the context menu.
+2. Right-click the **TollBooth** project, and select **Publish** from the context menu.
 
     ![In Solution Explorer, the TollBooth is selected, and within its context menu, the Publish item is selected.](media/image39.png 'Solution Explorer ')
 
 3. In the Publish window, select **Azure**, then select **Next**.
 
-    ![In the Pick a publish target window, the Azure Functions Consumption Plan is selected in the left pane. In the right pane, the Select Existing radio button is selected and the Run from package file (recommended) checkbox is unchecked. The Create Profile button is also selected.](media/vs-publish-function.png 'Publish window')
+    ![In the Pick a publish target window, the Azure Functions Consumption Plan is selected in the left pane. The Select Existing radio button is selected in the right pane, and the Run from package file (recommended) checkbox is unchecked. The Create Profile button is also selected.](media/vs-publish-function.png 'Publish window')
 
     > **Note**: If you do not see the ability to publish to an Azure Function, you may need to update your Visual Studio instance.
 
 4. In the App Service form, select your **Subscription**, select **Resource Group** under **View**, then expand your **hands-on-lab-SUFFIX** resource group and select the Function App whose name ends with **FunctionApp**. Finally, **uncheck the `Run from package file` option**.
 
-5. Whatever you named the Function App when you provisioned it is fine. Just make sure it is the same one to which you applied the Application Settings in Task 1 of this exercise.
+5. Whatever you named the Function App when you provisioned it is okay. Just make sure it is the same one to which you applied the Application Settings in Task 1 of this exercise.
 
     ![In the App Service form, Resource Group displays in the View field, and in the tree-view below, the hands-on-lab-SUFFIX folder is expanded, and TollBoothFunctionApp is selected.](media/vs-publish-function2.png 'Publish window')
 
-    > **Important**: We do not want to run from a package file, because when we deploy from GitHub later on, the build process will be skipped if the Function App is configured for a zip deployment.
+    > **Important**: We do not want to run from a package file because when we deploy from GitHub later on, the build process will be skipped if the Function App is configured for a zip deployment.
 
 6. After you select the Function App, select **Finish**.
 
 7. Select **Publish** to start the process. Watch the Output window in Visual Studio as the Function App publishes. When it is finished, you should see a message that says, `========== Publish: 1 succeeded, 0 failed, 0 skipped ==========`.
 
-    > **Note**: If prompted to update the functions version on Azure, select **Yes**.
+    > **Note**: If prompted to update the version of the function on Azure, select **Yes**.
 
     ![The Publish button is selected.](media/vs-publish-function3.png "Publish")
 
-8. Using a new tab or instance of your browser navigate to the Azure portal, <http://portal.azure.com>.
+8. Using a new tab or instance of your browser, navigate to the Azure portal, <http://portal.azure.com>.
 
 9. Open the **hands-on-lab-SUFFIX** resource group, then select the **TollBoothFunctions** Azure Function App, to which you just published.
 
 10. Select **Functions** in the left-hand navigation menu. You should see both functions you just published from the Visual Studio solution listed.
 
-    ![In the Function Apps blade, in the left tree-view both TollBoothFunctionApp, and Functions (Read Only) are expanded. Beneath Functions (Read Only), two functions ExportLicensePlates and ProcessImage are highlighted.](media/dotnet-functions.png 'TollBoothFunctionApp blade')
+    ![In the Function Apps blade, in the left tree-view, both TollBoothFunctionApp and Functions (Read Only) are expanded. Beneath Functions (Read Only), two functions ExportLicensePlates and ProcessImage are highlighted.](media/dotnet-functions.png 'TollBoothFunctionApp blade')
 
-11. Now we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to the data lake storage container. Select the **ProcessImage** function, select **Integration** on the left-hand menu, select **Event Grid Trigger (eventGridEvent)**, and then select **Create Event Grid subscription**.
+11. Now, we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to the data lake storage container. Select the **ProcessImage** function, select **Integration** on the left-hand menu, select **Event Grid Trigger (eventGridEvent)**, and then select **Create Event Grid subscription**.
 
     ![In the TollboothFunctionApp tree-view, the ProcessImage function is selected. In the code window pane, the Add Event Grid subscription link is highlighted.](media/processimage-add-eg-sub.png 'ProcessImage function')
 
@@ -334,13 +332,13 @@ Create two new Azure Functions written in Node.js, using the Azure portal. These
 | Create your first function in the Azure portal |        <https://docs.microsoft.com/azure/azure-functions/functions-create-first-azure-function> |
 | Store unstructured data using Azure Functions and Azure Cosmos DB | <https://docs.microsoft.com/azure/azure-functions/functions-integrate-store-unstructured-data-cosmosdb> |
 
-### Task 1: Create function to save license plate data to Azure Cosmos DB
+### Task 1: Create a function to save license plate data to Azure Cosmos DB
 
 In this task, you will create a new Node.js function triggered by Event Grid and that outputs successfully processed license plate data to Azure Cosmos DB.
 
-1. Using a new tab or instance of your browser navigate to the Azure portal, <http://portal.azure.com>.
+1. Using a new tab or instance of your browser, navigate to the Azure portal, <http://portal.azure.com>.
 
-2. Open the **hands-on-lab-SUFFIX** resource group, then select the Azure Function App you created whose name begins with **TollBoothEvents**. If you did not use this naming convention, make sure you select the Function App that you _did not_ deploy to in the previous exercise.
+2. Open the **hands-on-lab-SUFFIX** resource group and select the Azure Function App you created whose name begins with **TollBoothEvents**. If you did not use this naming convention, make sure you choose the Function App that you _did not_ deploy to in the previous exercise.
 
 3. Select **Functions** in the left-hand menu, then select **+ Add**.
 
@@ -384,13 +382,13 @@ In this task, you will add an Event Grid subscription to the SavePlateData funct
 
 2. On the **Create Event Subscription** blade, specify the following configuration options:
 
-    - **Name**: Enter a unique value, similar to **saveplatedatasub** (ensure the green check mark appears).
+    - **Name**: Enter a unique value, similar to **saveplatedatasub** (ensure the green checkmark appears).
     - **Event Schema**: Select **Event Grid Schema**.
     - **Topic Type**: Select **Event Grid Topics**.
     - **Subscription**: Select the subscription you are using for this hands-on lab.
     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
-    - **Resource**: Select your Event Grid Topic. This should be the only service listed, and will start with `eventgridtopic-`.
-    - **Event Types**: Select **Add Event Type** and enter `savePlateData` for the new event type value. This will ensure this function is only triggered by this Event Grid type.
+    - **Resource**: Select your Event Grid Topic. This should be the only service listed and will start with `eventgridtopic-`.
+    - **Event Types**: Select **Add Event Type** and enter `savePlateData` for the new event type value. This will ensure this Event Grid type only triggers this function.
     - **Endpoint Type**: Leave Azure Function as the Endpoint Type.
     - **Endpoint**: Leave as SavePlateData.
 
@@ -402,7 +400,7 @@ In this task, you will add an Event Grid subscription to the SavePlateData funct
 
 In this task, you will add an Azure Cosmos DB output binding to the SavePlateData function, enabling it to save its data to the Processed collection.
 
-1. While still on the **SavePlateData** Integration blade, select **+ Add output** under `Outputs` and in the `Create Output` blade that appears, select the **Azure Cosmos DB** binding type.
+1. While still on the **SavePlateData** Integration blade, select **+ Add output** under `Outputs`, and in the `Create Output` blade that appears, select the **Azure Cosmos DB** binding type.
 
     ![The Add Output link is highlighted with an arrow pointing to the highlighted binding type in the Create Output blade.](media/function-output-binding-type.png "Create Output")
 
@@ -412,9 +410,9 @@ In this task, you will add an Azure Cosmos DB output binding to the SavePlateDat
     - **Database name**: Enter **LicensePlates**.
     - **Collection name**: Enter **Processed**.
 
-3. Scroll down in the Create Output form, select **New** under to the **Cosmos DB account connection** field.
+3. Scroll down in the Create Output form, select **New** under the **Cosmos DB account connection** field.
 
-    > **Note**: If you see a notice for "Extensions not installed", select **Install** and wait for the extension installation to complete before proceeding.
+    > **Note**: If you see a notice for "Extensions not installed," select **Install** and wait for the extension installation to complete before proceeding.
 
     ![A message is displayed indicating the Cosmos DB Extensions are not installed. The Install link is selected.](media/cosmos-extension-install.png 'Cosmos DB Extensions not installed')
 
@@ -424,13 +422,13 @@ In this task, you will add an Azure Cosmos DB output binding to the SavePlateDat
 
 5. Select **OK**.
 
-    > **Note**: You should wait for the template dependency to install to complete, if you were prompted earlier.
+    > **Note**: You should wait for the template dependency to install to complete if you were prompted earlier.
 
     ![Under Azure Cosmos DB output the following field values display: Document parameter name, outputDocument; Collection name, Processed; Database name, LicensePlates; Azure Cosmos DB account connection, cosmosdb_DOCUMENTDB.](media/saveplatedata-cosmos-integration.png 'Azure Cosmos DB output section')
 
 6. Close the `SavePlateData` function.
 
-### Task 4: Create function to save manual verification info to Azure Cosmos DB
+### Task 4: Create a function to save manual verification info to Azure Cosmos DB
 
 In this task, you will create another new function triggered by Event Grid and outputs information about photos that need to be manually verified to Azure Cosmos DB.
 
@@ -440,7 +438,7 @@ In this task, you will create another new function triggered by Event Grid and o
 
 2. Enter **event grid** into the **Select a template** filter box, select the **Azure Event Grid trigger** template, and then enter `QueuePlateForManualCheckup` into the **New Function** name field.
 
-    ![In the Add function dialog, event grid is entered into the filter box, the Azure Event Grid trigger template is selected and highlighted, and QueuePlateForManualCheckup is entered in the Name field and highlighted.](media/new-function-manual-checkup.png "Add function form")
+    ![In the Add function dialog, event grid is entered into the filter box. The Azure Event Grid trigger template is selected and highlighted, and QueuePlateForManualCheckup is entered in the Name field and highlighted.](media/new-function-manual-checkup.png "Add function form")
 
 3. Select **Add**.
 
@@ -513,7 +511,7 @@ In this task, you will add an Azure Cosmos DB output binding to the QueuePlateFo
 
 **Duration**: 15 minutes
 
-Application Insights can be integrated with Azure Function Apps to provide robust monitoring for your functions. In this exercise, you examine telemetry in the Application Insights account that you created when provisioning the Function Apps. Since you assigned the Application Insights account to the Function Apps when creating them, the Application Insights telemetry key was added to the Function App configuration for you.
+Application Insights can be integrated with Azure Function Apps to provide robust monitoring for your functions. In this exercise, you examine telemetry in the Application Insights account that you created when provisioning the Function Apps. Since you associated the Application Insights account with the Function Apps when creating them, the Application Insights telemetry key was added to the Function App configuration for you.
 
 ### Help references
 
@@ -523,7 +521,7 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 | Monitor Azure Functions using Application Insights | <https://docs.microsoft.com/azure/azure-functions/functions-monitoring> |
 | Live Metrics Stream: Monitor & Diagnose with 1-second latency | <https://docs.microsoft.com/azure/application-insights/app-insights-live-stream> |
 
-### Task 1: Use the Live Metrics Stream to monitor functions in real time
+### Task 1: Use the Live Metrics Stream to monitor functions in real-time
 
 1. Open the **appinsights** Application Insights resource from within your lab resource group.
 
@@ -545,13 +543,13 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
 6. Save your changes by selecting the Save icon on the Visual Studio toolbar.
 
-7. Right-click the **UploadImages** project in the Solution Explorer, then select **Debug** then **Start new instance** from the context menu.
+7. Right-click the **UploadImages** project in the Solution Explorer, select **Debug**, then **Start new instance** from the context menu.
 
     ![In Solution Explorer, the UploadImages project is selected. From the context menu, Debug then Start new instance is selected.](media/vs-debug-uploadimages.png 'Solution Explorer')
 
     >**Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as `C:\Users\workshop\Downloads\`, then you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters.`
 
-8. When the console window appears, enter **1** and press **ENTER**. This uploads a handful of car photos to the images container of your Blob storage account.
+8. When the console window appears, enter **1** and press **ENTER**. This action uploads a handful of car photos to the images container of your Blob storage account.
 
     ![A Command prompt window displays, showing images being uploaded.](media/image69.png 'Command prompt window')
 
@@ -563,17 +561,17 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
     ![The Command prompt window displays with image uploading information.](media/image71.png 'Command prompt window')
 
-11. Switch back to the Live Metrics Stream window and observe the activity as the photos are uploaded. You can see the number of servers online, which translate to the number of Function App instances that are running between both Function Apps. You should also notice things such as a steady cadence for the Request Rate monitor, the Request Duration hovering below \~200ms second, and the Incoming Requests roughly matching the Outgoing Requests.
+11. Switch back to the Live Metrics Stream window and observe the activity as the photos are uploaded. You can see the number of servers online, which translates to the number of Function App instances running between both Function Apps. You should also notice things such as a steady cadence for the Request Rate monitor, the Request Duration hovering below \~200ms second, and the Incoming Requests roughly matching the Outgoing Requests.
 
-    ![In the Live Metrics Stream window, two servers are online. Under Incoming Requests. the Request Rate heartbeat line graph is selected, as is the Request Duration dot graph. Under Overall Health, the Process CPU heartbeat line graph is also selected, the similarities between this graph and the Request Rate graph under Incoming Requests are highlighted for comparison.](media/image72.png 'Live Metrics Stream window')
+    ![In the Live Metrics Stream window, two servers are online under Incoming Requests. The Request Rate heartbeat line graph is selected, as is the Request Duration dot graph. Under Overall Health, the Process CPU heartbeat line graph is also selected, the similarities between this graph and the Request Rate graph under Incoming Requests are highlighted for comparison.](media/image72.png 'Live Metrics Stream window')
 
 12. After this has run for a while, close the image upload console window once again, but leave the Live Metrics Stream window open.
 
 ### Task 2: Observe your functions dynamically scaling when resource-constrained
 
-In this task, you will change the Computer Vision API to the Free tier. This will limit the number of requests to the OCR service to 10 per minute. Once changed, run the UploadImages console app to upload 1,000 images again. The resiliency policy programmed into the FindLicensePlateText.MakeOCRRequest method of the ProcessImage function will begin exponentially backing off requests to the Computer Vision API, allowing it to recover and lift the rate limit. This intentional delay will greatly increase the function's response time, thus causing the Consumption plan's dynamic scaling to kick in, allocating several more servers. You will watch all of this happen in real time using the Live Metrics Stream view.
+In this task, you will change the Computer Vision API to the Free tier. This will limit the number of requests to the OCR service to 10 per minute. Once changed, run the UploadImages console app to upload 1,000 images again. The resiliency policy is programmed into the FindLicensePlateText.MakeOCRRequest method of the ProcessImage function will begin exponentially backing off requests to the Computer Vision API, allowing it to recover and lift the rate limit. This intentional delay will significantly increase the function's response time, causing the Consumption plan's dynamic scaling to kick in, allocating several more servers. You will watch all of this happen in real-time using the Live Metrics Stream view.
 
-1. Open your Computer Vision API service by opening the **hands-on-lab-SUFFIX** resource group, and then selecting the **Cognitive Services** service name.
+1. Open your Computer Vision API service by opening the **hands-on-lab-SUFFIX** resource group and then selecting the **Cognitive Services** service name.
 
     ![The computervision Cognitive Service resource is highlighted in the list of services in the resource group.](media/resource-group-computer-vision-resource.png "Resource group")
 
@@ -587,9 +585,9 @@ In this task, you will change the Computer Vision API to the Free tier. This wil
 
     ![The Command prompt window displays image uploading information.](media/image71.png 'Command Prompt window')
 
-4. Switch back to the Live Metrics Stream window and observe the activity as the photos are uploaded. After running for a couple of minutes, you should start to notice a few things. The Request Duration will start to increase over time. As this happens, you should notice more servers being brought online. Each time a server is brought online, you should see a message in the Sample Telemetry stating that it is "Generating 2 job function(s)", followed by a Starting Host message. You should also see messages logged by the resilience policy that the Computer Vision API server is throttling the requests. This is known by the response codes sent back from the service (429). A sample message is "Computer Vision API server is throttling our requests. Automatically delaying for 16000ms".
+4. Switch back to the Live Metrics Stream window and observe the activity as the photos are uploaded. After running for a couple of minutes, you should start to notice a few things. The Request Duration will begin to increase over time. As this happens, you should notice more servers being brought online. Each time a server is brought online, you should see a message in the Sample Telemetry stating that it is "Generating 2 job function(s)", followed by a Starting Host message. You should also see messages logged by the resilience policy that the Computer Vision API server is throttling the requests. This is known by the response codes sent back from the service (429). A sample message is "Computer Vision API server is throttling our requests. Automatically delaying for 16000ms".
 
-    > **Note**: If you select a sample telemetry and cannot see its details, drag the resize bar at the bottom of the list up to resize the details pane.
+    > **Note**: If you select a sample telemetry item and cannot see its details, drag the resize bar at the bottom of the list up to resize the details pane.
 
     ![In the Live Metrics Stream window, 11 servers are now online.](media/image74.png 'Live Metrics Stream window')
 
@@ -603,7 +601,7 @@ In this task, you will change the Computer Vision API to the Free tier. This wil
 
 In this exercise, you will use the Azure Cosmos DB Data Explorer in the portal to view saved license plate data.
 
-> **Note:** Ensure that your IP address has been added to the IP list under the **Firewall settings** in your Azure Cosmos DB account. If not, then you will not able to see the License Plates data within Azure Cosmos DB. This step was completed in the Before the hands-on lab guide.
+> **Note:** Ensure that your IP address has been added to the IP list under the **Firewall settings** in your Azure Cosmos DB account. If not, you will not see the License Plates data within Azure Cosmos DB. You completed this step in the Before the hands-on lab guide.
 
 ### Help references
 
@@ -628,21 +626,21 @@ In this exercise, you will use the Azure Cosmos DB Data Explorer in the portal t
 
 4. Expand the **LicensePlates** database and then the **Processed** collection and select **Items**. This will list each of the JSON documents added to the collection.
 
-5. Select one of the documents to view its contents. The first four properties were added by your functions. The remaining properties are standard and are assigned by Cosmos DB.
+5. Select one of the documents to view its contents. Your functions added the first four properties. The remaining properties are standard and are assigned by Cosmos DB.
 
-    ![In the tree-view beneath the LicensePlates Cosmos DB, the Processed collection is expanded with the Items item selected. On the Items tab, a document is selected, and to the side, the JSON data associated with the document is displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and exported) are displayed along with the standard Cosmos DB properties.](media/data-explorer-processed.png 'Data Explorer')
+    ![In the tree-view beneath the LicensePlates Cosmos DB, the Processed collection is expanded with the Items item selected. On the Items tab, a document is selected, and its JSON data is displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and exported) are displayed along with the standard Cosmos DB properties.](media/data-explorer-processed.png 'Data Explorer')
 
 6. Next, expand the **NeedsManualReview** collection and select **Items**.
 
-7. Select one of the documents to view its contents. Notice that the filename is provided, as well as a property named "resolved". While this is out of scope for this lab, those properties can be used together to provide a manual process for viewing the photo and entering the license plate.
+7. Select one of the documents to view its contents. Notice that the filename is provided, as well as a property named "resolved." While out of scope for this lab, those properties can be used to provide a manual process for reviewing photos and entering license plates.
 
-    ![In the tree-view beneath the LicensePlates Cosmos DB, the NeedsManualReview collection is expanded, and the Items item is selected. On the Items tab, a document is selected, and to the side, the JSON properties of the document are displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and resolved) are shown along with the standard Cosmos DB properties.](media/data-explorer-needsreview.png 'Data Explorer')
+    ![In the tree-view beneath the LicensePlates Cosmos DB, the NeedsManualReview collection is expanded, and the Items item is selected. On the Items tab, a document is selected, and its JSON data is displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and resolved) are shown along with the standard Cosmos DB properties.](media/data-explorer-needsreview.png 'Data Explorer')
 
 8. Select the ellipses (...) next to the **Processed** collection and select **New SQL Query**.
 
     ![In the tree-view beneath the LicencePlates Cosmos DB, the Processed collection is selected. From its right-click context menu, New SQL Query is selected.](media/data-explorer-new-sql-query.png 'Data Explorer')
 
-9. Paste the SQL query below into query window. This query counts the number of processed documents that have not been exported:
+9. Paste the SQL query below into the query window. This query counts the number of processed documents that have not been exported:
 
     ```sql
     SELECT VALUE COUNT(1) FROM c WHERE c.exported = false
