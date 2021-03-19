@@ -56,7 +56,8 @@
 
     "computerVisionName": "[concat('computervision-', uniqueString(resourceGroup().id))]",
     "computerVisionSecretName": "computerVisionApiKey",
-    "keyVaultName": "[concat('keyvault-', uniqueString(resourceGroup().id))]"
+    "keyVaultName": "[concat('keyvault-', uniqueString(resourceGroup().id))]",
+    "logicAppName": "[concat('logicapp-', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
@@ -282,6 +283,19 @@
       "location": "[variables('location')]",
       "properties": {
         "inputSchema": "EventGridSchema"
+      }
+    },
+    {
+      "name": "[variables('logicAppName')]",
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2019-05-01",
+      "identity": "[json('null')]",
+      "properties": {
+          "parameters": {},
+          "state": "Enabled",
+          "sku": {
+            "name": "Standard"
+          }
       }
     },
     {

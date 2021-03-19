@@ -33,6 +33,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Task 4: Provision an Event Grid topic](#task-4-provision-an-event-grid-topic)
   - [Task 5: Provision and configure an Azure Cosmos DB account](#task-5-provision-and-configure-an-azure-cosmos-db-account)
   - [Task 6: Provision the Computer Vision API service](#task-6-provision-the-computer-vision-api-service)
+  - [Task 7: Create a Logic App](#task-7-create-a-logic-app)
   - [Task 7: Provision Azure Key Vault](#task-7-provision-azure-key-vault)
   - [Task 8: Retrieve the URI for each secret](#task-8-retrieve-the-uri-for-each-secret)
   - [Task 9: Configure application settings for the TollBoothFunctions Function App](#task-9-configure-application-settings-for-the-tollboothfunctions-function-app)
@@ -389,6 +390,36 @@ Ensure all resources use the same resource group for easier cleanup.
     ![In the Cognitive Services blade, under Resource Management, Keys and Endpoint is selected. The Copy button next to the Endpoint and Key 1 values are selected.](media/computer-vision-keys-and-endpoint.png 'Keys and Endpoint information')
 
 8. Paste the values into a text editor, such as Notepad, for later reference.
+
+## Task 7: Create a Logic App
+
+1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
+
+   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
+
+2. Enter "logic app" into the **Search the marketplace** box and select **Logic App** from the results.
+
+   ![Logic app is entered into the search the marketplace box and highlighted. The Logic App pane is highlighted in the search results.](media/new-logic-app.png "Create new resource")
+
+3. Select the **Create** button on the **Logic App** blade.
+
+4. On the **Create a logic app** blade Basics tab, specify the following configuration options:
+
+   **Project Details**:
+
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
+
+   **Instance Details**:
+
+   - **Logic app name**: Enter a globally unique value, such as **logicapp-SUFFIX** (ensure the green check mark appears).
+   - **Region:** Select the region you have been using for resources in this hands-on lab.
+   - **Associate with integration service environment**: Leave unchecked.
+   - **Enable log analysis**: Leave unchecked.
+
+   ![The values specified above are entered into the create a logic app basics tab.](media/create-a-logic-app.png "Create a logic app")
+
+5. Select **Review + create**, then select **Create**.
 
 ## Task 7: Provision Azure Key Vault
 
