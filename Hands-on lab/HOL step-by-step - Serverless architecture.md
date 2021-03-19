@@ -603,6 +603,8 @@ In this task, you will change the Computer Vision API to the Free tier. This wil
 
 In this exercise, you will use the Azure Cosmos DB Data Explorer in the portal to view saved license plate data.
 
+> **Note:** Ensure that your IP address has been added to the IP list under the **Firewall settings** in your Azure Cosmos DB account. If not, then you will not able to see the License Plates data within Azure Cosmos DB. This step was completed in the Before the hands-on lab guide.
+
 ### Help references
 
 |                       |                                                           |
@@ -610,40 +612,43 @@ In this exercise, you will use the Azure Cosmos DB Data Explorer in the portal t
 | **Description**       |                         **Links**                         |
 | About Azure Cosmos DB | <https://docs.microsoft.com/azure/cosmos-db/introduction> |
 
-
-> **Note:** Ensure that your IP address is added to the IP list under the Firewall settings in your Azure Cosmos DB account. If not, then you will not able to see the License Plates data within Azure Cosmos DB.
-
 ### Task 1: Use the Azure Cosmos DB Data Explorer
 
-1. Open your Azure Cosmos DB account by opening the **hands-on-lab-SUFFIX** resource group, and then selecting the **Azure Cosmos DB account** name.
+1. In the [Azure portal](https://portal.azure.com), navigate to the **hands-on-lab-SUFFIX** resource group.
 
-2. Select **Data Explorer** from the menu.
+   > You can get to the resource group by selecting **Resource groups** under **Azure services** on the Azure portal home page and then select the resource group from the list. If there are many resource groups in your Azure account, you can filter the list for **hands-on-lab** to reduce the resource groups listed.
 
-    ![In the Data Explorer blade, Data Explorer is selected from the left menu.](media/data-explorer-link.png 'Tollbooth - Data Explorer blade')
+2. On your resource group blade, select the **cosmosdb** Azure Cosmos DB account resource in the resource group's list of services available.
 
-3. Expand the **Processed** collection, then select **Items**. This will list each of the JSON documents added to the collection.
+   ![The Azure Cosmos DB account resource is highlighted in the list of services in the resource group.](media/resource-group-cosmos-db-account.png "Resources")
 
-4. Select one of the documents to view its contents. The first four properties are ones that were added by your functions. The remaining properties are standard and are assigned by Cosmos DB.
+3. On the Cosmos DB blade, select **Data Explorer** from the left-hand navigation menu.
 
-    ![In the tree-view beneath the LicensePlates Cosmos DB, the Processed collection is expanded with the Items item selected. On the Items tab, a document is selected, and to the side, the JSON data associated with the document is displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and exported) are displayed along with the standard Cosmos DB properties.](media/data-explorer-processed.png 'Tollbooth - Data Explorer blade')
+    ![In the Data Explorer blade, Data Explorer is selected from the left menu.](media/data-explorer-link.png 'Data Explorer')
 
-5. Expand the **NeedsManualReview** collection, then select **Items**.
+4. Expand the **LicensePlates** database and then the **Processed** collection and select **Items**. This will list each of the JSON documents added to the collection.
 
-6. Select one of the documents to view its contents. Notice that the filename is provided, as well as a property named "resolved". While this is out of scope for this lab, those properties can be used together to provide a manual process for viewing the photo and entering the license plate.
+5. Select one of the documents to view its contents. The first four properties were added by your functions. The remaining properties are standard and are assigned by Cosmos DB.
 
-    ![In the tree-view beneath the LicensePlates Cosmos DB, the NeedsManualReview collection is expanded, and the Items item is selected. On the Items tab, a document is selected, and to the side, the JSON properties of the document are displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and resolved) are shown along with the standard Cosmos DB properties.](media/data-explorer-needsreview.png 'Tollbooth - Data Explorer blade')
+    ![In the tree-view beneath the LicensePlates Cosmos DB, the Processed collection is expanded with the Items item selected. On the Items tab, a document is selected, and to the side, the JSON data associated with the document is displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and exported) are displayed along with the standard Cosmos DB properties.](media/data-explorer-processed.png 'Data Explorer')
 
-7. Select the ellipses (...) next to the **Processed** collection and select **New SQL Query**.
+6. Next, expand the **NeedsManualReview** collection and select **Items**.
 
-    ![In the tree-view beneath the LicencePlates Cosmos DB, the Processed collection is selected. From its right-click context menu, New SQL Query is selected.](media/data-explorer-new-sql-query.png 'Tollbooth - Data Explorer blade')
+7. Select one of the documents to view its contents. Notice that the filename is provided, as well as a property named "resolved". While this is out of scope for this lab, those properties can be used together to provide a manual process for viewing the photo and entering the license plate.
 
-8. Modify the SQL query to count the number of processed documents that have not been exported:
+    ![In the tree-view beneath the LicensePlates Cosmos DB, the NeedsManualReview collection is expanded, and the Items item is selected. On the Items tab, a document is selected, and to the side, the JSON properties of the document are displayed. The first four properties of the document (fileName, licencePlateText, timeStamp, and resolved) are shown along with the standard Cosmos DB properties.](media/data-explorer-needsreview.png 'Data Explorer')
+
+8. Select the ellipses (...) next to the **Processed** collection and select **New SQL Query**.
+
+    ![In the tree-view beneath the LicencePlates Cosmos DB, the Processed collection is selected. From its right-click context menu, New SQL Query is selected.](media/data-explorer-new-sql-query.png 'Data Explorer')
+
+9. Paste the SQL query below into query window. This query counts the number of processed documents that have not been exported:
 
     ```sql
     SELECT VALUE COUNT(1) FROM c WHERE c.exported = false
     ```
 
-9. Execute the query and observe the results. In our case, we have 669 processed documents that need to be exported.
+10. Execute the query and observe the results. In our case, we have 669 processed documents that need to be exported.
 
     ![In the Query window, the previously defined SQL query displays. Under Results, the number 669 is highlighted.](media/cosmos-query-results.png 'Query 1 tab')
 
