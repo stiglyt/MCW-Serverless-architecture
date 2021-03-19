@@ -1,210 +1,527 @@
-# Manual resource deployment and setup guide
+![Microsoft Cloud Workshops](https://github.com/Microsoft/MCW-Template-Cloud-Workshop/raw/master/Media/ms-cloud-workshop.png 'Microsoft Cloud Workshops')
 
-This guide provides step-by-step instructions to manually provision and the configure resources created by the ARM template referenced in the before the hands-on lab guide.
+<div class="MCWHeader1">
+Serverless architecture
+</div>
 
+<div class="MCWHeader2">
+Manual resource deployment and setup guide
+</div>
+
+<div class="MCWHeader3">
 April 2021
+</div>
 
+Information in this document, including URL and other Internet Web site references, is subject to change without notice. Unless otherwise noted, the example companies, organizations, products, domain names, e-mail addresses, logos, people, places, and events depicted herein are fictitious, and no association with any real company, organization, product, domain name, e-mail address, logo, person, place or event is intended or should be inferred. Complying with all applicable copyright laws is the responsibility of the user. Without limiting the rights under copyright, no part of this document may be reproduced, stored in or introduced into a retrieval system, or transmitted in any form or by any means (electronic, mechanical, photocopying, recording, or otherwise), or for any purpose, without the express written permission of Microsoft Corporation.
+
+Microsoft may have patents, patent applications, trademarks, copyrights, or other intellectual property rights covering subject matter in this document. Except as expressly provided in any written license agreement from Microsoft, the furnishing of this document does not give you any license to these patents, trademarks, copyrights, or other intellectual property.
+
+The names of manufacturers, products, or URLs are provided for informational purposes only and Microsoft makes no representations and warranties, either expressed, implied, or statutory, regarding these manufacturers or the use of the products with any Microsoft technologies. The inclusion of a manufacturer or product does not imply endorsement of Microsoft of the manufacturer or product. Links may be provided to third party sites. Such sites are not under the control of Microsoft and Microsoft is not responsible for the contents of any linked site or any link contained in a linked site, or any changes or updates to such sites. Microsoft is not responsible for webcasting or any other form of transmission received from any linked site. Microsoft is providing these links to you only as a convenience, and the inclusion of any link does not imply endorsement of Microsoft of the site or the products contained therein.
+
+© 2021 Microsoft Corporation. All rights reserved.
+
+Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellectualproperty/Trademarks/Usage/General.aspx> are trademarks of the Microsoft group of companies. All other trademarks are property of their respective owners.
+
+<!-- TOC -->
 **Contents**:
 
-- [Manual resource deployment and setup guide](#manual-resource-deployment-and-setup-guide)
-  - [Task 1: Create a virtual network](#task-1-create-a-virtual-network)
-  - [Task 2: Create a VPN gateway](#task-2-create-a-vpn-gateway)
-  - [Task 3: Provision SQL MI](#task-3-provision-sql-mi)
-  - [Task 4: Create the JumpBox VM](#task-4-create-the-jumpbox-vm)
-  - [Task 5: Create SQL Server 2008 R2 virtual machine](#task-5-create-sql-server-2008-r2-virtual-machine)
-  - [Task 6: Create Azure Database Migration Service](#task-6-create-azure-database-migration-service)
-  - [Task 7: Provision a Web App](#task-7-provision-a-web-app)
-  - [Task 8: Create an Azure Blob Storage account](#task-8-create-an-azure-blob-storage-account)
-  - [Task 9: Connect to the JumpBox](#task-9-connect-to-the-jumpbox)
-  - [Task 10: Install required software on the JumpBox](#task-10-install-required-software-on-the-jumpbox)
-  - [Task 11: Connect to SqlServer2008 VM](#task-11-connect-to-sqlserver2008-vm)
-  - [Task 12: Configure the WideWorldImporters database on the SqlServer2008 VM](#task-12-configure-the-wideworldimporters-database-on-the-sqlserver2008-vm)
+- [Serverless architecture manual resource deployment and setup guide](#serverless-architecture-manual-resource-deployment-and-setup-guide)
+  - [Requirements](#requirements)
+  - [Task 1: Provision an Azure Data Lake Storage Gen2 account](#task-1-provision-an-azure-data-lake-storage-gen2-account)
+  - [Task 2: Provision the TollBooth Function App](#task-2-provision-the-tollbooth-function-app)
+  - [Task 3: Provision the Events Function App](#task-3-provision-the-events-function-app)
+  - [Task 4: Provision an Event Grid topic](#task-4-provision-an-event-grid-topic)
+  - [Task 5: Provision and configure an Azure Cosmos DB account](#task-5-provision-and-configure-an-azure-cosmos-db-account)
+  - [Task 6: Provision the Computer Vision API service](#task-6-provision-the-computer-vision-api-service)
+  - [Task 7: Provision Azure Key Vault](#task-7-provision-azure-key-vault)
+  - [Task 8: Retrieve the URI for each secret](#task-8-retrieve-the-uri-for-each-secret)
+  - [Task 9: Configure application settings for the TollBoothFunctions Function App](#task-9-configure-application-settings-for-the-tollboothfunctions-function-app)
+  - [Task 10: Set up a development virtual machine](#task-10-set-up-a-development-virtual-machine)
+  - [Task 11: Connect to the Lab VM](#task-11-connect-to-the-lab-vm)
+  - [Task 12: Disable Internet Explorer Enhanced Security](#task-12-disable-internet-explorer-enhanced-security)
+  - [Task 13: Install required software on the LabVM](#task-13-install-required-software-on-the-labvm)
 
-> **Important**: Many Azure resources require globally unique names. Throughout these steps, you will see the word "SUFFIX" as part of resource names. You should replace this with your Microsoft alias, initials, or another value to ensure resources are uniquely named.
+<!-- /TOC -->
 
-## Task 1: Create a virtual network
+# Serverless architecture manual resource deployment and setup guide
 
-In this task, you create and configure a virtual network (VNet), which will contain your SQL managed instance, JumpBox VM, and a few other resources use throughout this hands-on lab. Once provisioned, you will associate the route table with the ManagedInstance subnet, and add a Management subnet to the VNet.
+**Duration**: 30 minutes
+
+This guide provides instructions for manually performing Task 2 (Run ARM template to provision lab resources) of the before the hands-on lab guide. The step-by-step directions below manually provision and configure the resources created by the ARM template.
+
+Ensure all resources use the same resource group for easier cleanup.
+
+> **Important**: Many Azure resources require globally unique names. Throughout these steps, you will see the word "SUFFIX" as part of resource names. You should replace this with your Microsoft alias, initials, or other value to ensure uniquely named resources.
+
+## Requirements
+
+- Microsoft Azure subscription (non-Microsoft subscription)
+- Local machine or a virtual machine configured with (**complete the day before the lab!**):
+  - Visual Studio Community 2019 or greater
+    - <https://www.visualstudio.com/vs/>
+  - Azure development workload for Visual Studio 2019
+    - <https://docs.microsoft.com/azure/azure-functions/functions-develop-vs#prerequisites>
+  - .NET Framework 4.7 runtime (or higher) and .NET Core 3.1
+    - <https://www.microsoft.com/net/download/windows>
+- Office 365 account. If required, you can sign up for an Office 365 trial at:
+  - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
+- GitHub account. You can create a free account at <https://github.com>.
+
+## Task 1: Provision an Azure Data Lake Storage Gen2 account
 
 1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
 
    ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
 
-2. Enter "virtual network" into the Search the Marketplace box, and then select **Virtual Network** from the results.
+2. Enter "storage account" into the Search the Marketplace box, select **Storage account** from the results, and then select **Create**.
 
-   !["Virtual Network" is entered into the Search the Marketplace box. Virtual Network is selected in the results.](media/create-resource-vnet.png "Create virtual Network")
+   !["Storage account" is entered into the Search the Marketplace box. Storage account is selected in the results.](./media/create-resource-storage-account.png "Create Storage account")
 
-3. Select **Create** on the Virtual Network blade.
+3. On the Create storage account **Basics** tab, enter the following:
 
-   ![The Create button is highlighted on the Virtual Network blade.](media/vnet-create.png "Create Virtual Network")
-
-4. On the Create virtual network **Basics** tab, enter the following:
-
-   Project details:
+   **Project Details**:
 
    - **Subscription**: Select the subscription you are using for this hands-on lab.
-   - **Resource group**: Select the **hands-on-lab-SUFFIX** resource group from the list.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
 
-   Instance details:
+   **Instance Details**:
 
-   - **Name**: Enter `hands-on-lab-SUFFIX-vnet`
-   - **Region**: Select the region you are using for resources in this hands-on lab.
+   - **Storage account name**: Enter datalakeSUFFIX.
+   - **Location**: Select the location you are using for resources in this hands-on lab.
+   - **Performance**: Choose **Standard**.
+   - **Account kind**: Select **StorageV2 (general purpose v2)**.
+   - **Replication**: Select **Locally-redundant storage (LRS)**.
 
-   ![The values specified above are entered into the appropriate fields on the Create Virtual Network Basics tab.](media/create-virtual-network-basics-tab.png "Create virtual network Basics tab")
+   ![On the Create storage account blade, the values specified above are entered into the appropriate fields.](media/storage-create-account-basics.png "Create storage account")
 
-5. Select **Next: IP Addresses**.
+4. Next, select the **Advanced** tab.
 
-6. On the **IP Addresses** tab, select **default** under subnets and edit the subnet's properties as follows:
+   ![The Advanced tab is highlighted in the tabs on the Create storage account blade.](media/storage-create-account-tabs.png "Create storage account")
 
-   - **Subnet Name**: Enter `ManagedInstance`
-   - **Address space**: Accept the default value. This should have a subnet mask of /24, and be within the address space indicated in the VNet's IPv4 address space, in the format **10.X.0.0/24**.
-   - Select **Save**.
+5. On the Advanced tab, select **Enabled** from the **Hierarchical namespace** setting under Data Lake Storage Gen2.
 
-   ![On the Create virtual IP Addresses tab, the values specified above are entered into the appropriate fields.](media/create-virtual-network-ip-addresses-tab.png "Create virtual network IP addresses tab")
+   ![The Advanced tab of the Create storage account blade is highlighted and Hierarchical namespace and its enabled setting are selected and highlighted.](media/storage-create-account-advanced.png "Create storage account")
 
-7. Select **Review + create**. The default values will be used for the remaining tabs, so they can be skipped.
+6. Select **Review + create**.
 
-8. On the **Review + create** tab, ensure the **Validation passed** message is displayed and select **Create**. It will take a few seconds for the virtual network to provision.
+7. On the **Review + create** blade, ensure the Validation passed message is displayed and then select **Create**.
 
-9. When it completes, you will get a notification in the Azure portal that the deployment succeeded. Select **Go to resource** within the notification.
+8. After the storage account has completed provisioning, open the storage account by selecting **Go to resource**.
 
-   ![The Go to resource button is highlighted in the deployment succeeded notification in the Azure portal.](media/vnet-go-to-resource.png "Deployment succeeded notification")
+    ![In the Azure Portal, once the storage account has completed provisioning, a status message is displayed saying Your deployment is complete. Beneath the next steps section, The Go to resource button is highlighted.](media/storage-go-to-resource.png "Go to resource")
 
-10. On the Virtual network blade, select **Subnets** under Settings in the left-hand menu, and then select **+ Subnet** from the top menu.
+9. On the **Storage account** blade, select **Containers** under **Data Lake Storage** in the left-hand navigation menu and then select the **+ Container** button to add a new container.
 
-    ![The Subnets item is highlighted and selected in the left-hand menu of the Virtual network blade, and + Subnet is highlighted in the top menu.](media/vnet-subnets-add.png "Add subnet")
+    ![The Containers menu item is selected and highlighted in the Storage account blade's left-hand menu, and + Container is highlighted on the Containers blade.](media/data-lake-containers.png "Containers")
 
-11. On the Add subnet blade, enter the following:
+10. In the New container dialog, enter **images** into the **Name** field, choose **Private (no anonymous access)** for the public access level, then select **Create** to save the container.
 
-    - **Name**: Enter `Management`
-    - **Address range**: Accept the default value, which should be a subnet mask of /24, within the address range of your VNet.
-    - **NAT gateway**: Leave set to **None**.
-    - **Network security group**: Leave set to **None**.
-    - **Route table**: Leave set to **None**.
-    - **Service endpoints**: Leave set to **0 selected**.
-    - **Subnet delegation**: Leave set to **None**.
+    ![In the New container dialog, images is entered into the Name field and highlighted. Private (no anonymous access) is selected for the public access level. The **Create** button is highlighted.](media/data-lake-new-container-images.png 'Containers blade')
 
-    ![On the Add subnet blade, Management is entered into the name field, and the default values are specified for the remaining settings.](media/add-subnet-management.png "Add subnet")
+11. Repeat step 10 to create another container named **export**.
 
-12. Select **OK**.
+    ![In the New container dialog, images is entered into the Name field and highlighted. Private (no anonymous access) is selected for the public access level. The **Create** button is highlighted.](media/data-lake-new-container-export.png 'Storage and Containers blade')
 
-13. Back on the **Subnets** blade, select **+ Gateway Subnet**.
+12. Next, select **Access Keys**, under Settings in the left-hand navigation menu. Then on the **Access keys** blade, select **Show keys** and then select the **Click to copy** button for the **key1 connection string** value.
 
-    ![Subnets is selected and highlighted in the left-hand menu. On the Subnets blade, +Gateway subnet is highlighted.](media/vnet-add-gateway-subnet.png "Subnets")
+    ![In the Storage account blade, under Settings, Access keys is selected. Under Default keys, the copy button next to the key1 connection string is selected.](media/data-lake-access-keys.png 'Storage account blade')
 
-14. The **Name** for gateway subnet is automatically filled in with the value `GatewaySubnet`. This value is required in order for Azure to recognize the subnet as the gateway subnet. Accept the auto-filled Address range value, and leave Route table, Service endpoints, and Subnet delegation set to their default values.
+13. Paste the value into a text editor, such as Notepad, for reference in the Key Vault steps below.
 
-    ![The Add subnet form is displayed, with the default values.](media/vnet-add-gateway-subnet-form.png "Add subnet")
+## Task 2: Provision the TollBooth Function App
 
-    > **Note**: The default address range creates a gateway subnet with a CIDR block of /24. This provides enough IP addresses to accommodate additional future configuration requirements.
+1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
 
-15. Select **OK**.
+    ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
 
-## Task 2: Create a VPN gateway
+2. Enter "function app" into the **Search the marketplace** box and select **Function App** from the results.
 
-In this task, you set up a Virtual Network Gateway.
+    ![Function app is highlighted in the search box, and the Function App row is highlighted in the results below that.](media/create-resource-function-app.png "Azure Portal")
+
+3. On the **Function App** blade, select **Create**.
+
+4. On the **Create Function App** blade, enter the following:
+
+   **Project Details**:
+
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
+
+   **Instance Details**:
+
+   - **Function App name:** Enter a globally unique name, such as "TollBoothFunctions-SUFFIX".
+   - **Publish:** Select Code.
+   - **Runtime Stack** Select .NET.
+   - **Version**: Choose 3.1.
+   - **Region:** Select the region you have been using for resources in this hands-on lab.
+
+   ![The information above is entered on the Create Function App basics tab.](media/create-function-app-basics-tab.png "Create Function App Settings")
+
+5. Select **Next: Hosting**.
+
+6. On the Hosting tab, set the following configuration:
+
+   - **Storage account:** Select the **datalakeSUFFIX** storage account you created in Task 1 above.
+   - **Operating System**: Select Windows.
+   - **Plan type:** Choose Consumption (Serverless).
+
+   ![The information above is entered on the Create Function App hosting tab.](media/create-function-app-hosting-tab.png "Create Function App Settings")
+
+7. Select **Next: Monitoring**, and on the Monitoring tab, enter the following:
+
+   - **Enable Application Insights**: Select Yes.
+   - **Application Insights**: Select Create new.
+
+   ![In the Monitoring tab of the Create Function App blade, the form fields are set to the previously defined values.](media/new-functionapp-net-monitoring.png "Function App Monitoring blade")
+
+8. In the **Create new Application Insights** dialog, provide the following information, then select **OK**:
+
+   - **Name**: Enter a globally unique value, similar to **appinsights-SUFFIX** (ensure the green checkmark appears).
+   - **Location**: Select the same Azure region you selected for your Function App.
+
+    ![The new Application Insights form is configured as described.](media/new-app-insights.png "Create new Application Insights")
+
+9. Select **Review + create**.
+
+   ![The Review + create button is highlighted in the button bar.](media/review-create-button.png "Review + create")
+
+10. Select **Create** to provision the new Function App.
+
+11. When the function app provisioning completes, navigate to it in the Azure portal by opening the **hands-on-lab-SUFFIX** resource group and then select the Azure Function App resource whose name begins with **TollBoothFunctions**.
+
+    > For your Function App to be able to access Key Vault to read the secrets, you must [create a system-assigned managed identity](https://docs.microsoft.com/azure/app-service/overview-managed-identity#adding-a-system-assigned-identity) for the Function App, and [create an access policy in Key Vault](https://docs.microsoft.com/azure/key-vault/key-vault-secure-your-key-vault#key-vault-access-policies) for the application identity.
+
+    ![In the hands-on-lab-SUFFIX resource group, the TollBoothFunctions Function App is highlighted.](media/resource-group-toll-booth-functions.png 'hands-on-lab-SUFFIX resource group')
+
+12. On the Function App blade, select **Identity** in the left-hand navigation menu, and within the **System assigned** tab, switch **Status** to **On** and select **Save**.
+
+    ![In the Identity blade, the System assigned tab is selected with the Status set to On, and the Save button is highlighted.](media/function-app-identity.png "Identity")
+
+## Task 3: Provision the Events Function App
+
+1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
+
+    ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
+
+2. Enter "function app" into the **Search the marketplace** box and select **Function App** from the results.
+
+    ![Function app is highlighted in the search box, and the Function App row is highlighted in the results below that.](media/create-resource-function-app.png "Azure Portal")
+
+3. On the **Function App** blade, select **Create**.
+
+4. On the **Create Function App** blade, enter the following:
+
+   **Project Details**:
+
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
+
+   **Instance Details**:
+
+   - **Function App name:** Enter a globally unique name, such as "TollBoothEvents-SUFFIX".
+   - **Publish:** Select Code.
+   - **Runtime Stack** Select Node.js.
+   - **Version**: Choose 14 LTS.
+   - **Region:** Select the region you have been using for resources in this hands-on lab.
+
+   ![The information above is entered on the Create Function App basics tab.](media/create-events-function-app-basics-tab.png "Create Function App Settings")
+
+5. Select **Next: Hosting**.
+
+6. On the Hosting tab, set the following configuration:
+
+   - **Storage account:** Select the **datalakeSUFFIX** storage account you created in Task 1 above.
+   - **Operating System**: Select Windows.
+   - **Plan type:** Choose Consumption (Serverless).
+
+   ![The information above is entered on the Create Function App hosting tab.](media/create-function-app-hosting-tab.png "Create Function App Settings")
+
+7. Select **Next: Monitoring**, and on the Monitoring tab, enter the following:
+
+   - **Enable Application Insights**: Select Yes.
+   - **Application Insights**: Select the Application Insights instance you created earlier when provisioning the TollBoothFunctions Function App.
+
+   ![In the Monitoring tab of the Create Function App blade, the form fields are set to the previously defined values.](media/event-function-app-net-monitoring.png "Function App Monitoring blade")
+
+8. Select **Review + create** and then select **Create** to provision the Function App.
+
+## Task 4: Provision an Event Grid topic
 
 1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
 
    ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
 
-2. Enter "virtual network gateway" into the Search the Marketplace box, and select **Virtual network gateway** from the results.
+2. Enter "event grid topic" into the **Search the marketplace** box and select **Event Grid Topic** from the results.
 
-   !["Virtual network gateway" is entered into the Search the Marketplace box, and Virtual network gateway is highlighted in the results.](media/create-resource-virtual-network-gateway.png "Create a resource")
+   ![Event Grid Topic is highlighted in the search box, and the Event Grid Topic panel is highlighted in the results below that.](media/create-resource-event-grid-topic.png "Event Grid Topic")
 
-3. Select **Create** on the Virtual network gateway blade.
+3. On the **Event Grid Topic** blade, select **Create**.
 
-   ![The Create button is highlighted on the Virtual network gateway blade.](media/virtual-network-gateway-create.png "Virtual network gateway")
+4. On the **Create Topic** blade, specify the following configuration options:
 
-4. On the Create virtual network gateway **Basics** tab, enter the following:
+   **Project Details**:
 
-   - Project details:
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
 
-     - **Subscription**: Select the subscription you are using for this hands-on lab.
-     - **Resource group**: This will be derived from the virtual network's resource group.
+   **Instance Details**:
 
-   - Instance details:
+   - **Name:** Enter a globally unique value, such as **eventgridtopic-SUFFIX** (ensure the green checkmark appears).
+   - **Location:** Select the region you have been using for resources in this hands-on lab.
 
-     - **Name**: Enter `hands-on-lab-SUFFIX-vnet-gateway`
-     - **Region**: Select the location you are using for resources in this hands-on lab.
-     - **Gateway type**: Choose **VPN**.
-     - **VPN type**: Choose **Route-based**.
-     - **SKU**: Select **VpnGw1**.
-     - **Virtual network**: Select the **hands-on-lab-SUFFIX-vnet**.
+   ![In the Create Topic blade, the Name field is set to TollBoothTopic, and the Resource Group selected is ServerlessArchitecture.](media/new-event-grid-topic.png 'Create Topic blade')
 
-   - Public IP address:
+5. Select **Review + Create**, then select **Create** in the screen that follows.
 
-     - **Public IP address**: Choose **Create new**.
-     - **Public IP address name**: Enter **vnet-gateway-ip**.
-     - **Enable active-active mode**: Choose **Disabled**.
-     - **Configure BGP ASN**: Choose **Disabled**.
+6. After the Event Grid topic has completed provisioning, open the account by opening the **hands-on-lab-SUFFIX** resource group and then selecting the **Event Grid Topic** resource from the list of available services.
 
-   ![The values specified above are entered into the appropriate fields in the Create virtual network gateway Basics tab.](media/virtual-network-gateway-create-basics.png "Create virtual network gateway")
+7. On the Event Grid Topic blade, select **Overview** in the left-hand navigation menu and then copy the **Topic Endpoint** value and paste the value into a text editor, such as Notepad, for later reference.
 
-5. Select **Review + create**.
+   ![On the Event Grid Topic blade, Overview is selected and highlighted, and the Topic Endpoint value is highlighted.](media/event-grid-topic-endpoint.png 'Event Grid Topic blade')
 
-6. On the **Review + create** tab, ensure the _Validation passed_ message is displayed and then select **Create**.
+8. Next, select **Access Keys** under Settings in the left-hand navigation menu on the Event Grid Topic blade.
 
-   ![The validation passed message is displayed on the Review + create tab.](media/virtual-network-gateway-create-summary.png "Create virtual network gateway")
+9. Within the **Access Keys** blade, copy the **Key 1** value and paste it into a text editor, such as Notepad, for later reference.
 
-7. It can take up to 45 minutes for the Virtual network gateway to provision.
+   ![In the TollBoothTopic blade, in the left menu under Settings, Access keys is selected. In the listing of Access keys, the copy button next to the Key 1 access key is selected.](media/event-grid-access-keys.png 'TollBoothTopic - Access keys blade')
 
-## Task 3: Provision SQL MI
-
-In this task, you create an Azure SQL Managed Instance.
+## Task 5: Provision and configure an Azure Cosmos DB account
 
 1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
 
    ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
 
-2. Enter "sql managed instance" into the Search the Marketplace box, and then select **Azure SQL Managed Instance** from the results.
+2. On the **New** screen, select **Databases** then select **Azure Cosmos DB**.
 
-   !["Sql managed instance" is entered into the Search the Marketplace box. Azure SQL Managed Instance is selected in the results.](media/create-resource-sql-mi.png "Create SQL Managed Instance")
+   ![In Azure Portal, in the menu, New is selected. Under Azure marketplace, Databases is selected, and under Featured, Azure Cosmos DB is selected.](media/new-databases-cosmos-db.png 'Azure Portal')
 
-3. Select **Create** on the Azure SQL Managed Instance blade.
+3. On the **Create new Azure Cosmos DB** **account** blade, specify the following configuration options:
 
-   ![The Create button is highlighted on the Azure SQL Managed Instance blade.](media/sql-mi-create.png "Create Azure SQL Managed Instance")
+   **Project Details**:
 
-4. On the Create Azure SQL Database Managed Instance Basics tab, enter the following:
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
 
-   - Project details:
+   **Instance Details**:
 
-     - **Subscription**: Select the subscription you are using for this hands-on lab.
-     - **Resource group**: Select **hands-on-lab-SUFFIX** from the list.
+   - **Account Name:** Enter a globally unique value, such as **cosmosdb-SUFFIX** (ensure the green check mark appears).
+   - **API**: Select the **Core (SQL)** API.
+   - **Location:** Select the region you have been using for resources in this hands-on lab.
+   - **Capacity mode**: Select **Provisioned throughput**.
+   - **Apply Free Tier Discount**: Select **Do Not Apply**.
+   - **Account Type**: Select **Production**.
+   - **Geo-Redundancy**: Choose **Disable**.
+   - **Multi-region writes**: Select **Disable**.
 
-   - Managed Instance details:
+   ![Fields in the Azure Cosmos DB blade are set to the previously defined settings.](media/new-cosmos-db-basics-tab.png 'Azure Cosmos DB blade')
 
-     - **Managed instance name**: Enter `sqlmi-SUFFIX`
-     - **Region**: Select the region you are using for resources in this hands-on lab.
-     - **Compute + storage**: Select **Configure Managed Instance**, and on the Configure performance blade, select **Business Critical**, **Gen5**, and set the vCores to **4** and the Storage to **32**, and then select **Apply**.
+4. Select **Review + create**, then select **Create**.
 
-     ![On the Compute + storage blade, Business Critical is selected for the service tier, the vCores are set to 4, and storage size is set to 32 GB.](media/sql-mi-configure-performance.png "Compute + storage blade")
+5. After the Azure Cosmos DB account has completed provisioning, open the account by opening the **hands-on-lab-SUFFIX** resource group and then selecting the **Azure Cosmos DB** resource from the list of available services in the resource group.
 
-   - Administrator account:
+6. On the Cosmos DB blade, select **Data Explorer** in the left-hand navigation menu and then select **New Container**.
 
-     - **Managed instance admin login**: Enter `sqlmiuser`
-     - **Password**: Enter `Password.1234567890`
+   ![In the Data Explorer blade, the Data Explorer item is selected in the left menu. The New Container button is selected in the Data Explorer pane.](media/data-explorer-new-container.png 'Data Explorer blade')
 
-     ![On the Create SQL Managed Instance Basics tab, the values specified above are entered into the appropriate fields.](media/sql-managed-instance-basics-tab.png "Create SQL Managed Instance")
+7. On the **Add Container** blade, specify the following configuration options:
 
-     > **Note**: If you see a message stating that Managed Instance creation is not available for the chosen subscription type, follow the instructions for [obtaining a larger quota for SQL Managed Instance](https://docs.microsoft.com/azure/sql-database/sql-database-managed-instance-resource-limits#obtaining-a-larger-quota-for-sql-managed-instance).
+   - **Database Id**: Choose **Create new** and enter **LicensePlates** for the name.
+   - **Container Id**: Enter **Processed**.
+   - **Partition key**: Enter **/licensePlateText**.
+   - **Throughput**: Select **Autoscale** and enter **4000** into the **Max RU/s** box.
 
-     ![A message is displayed stating that SQL MI creation not available in the selected subscription.](media/sql-mi-creation-not-available.png "SQL MI creation not available")
+    ![In the Add Container blade, fields are set to the previously defined values.](media/cosmosdb-add-processed-collection.png 'Add Container blade')
 
-5. Select **Next: Networking**, and on the **Networking** tab set the following configuration:
+8. Select **OK**.
 
-   - **Virtual network**: Select **hands-on-lab-SUFFIX-vnet/ManagedInstance** from the dropdown list.
-   - **Prepare subnet for Managed Instance**: Select **Automatic**.
-   - **Connection type**: Leave **Proxy (Default)** selected.
-   - **Enable public endpoint**: Select **Disable**.
+9. Select **New Container** again on the Data Explorer blade to add another container.
 
-   ![On the Create SQL Managed Instance Networking tab, the configuration specified above is entered into the form.](media/sql-managed-instance-networking-tab.png "Create SQL Managed Instance")
+10. On the **Add Container** blade, specify the following configuration options:
 
-6. Select **Next: Review + create**, and on the **Review + create** tab, review the configuration and then select **Create**.
+    - **Database Id**: Choose **Use existing** and select the **LicensePlates** database Id.
+    - **Container Id**: Enter **NeedsManualReview**.
+    - **Partition key**: Enter **/fileName**.
+    - **Throughput**: Select **Autoscale** and enter **4000** into the **Max RU/s** box.
 
-   > **Note**: Provisioning of SQL Managed Instance can take 4+ hours if this is the first instance being deployed into a subnet. You can move on to the remaining tasks while the provisioning is in process. If the deployment process goes beyond 6 hours, you may need to submit a support ticket to request assistance in completing the setup.
+    ![In the Add Container blade, fields are set to the previously defined values.](media/cosmosdb-add-manual-review-collection.png 'Add Collection blade')
 
-## Task 4: Create the JumpBox VM
+11. Select **OK**.
+
+12. Select **Keys** under Settings in the left-hand navigation menu on the Cosmos DB blade.
+
+13. Underneath the **Read-write Keys** tab within the Keys blade, copy the **URI** and **Primary Key** values.
+
+    ![In the tollbooth - Keys blade, under Settings, Keys is selected. The copy buttons for the URI and Primary Key fields are selected on the Read-write Keys tab.](media/cosmos-db-keys.png 'tollbooth - Keys blade')
+
+14. Paste the values into a text editor, such as Notepad, for later reference.
+
+## Task 6: Provision the Computer Vision API service
+
+1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
+
+   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
+
+2. Enter "computer vision" into the **Search the marketplace** box, select **Computer Vision** from the results, and then select the **Create** button on the **Computer Vision** blade.
+
+3. On the **Create Computer Vision** blade, specify the following configuration options:
+
+   **Project Details**:
+
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
+
+   **Instance Details**:
+
+   - **Region:** Select the region you have been using for resources in this hands-on lab.
+   - **Name**: Enter a globally unique value, such as **computervision-SUFFIX** (ensure the green checkmark appears).
+   - **Pricing tier**: Select **Standard S1 (10 Class per second)**.
+
+   ![In the Create Computer Vision blade, fields are set to the previously defined values.](media/create-computer-vision-basics-tab.png 'Create blade')
+
+4. Select **Review + create** and then select **Create**.
+
+5. After the Computer Vision service has completed provisioning, open the service by opening the **hands-on-lab-SUFFIX** resource group and then selecting the **Computer Vision** Cognitive Service resource from the list of available services in the resource group.
+
+6. Under Resource Management in the left-hand navigation menu, select **Keys and Endpoint**.
+
+7. Within the **Keys and Endpoint** blade, copy the **Endpoint** and **KEY 1** values.
+
+    ![In the Cognitive Services blade, under Resource Management, Keys and Endpoint is selected. The Copy button next to the Endpoint and Key 1 values are selected.](media/computer-vision-keys-and-endpoint.png 'Keys and Endpoint information')
+
+8. Paste the values into a text editor, such as Notepad, for later reference.
+
+## Task 7: Provision Azure Key Vault
+
+1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
+
+   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
+
+2. Enter "key vault" into the **Search the marketplace** box and select **Key Vault** from the results.
+
+   ![Key vault is entered into the search the marketplace box and highlighted. The Key Vault pane is highlighted in the search results.](media/new-key-vault.png "Create new resource")
+
+3. Select the **Create** button on the **Key Vault** blade.
+
+4. On the **Create key vault** blade Basics tab, specify the following configuration options:
+
+   **Project Details**:
+
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource Group**: Select the hands-on-lab-SUFFIX resource group from the list of existing resource groups.
+
+   **Instance Details**:
+
+   - **Key vault name**: Enter a globally unique value, such as **keyvault-SUFFIX** (ensure the green check mark appears).
+   - **Region:** Select the region you have been using for resources in this hands-on lab.
+   - **Pricing tier**: Select **Standard**.
+   - **Days to retain deleted vaults**: Leave at 90.
+   - **Purge protection**: Select the **Disable** option.
+
+   ![In the Create key vault blade, fields are set to the previously defined values.](media/create-key-vault.png 'Create blade')
+
+5. Select **Next: Access policy**.
+
+6. On the Access policy tab, select **Add Access Policy**.
+
+   ![The Add Access Policy link is highlighted on the Access Policy tab.](media/create-key-vault-access-policy-tab.png "Add access policy")
+
+7. On the Add access policy dialog, enter the following:
+
+   - **Secret permissions**: Select **Get** from the list of available permissions.
+   - **Select principal**: Select *None selected** and in the dialog, enter **TollBoothFunctions** into the search box, select the TollBoothFunctions Function App's managed service identity from the results and then select **Select**.
+
+   ![In the Add access policy form, the Select principal field is highlighted.](media/key-vault-add-access-policy-select-principal.png "Add access policy")
+
+8. Select **Add** to add the new access policy.
+
+9. Select **Review + create**, then select **Create**.
+
+10. After the deployment completes, select **Go to resource** in the deployment complete notification.
+
+    ![When the deployment completes, a message is displayed indicating Your deployment is complete. The Go to resource button is highlighted in the next steps section.](media/key-vault-deployment-complete.png "Your deployment is complete")
+
+11. Select **Secrets** under Settings in the left-hand navigation menu.
+
+12. Select **Generate/Import** to add a new key.
+
+    ![The Secrets menu item and the Generate/Import button are highlighted.](media/generate-secret.png "Key Vault - Secrets")
+
+13. Using the key values you copied into a text editor, such as Notepad, in the tasks above, use the table below for the name-value pairs to use when creating the secrets. You only need to populate the **Name** and **Value** fields for each secret and leave the other fields at their default values.
+
+    |                          |                                     |
+    | ------------------------ | ----------------------------------- |
+    | **Name**                 | **Value**                           |
+    | computerVisionApiKey     | Computer Vision API key             |
+    | cosmosDBAuthorizationKey | Cosmos DB Primary Key               |
+    | dataLakeConnectionString | Data Lake storage connection string |
+    | eventGridTopicKey        | Event Grid Topic access key         |
+
+14. When you are finished creating the secrets, your list should look similar to the following:
+
+    ![The listing of secrets is displayed matching the previously defined values.](media/key-vault-keys.png "Key Vault Secrets")
+
+## Task 8: Retrieve the URI for each secret
+
+1. Open your Key Vault instance in the portal.
+
+2. Still on the **Secrets** page in Key Vault, select the `computerVisionApiKey` secret.
+
+   ![The computerVisionApiKey secret is highlighted in the secrets list.](media/key-vault-computer-vision-api-key.png "Secrets")
+
+3. On the computerVisionApiKey blade, select the **Current Version** of the secret.
+
+    ![The secret's current version is selected.](media/key-vault-secret-current-version.png "Current Version")
+
+4. On the secret version blade, copy the **Secret Identifier** value by selecting the **Copy to clipboard** button.
+
+    ![The Secret Identifier field is highlighted. Next to this field is a copy button.](media/key-vault-secret-identifier.png "Secret Identifier")
+
+5. Paste the secret identifier value into a text editor, such as Notepad, for later reference.
+
+6. Close the `computerVisionApiKey` blades and return to the **Secrets** page of your Key Vault.
+
+7. Repeat steps 2 through 6 above for the other three secrets listed.
+
+8. When you are done copying and pasting the secret identifier values, you should have a list similar to the following in your text editor document:
+
+   ```text
+   @Microsoft.KeyVault(SecretUri=https://tollboothvault.vault.azure.net/secrets/computerVisionApiKey/ce228a43f40140dd8a9ffb9a25d042ee)
+   @Microsoft.KeyVault(SecretUri=https://tollboothvault.vault.azure.net/secrets/cosmosDBAuthorizationKey/1f9a0d16ad22409b85970b3c794a218c)
+   @Microsoft.KeyVault(SecretUri=https://tollboothvault.vault.azure.net/secrets/dataLakeConnectionString/771aa40adac64af0b2aefbd741bd46ef)
+   @Microsoft.KeyVault(SecretUri=https://tollboothvault.vault.azure.net/secrets/eventGridTopicKey/e310bcd71a72489f89b6112234fed815)
+   ```
+
+## Task 9: Configure application settings for the TollBoothFunctions Function App
+
+1. Navigate to the **TollBoothFunctions** Function App resource in the Azure portal by opening the **hands-on-lab-SUFFIX** resource group and then select the Azure Function App resource whose name begins with **TollBoothFunctions**.
+
+   ![In the hands-on-lab-SUFFIX resource group, the TollBoothFunctions Function App is highlighted.](media/resource-group-toll-booth-functions.png 'hands-on-lab-SUFFIX resource group')
+
+2. On the Function App blade, select **Configuration** in the left-hand navigation menu.
+
+    ![In the TollBoothFunctionApp blade on the Overview tab, under Configured features, the Configuration item is selected.](media/function-app-configuration-menu.png 'TollBoothFunctionApp blade')
+
+3. Scroll to the **Application settings** section. Use the **+ New application setting** link to create the following additional key-value pairs (the key names must exactly match those found in the table below). **Be sure to remove the curly braces (`{}`)**.
+
+    |                          |           |
+    | ------------------------ | --------- |
+    | **Application Key**      | **Value** |
+    | computerVisionApiKey     | Enter `@Microsoft.KeyVault(SecretUri={referenceString})`, where `{referenceString}` is the URI for the **computerVisionApiKey** Key Vault secret |
+    | computerVisionApiUrl     | Computer Vision API endpoint you copied earlier with **vision/v3.0/ocr** appended to the end. Example: `https://eastus.api.cognitive.microsoft.com/vision/v3.0/ocr` |
+    | cosmosDBAuthorizationKey | Enter `@Microsoft.KeyVault(SecretUri={referenceString})`, where `{referenceString}` is the URI for the **cosmosDBAuthorizationKey** Key Vault secret |
+    | cosmosDBCollectionId     | Cosmos DB processed collection id (**Processed**) |
+    | cosmosDBDatabaseId       | Cosmos DB database id (**LicensePlates**) |
+    | cosmosDBEndPointUrl      | Cosmos DB URI |
+    | dataLakeConnection | Enter `@Microsoft.KeyVault(SecretUri={referenceString})`, where `{referenceString}` is the URI for the **dataLakeConnectionString** Key Vault secret |
+    | eventGridTopicEndpoint   | Event Grid Topic endpoint |
+    | eventGridTopicKey        | Enter `@Microsoft.KeyVault(SecretUri={referenceString})`, where `{referenceString}` is the URI for the **eventGridTopicKey** Key Vault secret |
+    | exportCsvContainerName   | Data lake CSV export container name (**export**) |
+
+    ![In the Application Settings section, the previously defined key/value pairs are displayed.](media/application-settings.png 'Application Settings')
+
+4. Select **Save** on the Configuration toolbar to save the application settings changes.
+
+## Task 10: Set up a development virtual machine
 
 In this task, you provision a virtual machine (VM) in Azure. The VM image used has the latest version of Visual Studio Community 2019 installed.
 
@@ -212,84 +529,15 @@ In this task, you provision a virtual machine (VM) in Azure. The VM image used h
 
    ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
 
-2. Enter "visual studio 2019" into the Search the Marketplace box, and then select **Visual Studio 2019 Latest** from the results.
+2. Enter "visual studio 2019" into the Search the Marketplace box and then select **Visual Studio 2019 Latest** from the results.
 
-   !["Visual studio 2019" is entered into the Search the Marketplace box. Visual Studio 2019 Latest is selected in the search results.](./media/create-resource-visual-studio-vm.png "Create Visual Studio 2019 virtual machine")
+   !["Visual studio 2019" is entered into the Search the Marketplace box. Visual Studio 2019 latest is selected in the results.](./media/create-resource-visual-studio-vm.png "Visual Studio 2019 Latest")
 
-3. On the Visual Studio 2019 blade, select **Visual Studio 2019 Community (latest release) on Windows Server 2019 (x64)** from the Select a software plan drop-down list and then select **Create**.
+3. On the Visual Studio 2019 Latest blade, select **Visual Studio 2019 Community (latest release) on Windows Server 2019 (x64)** from the Select a software plan drop-down list, and then select **Create**.
 
-   ![Visual Studio 2019 Community (latest release) on Windows Server 2019 (x64) is highlighted in the Select a software plan list on the Visual Studio 2019 blade.](media/visual-studio-create.png "Visual Studio 2019")
+   ![On the Visual Studio 2019 Latest blade, Visual Studio 2019 Community (latest release) on Windows Server 2019 (x64) is highlighted in the Select a software plan drop-down list.](media/visual-studio-create.png "Visual Studio 2019 Latest")
 
-4. On the Create a virtual machine **Basics** tab set the following configuration:
-
-   - Project details:
-
-     - **Subscription**: Select the subscription you are using for this hands-on lab.
-     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
-
-   - Instance details:
-
-     - **Virtual machine name**: Enter `JumpBox`
-     - **Region**: Select the region you are using for resources in this hands-on lab.
-     - **Availability options**: Select **No infrastructure redundancy required**.
-     - **Image**: Leave **Visual Studio 2019 Community (latest release) on Windows Server 2019 (x64)** selected.
-     - **Azure Spot instance**: Choose **No**.
-     - **Size**: Accept the default size of **Standard_D4s_v3**.
-
-   - Administrator account:
-
-     - **Username**: Enter `sqlmiuser`
-     - **Password**: Enter `Password.1234567890`
-
-   - Inbound port rules:
-
-     - **Public inbound ports**: Choose **Allow selected ports**.
-     - **Select inbound ports**: Select **RDP (3389)** in the list.
-
-   ![Screenshot of the Basics tab, with fields set to the previously mentioned settings.](media/lab-virtual-machine-basics-tab.png "Create a virtual machine Basics tab")
-
-5. Select **Next: Disks** to move to the next step.
-
-6. On the **Disks** tab, ensure the OS disk type is set to **Premium SSD**, and then select **Next: Networking**.
-
-   ![On the Create a virtual machine Disks tab, the OS disk type is set to Standard SSD.](media/lab-virtual-machine-disks-tab.png "Create a virtual machine Disks tab")
-
-7. On the **Networking** tab, set the following configuration:
-
-   - **Virtual network**: Select the **hands-on-lab-SUFFIX-vnet**.
-   - **Subnet**: Select the **Management** subnet.
-   - **Public IP**: Leave **(new) JumpBox-ip** selected.
-   - **NIC network security group**: Select **Basic**.
-   - **Public inbound ports**: Leave **Allow selected ports** selected.
-   - **Select inbound ports**: Leave **RDP** selected.
-
-   ![On the Create a virtual machine Networking tab, the settings specified above are entered into the appropriate fields.](media/lab-virtual-machine-networking-tab.png "Create a virtual machine Networking tab")
-
-8. Select **Review + create** to validate the configuration. The remaining tabs can be skipped, and default values will be used.
-
-9. On the **Review + create** tab, ensure the Validation passed message is displayed, and then select **Create** to provision the virtual machine.
-
-   ![The Review + create tab is displayed, with a Validation passed message.](media/lab-virtual-machine-review-create-tab.png "Create a virtual machine Review + create tab")
-
-10. It takes approximately 15 minutes for the VM to finish provisioning. You can move on to the next task while you wait.
-
-## Task 5: Create SQL Server 2008 R2 virtual machine
-
-In this task, you provision another virtual machine (VM) in Azure, which will host your "on-premises" instance of SQL Server 2008 R2. The VM uses the SQL Server 2008 R2 SP3 Standard on Windows Server 2008 R2 image.
-
-> **Note**: An older version of Windows Server is being used because SQL Server 2008 R2 is not supported on Windows Server 2016.
-
-1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
-
-   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
-
-2. Enter "SQL Server 2008 R2 SP3 on Windows Server 2008 R2" into the Search the Marketplace box.
-
-3. On the **SQL Server 2008 R2 SP3 on Windows Server 2008 R2** blade, select **SQL Server R2 SP3 Standard on Windows Server 2008 R2** for the software plan and then select **Create**.
-
-   ![The SQL Server 2008 R2 SP3 on Windows Server 2008 R2 blade is displayed with the standard edition selected for the software plan. The Create button highlighted.](media/create-resource-sql-server-2008-r2.png "Create SQL Server 2008 R2 Resource")
-
-4. On the Create a virtual machine **Basics** tab set the following configuration:
+4. On the Create a virtual machine **Basics** tab, set the following configuration:
 
    - Project Details:
 
@@ -298,216 +546,58 @@ In this task, you provision another virtual machine (VM) in Azure, which will ho
 
    - Instance Details:
 
-     - **Virtual machine name**: Enter `SqlServer2008`
+     - **Virtual machine name**: Enter LabVM.
      - **Region**: Select the region you are using for resources in this hands-on lab.
-     - **Availability options**: Select **No infrastructure redundancy required**.
-     - **Image**: Leave **SQL Server 2008 R2 SP3 Standard on Windows Server 2008 R2** selected.
-     - **Azure Spot instance**: Choose **No**.
-     - **Size**: Accept the default size of **Standard_D4s_v3**.
+     - **Availability options**: Select no infrastructure redundancy required.
+     - **Image**: Leave Visual Studio 2019 Community (latest release) on Windows Server 2019 (x64) selected.
+     - **Azure Spot instance**: Select No.
+     - **Size**: Accept the default size of Standard_D4s_v3.
 
    - Administrator Account:
 
-     - **Username**: Enter `sqlmiuser`
-     - **Password**: Enter `Password.1234567890`
+     - **Username**: Enter **demouser**.
+     - **Password**: Enter **Password.1!!**
 
    - Inbound Port Rules:
 
-     - **Public inbound ports**: Choose **Allow selected ports**.
-     - **Select inbound ports**: Select **RDP (3389)** in the list.
+     - **Public inbound ports**: Choose Allow selected ports.
+     - **Select inbound ports**: Select RDP (3389) in the list.
 
-   ![Screenshot of the Basics tab, with fields set to the previously mentioned settings.](media/sql-server-2008-r2-vm-basics-tab.png "Create a virtual machine Basics tab")
+   ![Screenshot of the Basics tab, with fields set to the previously mentioned settings.](media/lab-virtual-machine-basics-tab.png "Create a virtual machine Basics tab")
 
-5. Select **Next: Disks**, ensure the OS disk type is set to **Premium SSD**, and then select **Next: Networking**.
+   > **Note**: Default settings are used for the remaining tabs so that they can be skipped.
 
-   ![On the Create a virtual machine Disks tab, the OS disk type is set to Standard SSD.](media/lab-virtual-machine-disks-tab.png "Create a virtual machine Disks tab")
+5. Select **Review + create** to validate the configuration.
 
-6. On the **Networking** tab, set the following configuration:
+6. On the **Review + create** tab, ensure the Validation passed message is displayed, and then select **Create** to provision the virtual machine.
 
-   - **Virtual network**: Select the **hands-on-lab-vnet**.
-   - **Subnet**: Select the **Management** subnet.
-   - **Public IP**: Leave **(new) SqlServer2008-ip** selected.
-   - **NIC network security group**: Select **Basic**.
-   - **Public inbound ports**: Leave **Allow selected ports** selected.
-   - **Select inbound ports**: Leave **RDP (3389)** selected.
+   ![The Review + create tab is displayed, with a Validation passed message.](media/lab-virtual-machine-review-create-tab.png "Create a virtual machine Review + create tab")
 
-   ![On the Create a virtual machine Networking tab, the settings specified above are entered into the appropriate fields.](media/sql-virtual-machine-networking-tab.png "Create a virtual machine Networking tab")
+7. It takes approximately 5 minutes for the VM to finish provisioning.
 
-7. Select the **SQL Server settings** tab from the top menu.
+## Task 11: Connect to the Lab VM
 
-   ![The SQL Server settings tab is highlighted in the create a virtual machine tabs list.](media/sql-server-2008-r2-vm-sql-settings-tab.png "Create a virtual machine SQL Server settings tab")
+In this task, you create an RDP connection to your Lab virtual machine (VM).
 
-   > **Note**: The Management and Advanced tabs can be skipped, and default values will be used.
-
-8. On the **SQL Server settings** tab, set the following:
-
-   - Security & Networking:
-
-     - **SQL connectivity**: Select **Public (Internet)**
-     - **Port**: Set to `1433`
-
-   - SQL Authentication:
-
-     - **SQL Authentication**: Select **Enable**.
-     - **Login name**: Enter `sqlmiuser`
-     - **Password**: Enter `Password.1234567890`
-
-     ![The previously specified values are entered into the SQL Server settings tab.](media/sql-server-2008-r2-vm-sql-settings.png "SQL Server settings")
-
-9. Select **Review + create** to validate the configuration.
-
-10. On the **Review + create** tab, ensure the Validation passed message is displayed, and then select **Create** to provision the virtual machine.
-
-    ![The Review + create tab is displayed, with a Validation passed message.](media/sql-virtual-machine-review-create-tab.png "Create a virtual machine Review + create tab")
-
-11. It takes approximately 10 minutes for the SQL VM to finish provisioning. You can move on to the next task while you wait.
-
-## Task 6: Create Azure Database Migration Service
-
-In this task, you provision an instance of the Azure Database Migration Service (DMS).
-
-> **Important**: This service requires that you have registered the `Microsoft.DataMigration` resource provider within your subscription in Azure. You can find the steps to complete this in the Before the HOL guide.
-
-1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
-
-   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
-
-2. Enter "database migration" into the Search the Marketplace box, select **Azure Database Migration Service** from the results, and select **Create** on the Azure Database Migration Service blade.
-
-   !["Database migration" is entered into the Search the Marketplace box. Azure Database Migration Service is selected in the results.](media/create-resource-azure-database-migration-service.png "Create Azure Database Migration Service")
-
-3. On the Create Migration Service **Basics** tab, enter the following:
-
-   - Project details:
-
-     - **Subscription**: Select the subscription you are using for this hands-on lab.
-     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
-
-   - Instance details:
-
-     - **Migration service Name**: Enter `wwi-dms`
-     - **Location**: Select the location you are using for resources in this hands-on lab.
-     - **Service mode**: Select **Azure**.
-     - **Pricing tier**: Select **Configure tier**, choose **Premium**, and select **Apply**.
-
-     ![The Create Migration Service Basics tab is displayed, with the values specified above entered into the appropriate fields.](media/create-migration-service-basics-tab.png "Create Migration Service")
-
-4. Select **Next: Networking**.
-
-5. On the **Networking** tab, select the **hands-on-lab-SUFFIX-vnet/default** virtual network by checking the box next to it in the list of existing virtual networks. This places the DMS instance into the same VNet as your LabVM and SqlServer2008 virtual machines.
-
-   ![The hands-on-lab-vnet/default virtual network in checked and selected in the list of existing virtual networks on the Networking tab.](media/create-migration-service-networking-tab.png "Create Migration Service")
-
-6. Select **Review + create**.
-
-7. Select **Create**.
-
-8. It can take 15 minutes to deploy the Azure Data Migration Service. You can move on to the next task while you wait.
-
-## Task 7: Provision a Web App
-
-In this task, you provision an App Service (Web app), which will be used for hosting the Wide World Importers web application.
-
-1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
-
-   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
-
-2. In the [Azure portal](https://portal.azure.com/), select **+Create a resource**, enter "web app" into the Search the Marketplace box, select **Web App** from the results.
-
-   ![+Create a resource is selected in the Azure navigation pane, and "web app" is entered into the Search the Marketplace box. Web App is selected in the results.](media/create-resource-web-app.png "Create Web App")
-
-3. On the Web App blade, select **Create**.
-
-   ![On the Web App blade, the Create button is highlighted.](media/create-web-app.png "Create Web App")
-
-4. On the Create Web App **Basics** tab, set the following configuration:
-
-   - Project Details:
-
-     - **Subscription**: Select the subscription you are using for this hands-on lab.
-     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
-
-   - Instance Details:
-
-     - **Name**: Enter `wwi-web-SUFFIX`, to create a globally unique name.
-     - **Publish**: Select **Code**.
-     - **Runtime stack**: Select **.NET Core 3.1 (LTS)**.
-     - **Operating System**: Select **Windows**.
-     - **Region**: Select the region you are using for resources in this hands-on lab.
-
-   - App Service Plan:
-
-     - **Plan**: Accept the default value for creating a new App Service Plan.
-     - **Sku and size**: Accept the default value of **Standard S1**.
-
-     ![The values specified above are entered into the appropriate fields in the Create Web App Basics tab.](media/create-web-app-basics-tab.png "Create Web App Basics tab")
-
-5. Select **Review + create**.
-
-6. On the **Review + create** tab, select **Create**.
-
-7. It takes a few minutes for the Web App creation to complete. You can move on to the next task while you wait.
-
-## Task 8: Create an Azure Blob Storage account
-
-In this task, you create an Azure Storage account.
-
-1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
-
-   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
-
-2. Enter "storage account" into the Search the Marketplace box, select **Storage account - blob, file, table, queue** from the results, and then select **Create** on the Storage account blade.
-
-   !["Storage account" is entered into the Search the Marketplace box. Storage account is selected in the results.](media/create-resource-storage-account.png "Create Storage account")
-
-3. On the Create storage account blade, enter the following:
-
-   - Project details:
-
-     - **Subscription**: Select the subscription you are using for this hands-on lab.
-     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
-
-   - Instance details:
-
-     - **Storage account name**: Enter `sqlmistoreSUFFIX`
-     - **Location**: Select the location you are using for resources in this hands-on lab.
-     - **Performance**: Choose **Standard**.
-     - **Account kind**: Select **StorageV2 (general purpose v2)**.
-     - **Replication**: Select **Locally-redundant storage (LRS)**.
-     - **Access tier**: Choose **Hot**.
-
-     ![On the Create storage account blade, the values specified above are entered into the appropriate fields.](media/storage-create-account-basics-tab.png "Create storage account")
-
-4. Select **Review + create**.
-
-5. On the **Review + create** blade, ensure the Validate passed message is displayed and then select **Create**.
-
-   ![On the Review + create blade, the Validation passed message is displayed at the top.](media/storage-create-account-review.png "Create storage account")
-
-## Task 9: Connect to the JumpBox
-
-In this task, you create an RDP connection to your JumpBox virtual machine (VM) and disable Internet Explorer Enhanced Security Configuration.
-
-> **Note**: You do not need to wait for SQL MI to finish provisioning to complete the remaining tasks.
-
-1. When your JumpBox VM provisioning completes, navigate to the [Azure portal](https://portal.azure.com) and select **Resource groups** from the Azure services list.
+1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
 
    ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
 
-2. Select the hands-on-lab-SUFFIX resource group from the list.
+2. Select the **hands-on-lab-SUFFIX** resource group from the list.
 
-   ![Resource groups is selected in the Azure navigation pane, and the "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
 
-3. In the list of resources for your resource group, select the JumpBox VM.
+3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
 
-   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and JumpBox is highlighted.](./media/resource-group-resources-jumpbox.png "JumpBox in resource group list")
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
 
-4. On your JumpBox VM blade, select **Connect** and **RDP** from the top menu.
+4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
 
-   ![The JumpBox VM blade is displayed, with the Connect and RDP button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to JumpBox VM")
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
 
-5. On the Connect with RDP blade, select **Download RDP File**, then open the downloaded RDP file.
+5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
 
-   ![The Connect with RDP blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine-with-rdp.png "Connect with RDP")
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
 
 6. Select **Connect** on the Remote Desktop Connection dialog.
 
@@ -515,221 +605,45 @@ In this task, you create an RDP connection to your JumpBox virtual machine (VM) 
 
 7. Enter the following credentials when prompted, and then select **OK**:
 
-   - **Username**: `sqlmiuser`
-   - **Password**: `Password.1234567890`
+   - **User name**: demouser
+   - **Password**: Password.1!!
 
    ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials.png "Enter your credentials")
 
-8. Select **Yes** to connect, if prompted that the identity of the remote computer cannot be verified.
+8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
 
-   ![In the Remote Desktop Connection dialog box, a warning states that the identity of the remote computer cannot be verified, and asks if you want to continue anyway. At the bottom, the Yes button is circled.](./media/remote-desktop-connection-identity-verification-jumpbox.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
 
-9. Once logged in, launch the **Server Manager**. This should start automatically, but you can access it via the Start menu if it does not.
+## Task 12: Disable Internet Explorer Enhanced Security
 
-10. Select **Local Server**, then select **On** next to **IE Enhanced Security Configuration**.
+In this task, you disable Internet Explorer Enhanced Security Configuration (IE ESC) on the LabVM.
+
+> > **Note**: Sometimes this Visual Studio 2019 Latest image has IE ESC disabled already, and sometimes it does not.
+
+1. Once logged in, launch the **Server Manager**. This should start automatically, but you can access it via the Start menu if it does not.
+
+2. Select **Local Server**, then select **On** next to **IE Enhanced Security Configuration**.
 
     ![Screenshot of the Server Manager. In the left pane, Local Server is selected. In the right, Properties (For LabVM) pane, the IE Enhanced Security Configuration, which is set to On, is highlighted.](./media/windows-server-manager-ie-enhanced-security-configuration.png "Server Manager")
 
-11. In the Internet Explorer Enhanced Security Configuration dialog, select **Off** under both Administrators and Users, and then select **OK**.
+3. In the Internet Explorer Enhanced Security Configuration dialog, select **Off** under both Administrators and Users, and then select **OK**.
 
     ![Screenshot of the Internet Explorer Enhanced Security Configuration dialog box, with Administrators set to Off.](./media/internet-explorer-enhanced-security-configuration-dialog.png "Internet Explorer Enhanced Security Configuration dialog box")
 
-12. Close the Server Manager, but leave the connection to the JumpBox open for the next task.
+4. You can close the Server Manager but leave the connection to the LabVM open for the next task.
 
-## Task 10: Install required software on the JumpBox
+## Task 13: Install required software on the LabVM
 
-In this task, you download the lab starter solution and install SQL Server Management Studio (SSMS) on the JumpBox.
+In this task, you configure the LabVM with the required software and downloads. First, you download and install the Microsoft Edge web browser. Next, you download a copy of the Visual Studio starter solution and unzip it into a folder named `C:\ServerlessMCW`.
 
-1. First, download the lab starter solution from the [MCW Migrating SQL databases to Azure GitHub repo](https://github.com/microsoft/MCW-Migrating-SQL-databases-to-Azure/archive/master.zip).
+> **Note**: Some aspects of this lab require using the new Microsoft Edge (Chromium edition) browser. You may find yourself blocked if using Internet Explorer later in the lab, as Internet Explorer is not supported for some specific activities.
 
-2. If you receive a message that downloads are not allowed, select the Tools icon at the top right of the Internet Explorer browser window, and then select **Internet options** from the context menu.
+1. To install Microsoft Edge, launch Internet Explorer on the VM and download [Microsoft Edge](https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/0a4291f0-226e-4d0a-a702-7aa901f20ff4/MicrosoftEdgeEnterpriseX64.msi).
 
-   ![The Tools icon is highlighted in the Internet Explorer toolbar, and Internet Options is highlighted in the context menu.](media/ie-tools-context-menu.png "Internet Explorer")
+2. Run the downloaded installer and follow the setup instruction.
 
-3. In the **Internet Options** dialog, select **Custom level** in the Security level for this zone box.
+3. Next, [download a copy of the Serverless Architecture MCW GitHub repo](https://github.com/microsoft/MCW-Serverless-architecture/archive/master.zip).
 
-   ![The Custom level button is highlighted in the Internet Options dialog.](media/ie-internet-options.png "Internet Options")
+4. Extract the download ZIP file to `C:\ServerlessMCW`.
 
-4. In the Security Settings - Internet Zone dialog, locate the **Downloads** settings and choose **Enable**, then select **OK**.
-
-   ![The Downloads property is highlighted in the Security Settings dialog, and Enable is selected.](media/ie-security-settings-internet-zone.png "Security Settings")
-
-5. Select **OK** on the Internet Options dialog, and then attempt the download again.
-
-6. When prompted, choose to save the file and then select Open folder.
-
-   ![The download bar is displayed in Internet Explorer, and Open folder is highlighted.](media/ie-download-open-folder.png "Internet Explorer")
-
-7. Once it is download, extract the ZIP file to `C:\hands-on-lab`.
-
-   ![In the Extract Compressed Zip File dialog, C:\hands-on-lab is entered into the destination field.](media/extract-compressed-zip.png "Extract Compressed Zip")
-
-   > **Important**: Ensure you use the path above, or something similarly short. Failure to do so could result in errors opening some of the files due to a long file path.
-
-8. Next, install SQL Server Management Studio (SSMS) on the JumpBox. Open a web browser on your JumpBox, navigate to <https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms> and then select the **Download SQL Server Management Studio (SSMS).x** link to download the latest version of SSMS.
-
-   ![The Download SQL Server Management Studio (SSMS) link is highlighted on the page specified above.](media/download-ssms.png "Download SSMS")
-
-   > **Note**: Versions change frequently, so if the version number you see does not match the screenshot, download and install the most recent version.
-
-9. Run the downloaded installer.
-
-10. On the Welcome screen, select **Install** to begin the installation.
-
-    ![The Install button is highlighted on the SSMS installation welcome screen.](media/ssms-install.png "Install SSMS")
-
-11. Select **Close** when the installation completes.
-
-    ![The Close button is highlighted on the SSMS Setup Completed dialog.](media/ssms-install-close.png "Setup completed")
-
-## Task 11: Connect to SqlServer2008 VM
-
-In this task, you open an RDP connection to the SqlServer2008 VM, disable Internet Explorer Enhanced Security Configuration, and add a firewall rule to open port 1433 to inbound TCP traffic. You also install the Microsoft Data Migration Assistant (DMA).
-
-1. As you did for the JumpBox, navigate to the SqlServer2008 VM blade in the Azure portal, select **Overview** from the left-hand menu, and then select **Connect** and **RDP** on the top menu.
-
-   ![The SqlServer2008 VM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to SqlServer2008 VM")
-
-2. On the Connect with RDP blade, select **Download RDP File**, then open the downloaded RDP file.
-
-3. Select **Connect** on the Remote Desktop Connection dialog.
-
-   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection-sql-2008.png "Remote Desktop Connection dialog")
-
-4. Enter the following credentials when prompted, and then select **OK**:
-
-   - **Username**: `sqlmiuser`
-   - **Password**: `Password.1234567890`
-
-   ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials-sql-2008.png "Enter your credentials")
-
-5. Select **Yes** to connect, if prompted that the identity of the remote computer cannot be verified.
-
-   ![In the Remote Desktop Connection dialog box, a warning states that the identity of the remote computer cannot be verified, and asks if you want to continue anyway. At the bottom, the Yes button is circled.](./media/remote-desktop-connection-identity-verification-sqlserver2008.png "Remote Desktop Connection dialog")
-
-6. Once logged in, launch the **Server Manager**. This should start automatically, but you can access it via the Start menu if it does not.
-
-7. On the **Server Manager** view, select **Configure IE ESC** under Security Information.
-
-   ![Screenshot of the Server Manager. In the left pane, Local Server is selected. In the right, Properties (For LabVM) pane, the IE Enhanced Security Configuration, which is set to On, is highlighted.](./media/windows-server-2008-manager-ie-enhanced-security-configuration.png "Server Manager")
-
-8. In the Internet Explorer Enhanced Security Configuration dialog, select **Off** under both Administrators and Users, and then select **OK**.
-
-   ![Screenshot of the Internet Explorer Enhanced Security Configuration dialog box, with Administrators set to Off.](./media/2008-internet-explorer-enhanced-security-configuration-dialog.png "Internet Explorer Enhanced Security Configuration dialog box")
-
-9. Close the Server Manager.
-
-10. Next, you will install the Microsoft Data Migration Assistant v5.x by navigating to <https://www.microsoft.com/en-us/download/details.aspx?id=53595> in a web browser on the SqlServer2008 VM and then select the **Download** button.
-
-    ![The Download button is highlighted on the Data Migration Assistant download page.](media/dma-download.png "Download Data Migration Assistant")
-
-    > **Note**: Versions change frequently, so if the version number you see does not match the screenshot, download and install the most recent version.
-
-11. Run the downloaded installer.
-
-12. Select **Next** on each of the screens, accepting the license terms and privacy policy in the process.
-
-13. Select **Install** on the Privacy Policy screen to begin the installation.
-
-14. On the final screen, select **Finish** to close the installer.
-
-    ![The Finish button is selected on the Microsoft Data Migration Assistant Setup dialog.](./media/data-migration-assistant-setup-finish.png "Run the Microsoft Data Migration Assistant")
-
-## Task 12: Configure the WideWorldImporters database on the SqlServer2008 VM
-
-In this task, you restore and configure the `WideWorldImporters` database on the SQL Server 2008 R2 instance.
-
-1. On the SqlServer2008 VM, download a [backup of the WideWorldImporters database](https://raw.githubusercontent.com/microsoft/Migrating-SQL-databases-to-Azure/master/Hands-on%20lab/lab-files/Database/WideWorldImporters.bak), and save it to the `C:\` of the VM.
-
-2. Next, open **Microsoft SQL Server Management Studio 17** (SSMS) by entering "sql server" into the search bar in the Windows Start menu and selecting **Microsoft SQL Server Management Studio 17** from the search results.
-
-   ![SQL Server is entered into the Windows Start menu search box, and Microsoft SQL Server Management Studio 17 is highlighted in the search results.](media/start-menu-ssms-17.png "Windows start menu search")
-
-3. In the SSMS **Connect to Server** dialog, enter **SQLSERVER2008** into the Server name box, ensure **Windows Authentication** is selected, and then select **Connect**.
-
-   ![The SQL Server Connect to Search dialog is displayed, with SQLSERVER2008 entered into the Server name and Windows Authentication selected.](media/sql-server-connect-to-server.png "Connect to Server")
-
-4. Once connected, right-click **Databases** under **SQLSERVER2008** in the Object Explorer, and then select **Restore Database** from the context menu.
-
-   ![In the SSMS Object Explorer, the context menu for Databases is displayed and Restore Database is highlighted.](media/ssms-databases-restore.png "SSMS Object Explorer")
-
-5. You will now restore the `WideWorldImporters` database using the downloaded `WideWorldImporters.bak` file. On the **General** page of the Restore Database dialog, select **Device** under Source, and then select the Browse (`...`) button to the right of the Device box.
-
-   ![Under Source in the Restore Database dialog, Device is selected and highlighted, and the Browse button is highlighted.](media/ssms-restore-database-source.png "Restore Database source")
-
-6. In the **Select backup devices** dialog that appears, select **Add**.
-
-   ![In the Select backup devices dialog, the Add button is highlighted.](media/ssms-restore-database-select-devices.png "Select backup devices")
-
-7. In the **Locate Backup File** dialog, browse to the location you saved the downloaded `WideWorldImporters.bak` file, select that file, and then select **OK**.
-
-   ![In the Location Backup File dialog, the WideWorldImporters.bak file is selected and highlighted.](media/ssms-restore-database-locate-backup-file.png "Locate Backup File")
-
-8. Select **OK** on the **Select backup devices** dialog. This returns you to the Restore Database dialog. The dialog now contains the information required to restore the `WideWorldImporters` database.
-
-   ![The completed Restore Database dialog is displayed, with the WideWorldImporters database specified as the target.](media/ssms-restore-database.png "Restore Database")
-
-9. Select **OK** to start the restore.
-
-10. Select **OK** in the dialog when the database restore is complete.
-
-    ![A dialog is displayed with a message that the database WideWorldImporters was restored successfully.](media/ssms-restore-database-success.png "Restored successfully")
-
-11. Next, you execute a script in SSMS to create the `WorkshopUser` account. To create the script, open a new query window in SSMS by selecting **New Query** in the SSMS toolbar.
-
-    ![The New Query button is highlighted in the SSMS toolbar.](media/ssms-new-query.png "SSMS Toolbar")
-
-12. Copy and paste the SQL script below into the new query window:
-
-    ```sql
-    USE master;
-    GO
-
-    -- Create a login and user named WorkshopUser
-    CREATE LOGIN WorkshopUser WITH PASSWORD = N'Password.1234567890';
-    GO
-
-    EXEC sp_addsrvrolemember
-        @loginame = N'WorkshopUser',
-        @rolename = N'sysadmin';
-    GO
-
-    -- Assign the user to the WideWorldImporters database
-    USE WideWorldImporters;
-    GO
-
-    IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'WorkshopUser')
-    BEGIN
-        CREATE USER [WorkshopUser] FOR LOGIN [WorkshopUser]
-        EXEC sp_addrolemember N'db_datareader', N'WorkshopUser'
-    END;
-    GO
-    ```
-
-13. To run the script, select **Execute** from the SSMS toolbar.
-
-    ![The Execute button is highlighted in the SSMS toolbar.](media/ssms-execute.png "SSMS Toolbar")
-
-14. Select **New Query** from the SSMS toolbar again.
-
-    ![The New Query button is highlighted in the SSMS toolbar.](media/ssms-new-query.png "SSMS Toolbar")
-
-15. Next, copy and paste the SQL script below into the new query window. This script enables Service broker on the `WideWorldImporters` database.
-
-    ```sql
-    USE [WideWorldImporters];
-    GO
-
-    -- Grant the sqlmiuser ALTER database permissions
-    GRANT ALTER ON DATABASE:: WideWorldImporters TO sqlmiuser;
-    GO
-
-    -- Enable Service Broker
-    ALTER DATABASE WideWorldImporters
-    SET ENABLE_BROKER WITH ROLLBACK IMMEDIATE;
-    GO
-    ```
-
-16. To run the script, select **Execute** from the SSMS toolbar.
-
-    ![The Execute button is highlighted in the SSMS toolbar.](media/ssms-execute.png "SSMS Toolbar")
+   ![The Extract Compressed Folders dialog is displayed, with `C:\ServerlessMCW` entered into the extraction location.](media/zip-extract.png "Extract Compressed ZIP")
