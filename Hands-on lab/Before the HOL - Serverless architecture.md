@@ -27,24 +27,14 @@ The names of manufacturers, products, or URLs are provided for informational pur
   - [Before the hands-on lab](#before-the-hands-on-lab)
     - [Task 1: Create a resource group](#task-1-create-a-resource-group)
     - [Task 2: Run ARM template to provision lab resources](#task-2-run-arm-template-to-provision-lab-resources)
-    - [Task 2: Set up a development environment](#task-2-set-up-a-development-environment)
-    - [Task 3: Disable IE Enhanced Security](#task-3-disable-ie-enhanced-security)
-    - [Task 4: Install Microsoft Edge](#task-4-install-microsoft-edge)
-    - [Task 5: Validate connectivity to Azure](#task-5-validate-connectivity-to-azure)
-    - [Task 6: Download and explore the TollBooth starter solution](#task-6-download-and-explore-the-tollbooth-starter-solution)
+    - [Task 3: Configure application settings on the ToolBoothFunctions Function App](#task-3-configure-application-settings-on-the-toolboothfunctions-function-app)
+    - [Task 4: Create a GitHub account](#task-4-create-a-github-account)
 
 # Serverless architecture before the hands-on lab setup guide
 
 ## Requirements
 
 - Microsoft Azure subscription (non-Microsoft subscription)
-- Local machine or a virtual machine configured with (**complete the day before the lab!**):
-  - Visual Studio Community 2019 or greater
-    - <https://www.visualstudio.com/vs/>
-  - Azure development workload for Visual Studio 2019
-    - <https://docs.microsoft.com/azure/azure-functions/functions-develop-vs#prerequisites>
-  - .NET Framework 4.7 runtime (or higher) and .NET Core 3.1
-    - <https://www.microsoft.com/net/download/windows>
 - Office 365 account. If required, you can sign up for an Office 365 trial at:
   - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
 - GitHub account. You can create a free account at <https://github.com>.
@@ -81,186 +71,150 @@ In this exercise, you set up your environment for use in the rest of the hands-o
 
 ### Task 2: Run ARM template to provision lab resources
 
-In this task, you run an Azure Resource Manager (ARM) template to create the resources required for this hands-on lab. The components are deployed inside a new virtual network (VNet) to facilitate communication between the VMs and SQL MI. The ARM template also adds inbound and outbound security rules to the network security groups associated with SQL MI and the VMs, including opening port 3389 to allow RDP connections to the JumpBox. In addition to creating resources, the ARM template also executes PowerShell scripts on each of the VMs to install software and configure the servers. The resources created by the ARM template include:
+In this task, you run an Azure Resource Manager (ARM) template to create the resources required for this hands-on lab. In addition to creating resources, the ARM template also executes a PowerShell script on the `LabVM` to install software and configure the server. The resources created by the ARM template include:
 
-- A virtual network with three subnets, ManagedInstance, Management, and a Gateway subnet.
-- A virtual network gateway associated with the Gateway subnet.
-- A route table.
-- Azure SQL Managed Instance (SQL MI), added to the ManagedInstance subnet.
-- A JumpBox with Visual Studio 2019 Community Edition and SQL Server Management Studio (SSMS installed, added to the Management subnet).
-- A SQL Server 2008 R2 VM with the Data Migration Assistant (DMA) installed, added to the Management subnet.
-- Azure Database Migration Service (DMS).
-- Azure App Service Plan and App Service (Web App).
-- Azure Blob Storage account.
+- Azure Data Lake Storage Gen2 account
+  - Blob and File services
+  - Containers named `images` and `export`
+- Azure Cosmos DB
+  - Database named `LicensePlates`
+  - Containers named `Processed` and `NeedsManualReview`
+- Virtual network with `default` subnet
+- Virtual machine using the Visual Studio 2019 (Latest) Community Edition image
+  - Uses custom script extension to
+    - Install Microsoft Edge browser
+    - Download starter solution from Serverless architecture MCW GitHub repo
+    - Disable **IE Enhanced Security Configuration**
+- Network security group for VM
+- Network interface for VM
+- Public IP address for VM
+- Azure Function Apps
+  - `TollBoothFunctions`
+  - `TollBoothEvents`
+- Application Insights
+- Azure Computer Vision service
+- Azure Event Grid Topic
+- Azure Key Vault plus secrets for:
+  - `computerVisionApiKey`
+  - `cosmosDBAuthorizationKey`
+  - `dataLakeConnectionString`
+  - `eventGridTopicKey`
 
 > **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](./Manual-resource-setup.md).
 
-1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
+1. You are now ready to begin the ARM template deployment. To open a custom deployment screen in the Azure portal, select the Deploy to Azure button below:
 
-   ![The Show portal menu icon is highlighted, and the portal menu is displayed. Create a resource is highlighted in the portal menu.](media/create-a-resource.png "Create a resource")
+   > **TODO**: Globally find and replace `kylebunting` with `microsoft` in this project.
 
-2. Before running the ARM template, it is beneficial to quickly verify that you can provision SQL MI in your subscription. In the [Azure portal](https://portal.azure.com), select **+Create a resource**, enter "sql managed instance" into the Search the Marketplace box, and then select **Azure SQL Managed Instance** from the results.
-
-   ![+Create a resource is selected in the Azure navigation pane, and "sql managed instance" is entered into the Search the Marketplace box. Azure SQL Managed Instance is selected in the results.](media/create-resource-sql-mi.png "Create SQL Managed Instance")
-
-3. Select **Create** on the Azure SQL Managed Instance blade.
-
-   ![The Create button is highlighted on the Azure SQL Managed Instance blade.](media/sql-mi-create.png "Create Azure SQL Managed Instance")
-
-4. On the SQL managed instance blade, look for a message stating that "Managed instance creation is not available for the chosen subscription type...", which will be displayed near the bottom of the SQL managed instance blade.
-
-   ![A message is displayed stating that SQL MI creation not available in the selected subscription.](media/sql-mi-creation-not-available.png "SQL MI creation not available")
-
-   > **Note**: If you see the message stating that Managed Instance creation is not available for the chosen subscription type, follow the instructions for [obtaining a larger quota for SQL Managed Instance](https://docs.microsoft.com/azure/sql-database/sql-database-managed-instance-resource-limits#obtaining-a-larger-quota-for-sql-managed-instance) before proceeding with the following steps.
-
-5. You are now ready to begin the ARM template deployment. To open a custom deployment screen in the Azure portal, select the Deploy to Azure button below:
-
-   <a href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FMCW-Migrating-SQL-databases-to-Azure%2Fmaster%2FHands-on%20lab%2Flab-files%2FARM-template%2Fazure-deploy.json" target="_blank" title="Deploy to Azure">
-   <img src="http://azuredeploy.net/deploybutton.png"/>
+   <a href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkylebunting%2FMCW-Serverless-architecture%2Fmaster%2FHands-on%20lab%2Flab-files%2Farm-template%2Fazure-deploy.json" target="_blank" title="Deploy to Azure">
+      <img src="http://azuredeploy.net/deploybutton.png"/>
    </a>
 
-   > **Note**: Running the ARM template occasionally results in a `ResourceDeploymentFailure` error, with a code of `VnetSubnetConflictedWithIntendedPolicy`. This error is not caused by an issue with the ARM template and appears to be the result of backend resource deployment issues in Azure. At this time, the workaround is first to try the deployment in a different region. If that does not work, try going through the [Manual resource setup guide](./Manual-resource-setup.md) to create the SQL MI database.
-
-6. On the custom deployment screen in the Azure portal, enter the following:
+2. On the custom deployment screen in the Azure portal, enter the following:
 
    - **Subscription**: Select the subscription you are using for this hands-on lab.
    - **Resource group**: Select the hands-on-lab-SUFFIX resource group from the dropdown list.
-   - **Region**: Select the region you used for the hands-on-lab-SUFFIX resource group.
-   - **Managed Instance Name**: Accept the default value, **sqlmi**. The actual name must be globally unique, so a unique string is generated from your Resource Group and appended to the name during provisioning.
-   - **Admin Username**: Accept the default value, **sqlmiuser**.
-   - **Admin Password**: Accept the default value, **Password.1234567890**.
-   - **V Cores**: Accept the default value, **4**.
-   - **Storage Size in GB**: Accept the default value, **32**.
+   - **Vm Username**: Accept the default value, **demouser**.
+   - **Vm Password**: Accept the default value, **Password.1!!**.
 
    ![The Custom deployment blade is displayed, and the information above is entered on the Custom deployment blade.](media/azure-custom-deployment.png "Custom deployment blade")
 
-7. Select **Review + create** to review the custom deployment.
+3. Select **Review + create** to review the custom deployment.
 
-8. On the Review + create blade, ensure the _Validation passed_ message is displayed and then select **Create** to begin the custom deployment.
+   > **Note**: The ARM template will append a hyphen followed by a 13-digit string at the end of resource names. This is done to ensure globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
+
+4. On the Review + create blade, ensure the _Validation passed_ message is displayed and then select **Create** to begin the custom deployment.
+
+   > **Note**: The deployment of the custom ARM template should finish in about 5 minutes.
 
    ![On the Review + create blade for the custom deployment, the Validation passed message is highlighted, and the Create button is highlighted.](media/azure-custom-deployment-review-create.png "Review + create custom deployment")
 
-   > **Note**: The deployment of the custom ARM template can take over 4 hours due to the inclusion of SQL MI. However, the deployment of most of the resources completes within a few minutes. The JumpBox and SQL Server 2008 R2 VMs should finish in about 15 minutes.
+5. You can monitor the deployment's progress on the **Deployment** blade that opens when you start the ARM template deployment. When the deployment completes, select **Outputs** from the left-hand menu.
 
-9. You can monitor the deployment's progress by navigating to the hands-on-lab-SUFFIX resource group in the Azure portal and then selecting **Deployments** from the left-hand menu. The deployment is named **Microsoft.Template**. Select that to view the progress of each item in the template.
+   ![The Microsoft Template Deployment page is displayed and the Outputs item is highlighted in the left-hand menu.](media/microsoft-template-deployment.png "Template deployment")
 
-   ![The Deployments menu item is selected in the left-hand menu of the hands-on-lab-SUFFIX resource group and the Microsoft.Template deployment is highlighted.](media/resource-group-deployments.png "Resource group deployments")
+6. The deployment **Outputs** page contains the output values from running the deployment, including the endpoints for various services and the **Secret Uris** for the secrets added to Key Vault. Leave this page open for the next task, as you will be copying the **Secret Uri** values into the configuration for one of the Azure Function Apps.
 
-> Check back in a few hours to monitor the progress of your SQL MI provisioning. If the provisioning goes on for longer than 7 hours, you may need to issue a support ticket in the Azure portal to request the provisioning process be unblocked by Microsoft support.
+   ![The Outputs page of the template deployment is displayed. Outputs is selected and highlighted in the left-hand menu and the four secret Uri values are highlighted in the list of outputs.](media/microsoft-template-deployment-outputs.png "Deployment outputs")
 
-You should follow all steps provided _before_ attending the Hands-on lab.
+### Task 3: Configure application settings on the ToolBoothFunctions Function App
 
+In this task, you copy the Secret Uri values from  the output page of the ARM template deployment and use them to populate the application settings in the Function App configuration.
 
+1. In a new browser tab or window, open the [Azure portal](https://portal.azure.com) and navigate to the **hands-on-lab-SUFFIX** resource group you created above.
 
+   > You can get to the resource group by selecting **Resource groups** under **Azure services** on the Azure portal home page, and then selecting the resource group from the list. If there are many resource groups in your Azure account, you can filter the list for **hands-on-lab** to reduce the resource groups listed.
 
+2. On your resource group blade, select the **TollBoothFunctions** Function App resource in the list of services available in the resource group.
 
+   > **Note**: You will notice that most of the resource names have a hyphen followed by a 13-digit string at the end of their names. This was added by the ARM template to ensure globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
 
+   ![The TollBoothFunctions resource is highlighted in the list of services in the resource group.](media/resource-group-toll-booth-functions.png "Resources")
 
+3. On the **TollBoothFunctions** Function App blade, select **Configuration** under Settings in the left-hand menu.
 
+   ![Configuration is highlighted in the left-hand menu of the Function App blade.](media/function-app-toll-booth-configuration-menu.png "Function App menu")
 
+4. Using the **Secret Uri** values from the deployment outputs page you opened at the end of the previous task, update the application settings values for the function app. Use the table below for the name-value pairs to use when updating the secrets. You only need to update the `{xxxSecretUri}` token with the **Value** field for each secret, and can leave the other fields at their default values.
 
+   |                          |                         |
+   | ------------------------ | ----------------------- |
+   | **App Setting Name**    | **Update Instructions** |
+   | computerVisionApiKey     | Replace `{computerVisionApiKeySecretUri}` with the `computerVisionKeySecretUri` value from the outputs page. |
+   | cosmosDBAuthorizationKey | Replace `{cosmosDbAuthKeySecretUri}` with the `cosmosDbAuthKeySecretUri` value from the outputs page. |
+   | dataLakeConnection       | Replace `{dataLakeConnectionSecretUri}` with the `dataLakeConnectionSecretUri` value from the outputs page. |
+   | eventGridTopicKey        | Replace `{eventGridTopicKeySecretUri}` with the `eventGridTopicKeySecretUri` value from the outputs page. |
 
-### Task 2: Set up a development environment
+   > Each of the settings above use Key Vault references and have a value of `@Microsoft.KeyVault(SecretUri={TOKENIZED_STRING})`, where `{TOKENIZED_STRING}` is the placeholder for the secret URI for the associated Key Vault secret. The `@Microsoft.KeyVault(SecretUri=)` component of the value allows the Function App to read the value of the secret from Key Vault. To learn more, read the [Use Key Vault references for App Service and Azure Functions](https://docs.microsoft.com/azure/app-service/app-service-key-vault-references) document.
 
-If you do not have a machine with Visual Studio Community 2019 (or greater) and the Azure development workload, complete this task.
+5. To update the values, you select each one on the **Application settings** tab of the configuration blade and then edit the setting's value. Start by selecting the `computerVisionApiKey` setting in the list of application settings.
 
-1. Create a virtual machine (VM) in Azure using the Visual Studio Community 2019 on Windows Server 2019 (x64) image. A Windows 10 image will work as well. **Note:** Your Azure subscription must include MSDN offers to create a VM with Visual Studio pre-loaded.
+   ![The computerVisionApiKey settings is highlighted in the list of Application settings for the TollBoothFunctions Function App.](media/application-settings-computer-vision.png "Application settings")
 
-   ![In Azure Portal, in the search field, Visual Studio Community 2019 (latest release) on Windows Server 2019 (x64) is selected.](media/select-vs2019-image.png 'Azure Portal')
+6. On the Add/Edit application setting dialog for the `computerVisionApiKey` setting, replace the `{computerVisionApiKeySecretUri}` token with the `computerVisionKeySecretUri` value from the deployment output page. **Be sure to remove the curly braces (`{}`) around the tokenized value**.
 
-   - Select **+ Create a resource**.
+   ![The tokenized sting, {computerVisionApiKeySecretUri} is highlighted in the Value field on the Add/Edit application setting dialog for the computerVisionApiKey setting.](media/application-settings-edit-computer-vision.png "Add/Edit application setting")
 
-   - Type **Visual Studio 2019 Latest**.
+7. When you are finished updating the `computerVisionApiKey` setting, the final value should look similar to the following:
 
-   - Select the **Visual Studio Community 2019 (latest) on Windows Server 2019 (x64)**.
+   ![The secret Uri for the computerVisionApiKey is highlighted in the Value box for the computerVisionApiKey.](media/application-settings-edit-computer-vision-secret-uri.png "Add/Edit application setting")
 
-   - Select **Create**.
+8. Select **OK** in the Add/Edit application setting dialog.
 
-   - Select your subscription and recently created resource group.
+9. Repeat steps 5 through 8 for the remaining settings listed in the table above, updating the value of each to insert the secret Uri value from the deployment output page into the Key Vault reference string.
 
-   - For Virtual machine name, type **MainVM**, or a different name that is unique.
+10. When all of the values have been updated, your settings should look similar to the following:
 
-   - Leave availability option as **No infrastructure redundancy required**.
+    ![The four settings updated above have their values displayed and are highlighted on the application settings blade.](media/application-settings-values.png "Application settings")
 
-   - Ensure the image is **Visual Studio Community 2019 (latest) on Windows Server 2019 (x64)**.
+11. Select **Save** on the toolbar of the Configuration blade to save the updated application settings.
 
-   - Select your VM size.
+    ![The Save button is highlighted on the toolbar of the Configuration blade.](media/application-settings-toolbar-save.png "Save")
 
-   > **Note**: It is highly recommended to use a D4s or DS2_v2 instance size for this VM.
+12. Select **Continue** on the Save changes prompt dialog.
 
-   - For username, type **demouser**
+    ![The Continue button is highlighted on the Save changes dialog.](media/application-settings-save-changes.png "Save changes")
 
-   - For password, type **Password.1!!**
+13. After saving, you should see the **Source** for each of the updated settings change to **Key Vault Reference** with a green check mark, which indicates the Function App is successfully reading the secret value from Key Vault.
 
-   - Select **Allow selected ports**.
+    ![The Source column for each of the settings updated above is highlighted.](media/application-settings-source-key-vault-reference.png "Application settings source")
 
-   - For the inbound ports, select **RDP (3389)**.
+### Task 4: Create a GitHub account
 
-   - Select **Review + create**.
+In this task, you sign up for a free GitHub account, which is used for hosting a copy of the sample application used throughout this lab. This account will be integrated into the CI/CD workflow for pushing updates to the Function Apps in Azure.
 
-   - Select **Create**.
+> **Note**: If you already have a GitHub account, and wish to use that account, you can skip this task.
 
-### Task 3: Disable IE Enhanced Security
+1. Navigate to <https://github.com> in a web browser.
 
-> **Note**: Sometimes this image has IE ESC disabled. Sometimes it does not.
+2. In the form on the page, enter a **username**, your **email** address, and a **password**, then select **Sign up for GitHub**.
 
-1. Login to the newly created VM using RDP and the username and password you supplied earlier.
+    ![This is a screenshot of the sign-up form on github.com.](media/github-sign-up.png "Sign up for GitHub")
 
-2. After the VM loads, the Server Manager should open.
+3. On the Create your account screen, complete the account verification and select **Join a free plan**.
 
-3. Select **Local Server**.
+4. On the Welcome to GitHub screen, answer the questions and then select **Complete setup**.
 
-   ![Local Server is selected from the Server Manager menu.](media/image5.png 'Server Manager menu')
-
-4. On the side of the pane, for **IE Enhanced Security Configuration**, if it displays **On**, select it.
-
-   ![The IE Enhanced Security Configuration setting is set to On. The On item is selected.](media/image6.png 'IE Enhanced Security Configuration')
-
-   - Change to **Off** for Administrators and select **OK**.
-
-   ![In the Internet Explorer Enhanced Security Configuration dialog box, under Administrators, the Off button is selected.](media/image7.png 'Internet Explorer Enhanced Security Configuration dialog box')
-
-### Task 4: Install Microsoft Edge
-
-> **Note**: Some aspects of this lab require the use of the new Microsoft Edge (Chromium edition) browser. You may find yourself blocked if using Internet Explorer later in the lab.
-
-1. Launch Internet Explorer and download [Microsoft Edge](https://www.microsoft.com/edge).
-
-2. Follow the setup instructions and make sure you can run Edge to navigate to any webpage.
-
-> **Note**: Edge is needed for one of the labs as Internet Explorer is not supported for some specific activities.
-
-### Task 5: Validate connectivity to Azure
-
-1. From within the virtual machine, launch Visual Studio (select **Continue without code** link) and validate that you can log in with your Microsoft Account when prompted.
-
-2. To validate connectivity to your Azure subscription, open **Cloud Explorer** from the **View** menu, and ensure that you can connect to your Azure subscription.
-
-   ![In Cloud Explorer, the list of Azure subscriptions is shown. A single subscription is highlighted and expanded in the list.](media/vs-cloud-explorer.png 'Cloud Explorer')
-
-### Task 6: Download and explore the TollBooth starter solution
-
-1. From your LabVM, download the starter files by downloading a .zip copy of the Serverless architecture MCW GitHub repo.
-
-2. In a web browser, navigate to the [MCW Serverless architecture repo](https://github.com/Microsoft/MCW-Serverless-architecture).
-
-3. On the repo page, select **Clone or download**, then select **Download ZIP**.
-
-   ![On the GitHub Repository web page, the Clone or Download drop down is expanded with the Download ZIP button selected.](media/github-download-repo.png)
-
-4. Unzip the contents to the folder **C:\\ServerlessMCW\\**
-
-   ![On the Extract Compressed (Zipped) Folders dialog window, the extraction path is highlighted in the Files will be extracted to this folder field.](media/zip-extract.png 'Extract Compressed Folders')
-
-5. Navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\starter`
-
-6. From the **TollBooth** folder, open the Visual Studio Solution file: **TollBooth.sln**. Notice the solution contains the following projects:
-
-   - TollBooth
-   - UploadImages
-   
-   > **Note**: The UploadImages project is used for uploading a handful of car photos for testing scalability of the serverless architecture.
-
-7. Switch to windows explorer, navigate back to the **starter** subfolder and open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the photos is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The **copyfrom** folder is used by the UploadImages project as a basis for the 1,000 photo upload option for testing scalability.
+5. Verify your email address by opening your email and selecting the **Verify email address** link in the email you receive from GitHub (noreply@github.com).
 
 You should follow all steps provided _before_ performing the Hands-on lab.
