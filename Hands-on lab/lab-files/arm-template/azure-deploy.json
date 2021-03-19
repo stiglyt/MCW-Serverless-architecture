@@ -24,10 +24,7 @@
 
     "dataLakeAccountName": "[concat('datalake', uniqueString(resourceGroup().id))]",
     "dataLakeConnectionSecretName": "dataLakeConnectionString",
-    "dataLakeContainers": [
-        "images",
-        "export"
-    ],
+    "dataLakeContainers": ["images", "export"],
 
     "cosmosDbAccountName": "[concat('cosmosdb-', uniqueString(resourceGroup().id))]",
     "cosmosDbAuthKeySecretName": "cosmosDBAuthorizationKey",
@@ -48,9 +45,7 @@
     "vmCustomScriptFileName": "configure-labvm.ps1",
     "vmCustomScriptUri": "[concat('https://raw.githubusercontent.com/kylebunting/MCW-Serverless-architecture/master/Hands-on%20lab/lab-files/arm-template/', variables('vmCustomScriptFileName'))]",
 
-    "tollBoothHostingPlanName": "[concat('tollbooth-asp-', uniqueString(resourceGroup().id))]",
     "tollBoothFunctionAppName": "[concat('TollBoothFunctions-', uniqueString(resourceGroup().id))]",
-    "tollBoothEventsHostingPlanName": "[concat('events-asp', uniqueString(resourceGroup().id))]",
     "tollBoothEventsFunctionAppName": "[concat('TollBoothEvents-', uniqueString(resourceGroup().id))]",
     "appInsightsName": "[concat('appinsights-', uniqueString(resourceGroup().id))]",
 
@@ -62,6 +57,81 @@
     "keyVaultName": "[concat('keyvault-', uniqueString(resourceGroup().id))]"
   },
   "resources": [
+    {
+      "name": "[variables('keyVaultName')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2019-09-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "name": "Standard",
+          "family": "A"
+        },
+        "enableSoftDelete": false,
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [
+          {
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('tollBoothFunctionAppName')), '2019-08-01', 'Full').identity.principalId]",
+            "permissions": {
+              "secrets": ["get"]
+            },
+            "tenantId": "[subscription().tenantId]"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(variables('keyVaultName'), '/', variables('computerVisionSecretName'))]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts', variables('computerVisionName'))]"
+      ],
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('computerVisionName')), '2017-04-18').key1]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(variables('keyVaultName'), '/', variables('cosmosDbAuthKeySecretName'))]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbAccountName'))]"
+      ],
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbAccountName')), '2021-01-15').primaryMasterKey]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(variables('keyVaultName'), '/', variables('dataLakeConnectionSecretName'))]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName'))]"
+      ],
+      "properties": {
+        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('dataLakeAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName')), '2019-06-01').keys[0].value)]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2019-09-01",
+      "name": "[concat(variables('keyVaultName'), '/', variables('eventGridTopicKeySecretName'))]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+        "[resourceId('Microsoft.EventGrid/topics', variables('eventGridTopicName'))]"
+      ],
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.EventGrid/topics', variables('eventGridTopicName')), '2020-06-01').key1]"
+      }
+    },
     {
       "name": "[variables('dataLakeAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
@@ -105,20 +175,20 @@
       ]
     },
     {
-        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-        "apiVersion": "2019-06-01",
-        "name": "[concat(variables('dataLakeAccountName'), '/default/', variables('dataLakeContainers')[copyIndex()])]",
-        "copy": {
-            "name": "containercopy",
-            "count": "[length(variables('dataLakeContainers'))]"
-        },
-        "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName'))]",
-            "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('dataLakeAccountName'), 'default')]"
-        ],
-        "properties": {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2019-06-01",
+      "name": "[concat(variables('dataLakeAccountName'), '/default/', variables('dataLakeContainers')[copyIndex()])]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('dataLakeAccountName'), 'default')]"
+      ],
+      "copy": {
+        "name": "containercopy",
+        "count": "[length(variables('dataLakeContainers'))]"
+      },
+      "properties": {
         "publicAccess": "None"
-        }
+      }
     },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts",
@@ -293,27 +363,12 @@
       }
     },
     {
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2020-06-01",
-      "name": "[variables('tollBoothHostingPlanName')]",
-      "location": "[variables('location')]",
-      "sku": {
-        "name": "Y1",
-        "tier": "Dynamic"
-      },
-      "properties": {
-        "name": "[variables('tollBoothHostingPlanName')]",
-        "computeMode": "Dynamic"
-      }
-    },
-    {
       "type": "Microsoft.Web/sites",
       "name": "[variables('tollBoothFunctionAppName')]",
       "apiVersion": "2020-09-01",
       "location": "[variables('location')]",
       "kind": "functionapp",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('tollBoothHostingPlanName'))]",
         "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
         "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbAccountName'))]",
         "[resourceId('Microsoft.CognitiveServices/accounts', variables('computerVisionName'))]",
@@ -322,7 +377,6 @@
       ],
       "properties": {
         "name": "[variables('tollBoothFunctionAppName')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('tollBoothHostingPlanName'))]",
         "siteConfig": {
           "appSettings": [
             {
@@ -350,44 +404,44 @@
               "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), '2018-05-01-preview').InstrumentationKey]"
             },
             {
-                "name": "computerVisionApiUrl",
-                "value": "[concat(reference(concat('Microsoft.CognitiveServices/accounts/', variables('computerVisionName'))).endpoint, 'vision/v3.0/ocr')]"
+              "name": "computerVisionApiUrl",
+              "value": "[concat(reference(concat('Microsoft.CognitiveServices/accounts/', variables('computerVisionName'))).endpoint, 'vision/v3.0/ocr')]"
             },
             {
-                "name": "computerVisionApiKey",
-                "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{computerVisionApiKeySecretName}', ')')]"
+              "name": "computerVisionApiKey",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{computerVisionApiKeySecretUri}', ')')]"
             },
             {
-                "name": "cosmosDBEndpointUrl",
-                "value": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbAccountName'))).documentEndpoint]"
+              "name": "cosmosDBEndpointUrl",
+              "value": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbAccountName'))).documentEndpoint]"
             },
             {
-                "name": "cosmosDBAuthorizationKey",
-                "value": "[concat('Microsoft.KeyVault(SecretUri=', '{cosmosDBAuthorizationKeySecretUri}', ')')]"
+              "name": "cosmosDBAuthorizationKey",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{cosmosDBAuthorizationKeySecretUri}', ')')]"
             },
             {
-                "name": "cosmosDBDatabaseId",
-                "value": "[variables('cosmosDbDatabaseId')]"
+              "name": "cosmosDBDatabaseId",
+              "value": "[variables('cosmosDbDatabaseId')]"
             },
             {
-                "name": "cosmosDBCollectionId",
-                "value": "[variables('cosmosDbContainerProcessed')]"
+              "name": "cosmosDBCollectionId",
+              "value": "[variables('cosmosDbContainerProcessed')]"
             },
             {
-                "name": "dataLakeConnection",
-                "value": "[concat('Microsoft.KeyVault(SecretUri=', '{dataLakeConnectionSecretUri}', ')')]"
+              "name": "dataLakeConnection",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{dataLakeConnectionSecretUri}', ')')]"
             },
             {
               "name": "eventGridTopicEndpoint",
               "value": "[reference(concat('Microsoft.EventGrid/topics/', variables('eventGridTopicName'))).endpoint]"
             },
             {
-                "name": "eventGridTopicKey",
-                "value": "[concat('Microsoft.KeyVault(SecretUri=', '{eventGridTopicKeySecretUri}', ')')]"
+              "name": "eventGridTopicKey",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{eventGridTopicKeySecretUri}', ')')]"
             },
             {
-                "name": "exportCsvContainerName",
-                "value": "export"
+              "name": "exportCsvContainerName",
+              "value": "export"
             }
           ]
         },
@@ -399,33 +453,17 @@
       }
     },
     {
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2020-06-01",
-      "name": "[variables('tollBoothEventsHostingPlanName')]",
-      "location": "[variables('location')]",
-      "sku": {
-        "name": "Y1",
-        "tier": "Dynamic"
-      },
-      "properties": {
-        "name": "[variables('tollBoothEventsHostingPlanName')]",
-        "computeMode": "Dynamic"
-      }
-    },
-    {
       "type": "Microsoft.Web/sites",
       "name": "[variables('tollBoothEventsFunctionAppName')]",
       "apiVersion": "2020-09-01",
       "location": "[variables('location')]",
       "kind": "functionapp",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('tollBoothEventsHostingPlanName'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName'))]",
-        "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]"
+        "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName'))]"
       ],
       "properties": {
         "name": "[variables('tollBoothEventsFunctionAppName')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('tollBoothEventsHostingPlanName'))]",
         "siteConfig": {
           "appSettings": [
             {
@@ -479,83 +517,6 @@
           "statisticsEnabled": false
         }
       }
-    },
-    {
-      "name": "[variables('keyVaultName')]",
-      "type": "Microsoft.KeyVault/vaults",
-      "apiVersion": "2019-09-01",
-      "location": "[variables('location')]",
-      "properties": {
-        "sku": {
-          "name": "Standard",
-          "family": "A"
-        },
-        "enableSoftDelete": false,
-        "tenantId": "[subscription().tenantId]",
-        "accessPolicies": [
-          {
-            "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('tollBoothFunctionAppName')), '2019-08-01', 'Full').identity.principalId]",
-            "permissions": {
-              "secrets": ["get"]
-            },
-            "tenantId": "[subscription().tenantId]"
-          }
-        ]
-      },
-      "resources": [
-        {
-          "type": "secrets",
-          "apiVersion": "2019-09-01",
-          "name": "[variables('cosmosDbAuthKeySecretName')]",
-          "location": "[variables('location')]",
-          "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
-            "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbAccountName'))]"
-          ],
-          "properties": {
-            "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbAccountName')), '2021-01-15').primaryMasterKey]"
-          }
-        },
-        {
-          "type": "secrets",
-          "apiVersion": "2019-09-01",
-          "name": "[variables('dataLakeConnectionSecretName')]",
-          "location": "[variables('location')]",
-          "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
-            "[resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName'))]"
-          ],
-          "properties": {
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('dataLakeAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('dataLakeAccountName')), '2019-06-01').keys[0].value)]"
-          }
-        },
-        {
-          "type": "secrets",
-          "apiVersion": "2019-09-01",
-          "name": "[variables('computerVisionSecretName')]",
-          "location": "[variables('location')]",
-          "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
-            "[resourceId('Microsoft.CognitiveServices/accounts', variables('computerVisionName'))]"
-          ],
-          "properties": {
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('computerVisionName')), '2017-04-18').key1]"
-          }
-        },
-        {
-          "type": "secrets",
-          "apiVersion": "2019-09-01",
-          "name": "[variables('eventGridTopicKeySecretName')]",
-          "location": "[variables('location')]",
-          "dependsOn": [
-            "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
-            "[resourceId('Microsoft.EventGrid/topics', variables('eventGridTopicName'))]"
-          ],
-          "properties": {
-            "value": "[listKeys(resourceId('Microsoft.EventGrid/topics', variables('eventGridTopicName')), '2020-06-01').key1]"
-          }
-        }
-      ]
     },
     {
       "type": "Microsoft.Network/virtualNetworks",
@@ -643,10 +604,6 @@
     }
   ],
   "outputs": {
-    "vmUsername": {
-      "type": "string",
-      "value": "[parameters('vmUsername')]"
-    },
     "CosmosDbEndpoint": {
       "type": "string",
       "value": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbAccountName'))).documentEndpoint]"
@@ -660,20 +617,20 @@
       "value": "[concat(reference(concat('Microsoft.CognitiveServices/accounts/', variables('computerVisionName'))).endpoint, 'vision/v3.0/ocr')]"
     },
     "CosmosDbAuthKeySecretUri": {
-        "type": "string",
-        "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('cosmosDbAuthKeySecretName'))).secretUriWithVersion]"
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('cosmosDbAuthKeySecretName'))).secretUriWithVersion]"
     },
     "DataLakeConnectionSecretUri": {
-        "type": "string",
-        "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('dataLakeConnectionSecretName'))).secretUriWithVersion]"
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('dataLakeConnectionSecretName'))).secretUriWithVersion]"
     },
     "ComputerVisionKeySecretUri": {
-        "type": "string",
-        "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('computerVisionSecretName'))).secretUriWithVersion]"
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('computerVisionSecretName'))).secretUriWithVersion]"
     },
     "EventGridTopicKeySecretUri": {
-        "type": "string",
-        "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('eventGridTopicKeySecretName'))).secretUriWithVersion]"
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('eventGridTopicKeySecretName'))).secretUriWithVersion]"
     }
   }
 }
