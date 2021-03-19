@@ -52,15 +52,15 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Exercise 4: Explore your data in Azure Cosmos DB](#exercise-4-explore-your-data-in-azure-cosmos-db)
     - [Help references](#help-references-3)
     - [Task 1: Use the Azure Cosmos DB Data Explorer](#task-1-use-the-azure-cosmos-db-data-explorer)
-  - [Exercise 6: Create the data export workflow](#exercise-6-create-the-data-export-workflow)
+  - [Exercise 5: Create the data export workflow](#exercise-5-create-the-data-export-workflow)
     - [Help references](#help-references-4)
     - [Task 1: Create the Logic App](#task-1-create-the-logic-app)
-  - [Exercise 7: Configure continuous deployment for your Function App](#exercise-7-configure-continuous-deployment-for-your-function-app)
+  - [Exercise 6: Configure continuous deployment for your Function App](#exercise-6-configure-continuous-deployment-for-your-function-app)
     - [Help references](#help-references-5)
     - [Task 1: Add git repository to your Visual Studio solution and deploy to GitHub](#task-1-add-git-repository-to-your-visual-studio-solution-and-deploy-to-github)
     - [Task 2: Configure your Function App to use your GitHub repository for continuous deployment](#task-2-configure-your-function-app-to-use-your-github-repository-for-continuous-deployment)
     - [Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment](#task-3-finish-your-exportlicenseplates-function-code-and-push-changes-to-github-to-trigger-deployment)
-  - [Exercise 8: Rerun the workflow and verify data export](#exercise-8-rerun-the-workflow-and-verify-data-export)
+  - [Exercise 7: Rerun the workflow and verify data export](#exercise-7-rerun-the-workflow-and-verify-data-export)
     - [Task 1: Run the Logic App](#task-1-run-the-logic-app)
     - [Task 2: View the exported CSV file](#task-2-view-the-exported-csv-file)
   - [After the hands-on lab](#after-the-hands-on-lab)
@@ -647,7 +647,7 @@ In this exercise, you will use the Azure Cosmos DB Data Explorer in the portal t
 
     ![In the Query window, the previously defined SQL query displays. Under Results, the number 669 is highlighted.](media/cosmos-query-results.png 'Query 1 tab')
 
-## Exercise 6: Create the data export workflow
+## Exercise 5: Create the data export workflow
 
 **Duration**: 30 minutes
 
@@ -753,7 +753,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
     ![The Disable button is selected on the TollBoothLogic Logic app blade toolbar menu.](media/image97.png 'TollBoothLogic blade')
 
-## Exercise 7: Configure continuous deployment for your Function App
+## Exercise 6: Configure continuous deployment for your Function App
 
 **Duration**: 40 minutes
 
@@ -885,7 +885,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     ![The latest deployment is displayed in the Deployment Center.](media/functionapp-dc-latest.png 'Deployment Center')
 
-## Exercise 8: Rerun the workflow and verify data export
+## Exercise 7: Rerun the workflow and verify data export
 
 **Duration**: 10 minutes
 
