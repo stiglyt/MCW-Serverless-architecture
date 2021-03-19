@@ -37,7 +37,7 @@ namespace TollBooth
         [FunctionName("ProcessImage")]
         public static async Task Run([EventGridTrigger]EventGridEvent eventGridEvent,
             [Blob(blobPath: "{data.url}", access: FileAccess.Read,
-                Connection = "blobStorageConnection")] Stream incomingPlate,
+                Connection = "dataLakeConnection")] Stream incomingPlate,
             ILogger log)
         {
             var licensePlateText = string.Empty;

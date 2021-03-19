@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,16 +18,16 @@ namespace TollBooth
     {
         private readonly CloudBlobClient _blobClient;
         private readonly string _containerName = Environment.GetEnvironmentVariable("exportCsvContainerName");
-        private readonly string _blobStorageConnection = Environment.GetEnvironmentVariable("blobStorageConnection");
+        private readonly string _blobStorageConnection = Environment.GetEnvironmentVariable("dataLakeConnection");
         private readonly ILogger _log;
 
         public FileMethods(ILogger log)
         {
             _log = log;
-            // Retrieve storage account information from connection string.
+            // Retrieve data lake storage account information from connection string.
             var storageAccount = CloudStorageAccount.Parse(_blobStorageConnection);
 
-            // Create a blob client for interacting with the blob service.
+            // Create a blob client for interacting with the data lake account.
             _blobClient = storageAccount.CreateCloudBlobClient();
         }
 
@@ -40,9 +41,8 @@ namespace TollBooth
             using (var stream = new MemoryStream())
             {
                 using (var textWriter = new StreamWriter(stream))
-                using (var csv = new CsvWriter(textWriter))
+                using (var csv = new CsvWriter(textWriter, CultureInfo.InvariantCulture, false))
                 {
-                    csv.Configuration.Delimiter = ",";
                     csv.WriteRecords(licensePlates.Select(ToLicensePlateData));
                     await textWriter.FlushAsync();
 

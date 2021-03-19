@@ -12,7 +12,7 @@ namespace TollBooth
 {
     internal class DatabaseMethods
     {
-        private readonly string _endpointUrl = Environment.GetEnvironmentVariable("cosmosDBEndPointUrl");
+        private readonly string _endpointUrl = Environment.GetEnvironmentVariable("cosmosDBEndpointUrl");
         private readonly string _authorizationKey = Environment.GetEnvironmentVariable("cosmosDBAuthorizationKey");
         private readonly string _databaseId = Environment.GetEnvironmentVariable("cosmosDBDatabaseId");
         private readonly string _collectionId = Environment.GetEnvironmentVariable("cosmosDBCollectionId");

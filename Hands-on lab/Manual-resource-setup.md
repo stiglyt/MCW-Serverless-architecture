@@ -511,7 +511,7 @@ Ensure all resources use the same resource group for easier cleanup.
     | cosmosDBAuthorizationKey | Enter `@Microsoft.KeyVault(SecretUri={referenceString})`, where `{referenceString}` is the URI for the **cosmosDBAuthorizationKey** Key Vault secret |
     | cosmosDBCollectionId     | Cosmos DB processed collection id (**Processed**) |
     | cosmosDBDatabaseId       | Cosmos DB database id (**LicensePlates**) |
-    | cosmosDBEndPointUrl      | Cosmos DB URI |
+    | cosmosDBEndpointUrl      | Cosmos DB URI |
     | dataLakeConnection | Enter `@Microsoft.KeyVault(SecretUri={referenceString})`, where `{referenceString}` is the URI for the **dataLakeConnectionString** Key Vault secret |
     | eventGridTopicEndpoint   | Event Grid Topic endpoint |
     | eventGridTopicKey        | Enter `@Microsoft.KeyVault(SecretUri={referenceString})`, where `{referenceString}` is the URI for the **eventGridTopicKey** Key Vault secret |

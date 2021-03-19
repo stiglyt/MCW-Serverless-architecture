@@ -31,13 +31,13 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Overview](#overview)
   - [Solution architecture](#solution-architecture)
   - [Requirements](#requirements)
-  - [Exercise 2: Develop and publish the photo processing and data export functions](#exercise-2-develop-and-publish-the-photo-processing-and-data-export-functions)
+  - [Exercise 1: Develop and publish the photo processing and data export functions](#exercise-1-develop-and-publish-the-photo-processing-and-data-export-functions)
     - [Help references](#help-references)
-    - [Task 12: Open the starter solution in Visual Studio](#task-12-open-the-starter-solution-in-visual-studio)
-  - [Task 13: Validate connectivity to Azure](#task-13-validate-connectivity-to-azure)
-    - [Task 4: Finish the ProcessImage function](#task-4-finish-the-processimage-function)
-    - [Task 5: Publish the Function App from Visual Studio](#task-5-publish-the-function-app-from-visual-studio)
-  - [Exercise 3: Create functions in the portal](#exercise-3-create-functions-in-the-portal)
+  - [Task 1: Connect to the Lab VM](#task-1-connect-to-the-lab-vm)
+    - [Task 2: Open the starter solution in Visual Studio](#task-2-open-the-starter-solution-in-visual-studio)
+    - [Task 3: Finish the ProcessImage function](#task-3-finish-the-processimage-function)
+    - [Task 4: Publish the Function App from Visual Studio](#task-4-publish-the-function-app-from-visual-studio)
+  - [Exercise 2: Create functions in the portal](#exercise-2-create-functions-in-the-portal)
     - [Help references](#help-references-1)
     - [Task 1: Create function to save license plate data to Azure Cosmos DB](#task-1-create-function-to-save-license-plate-data-to-azure-cosmos-db)
     - [Task 2: Add an Event Grid subscription to the SavePlateData function](#task-2-add-an-event-grid-subscription-to-the-saveplatedata-function)
@@ -79,17 +79,17 @@ At the end of the hands-on-lab, you will have confidence in designing, developin
 
 ## Overview
 
-Contoso is rapidly expanding its toll booth management business to operate in a much larger area. As this is not their primary business, which is online payment services, they are struggling with scaling up to meet the upcoming demand to extract license plate information from many new tollbooths, using photos of vehicles uploaded to cloud storage. Currently, they have a manual process where they send batches of images to a 3rd-party who manually transcodes the license plates to CSV files that they send back to Contoso to upload to their online processing system.
+Contoso is rapidly expanding its toll booth management business to operate in a much larger area. As this is not their primary business, which is online payment services, they struggle with scaling up to meet the upcoming demand to extract license plate information from many new tollbooths, using photos of vehicles uploaded to cloud storage. Currently, they have a manual process where they send batches of images to a 3rd-party who manually transcodes the license plates to CSV files that they send back to Contoso to upload to their online processing system.
 
 They want to automate this process in a way that is cost-effective and scalable. They believe serverless is the best route for them but do not have the expertise to build the solution.
 
 ## Solution architecture
 
-Below is a diagram of the solution architecture you will build in this lab. Please study this carefully, so you understand the whole of the solution as you are working on the various components.
+Below is a diagram of the solution architecture you will build in this lab. Please study this carefully to understand the whole of the solution as you are working on the various components.
 
 ![The Solution diagram is described in the text following this diagram.](../Whiteboard%20design%20session/media/preferred-solution.png 'Solution diagram')
 
-The solution begins with vehicle photos being uploaded to an Azure Storage blobs container, as they are captured. An Event Grid subscription is created against the Blob storage create event, calling the photo processing **Azure Function** endpoint (on the side of the diagram), which in turn sends the photo to the **Cognitive Services Computer Vision API OCR** service to extract the license plate data. If processing was successful and the license plate number was returned, the function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called "savePlateData". However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called "queuePlateForManualCheckup". Two separate functions are configured to trigger when new events are added to the Event Grid topic, each filtering on a specific event type, both saving the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, which is responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all of the Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place. **Azure Key Vault** is used to securely store secrets, such as connection strings and access keys. Key Vault is accessed by the Function Apps through an access policy within Key Vault, assigned to each Function App's system-assigned managed identity.
+The solution begins with vehicle photos being uploaded to an Azure Data Lake Storage Gen2 container as they are captured. An Event Grid subscription is created against the data lake storage container. When a new blob is created, an event is triggered that calls the photo processing **Azure Function** endpoint (on the side of the diagram), which in turn sends the photo to the **Cognitive Services Computer Vision API OCR** service to extract the license plate data. If processing is successful and the license plate number is returned. The function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called "savePlateData." However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called "queuePlateForManualCheckup." Two separate functions are configured to trigger when new events are added to the Event Grid topic. Each filtering on a specific event type saves the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place. **Azure Key Vault** is used to securely store secrets, such as connection strings and access keys. Key Vault is accessed by the Function Apps through an access policy within Key Vault, assigned to each Function App's system-assigned managed identity.
 
 ## Requirements
 
@@ -105,9 +105,7 @@ The solution begins with vehicle photos being uploaded to an Azure Storage blobs
   - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
 - GitHub account. You can create a free account at <https://github.com>.
 
-
-
-## Exercise 2: Develop and publish the photo processing and data export functions
+## Exercise 1: Develop and publish the photo processing and data export functions
 
 **Duration**: 45 minutes
 
@@ -116,60 +114,124 @@ Use Visual Studio and its integrated Azure Functions tooling to develop and debu
 ### Help references
 
 |                                       |                                                                        |
-| ------------------------------------- | :--------------------------------------------------------------------: |
-| **Description**                       |                               **Links**                                |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| **Description**                       | **Link**                                                              |
 | Code and test Azure Functions locally | <https://docs.microsoft.com/azure/azure-functions/functions-run-local> |
 
-### Task 12: Open the starter solution in Visual Studio
+## Task 1: Connect to the Lab VM
 
-1. Navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\lab-files\src\TollBooth`
+In this task, you create an RDP connection to your Lab virtual machine (VM).
 
-2. From the **TollBooth** folder, open the Visual Studio Solution file, `TollBooth.sln`. Notice the solution contains the following projects:
+1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
 
-   - TollBooth
-   - UploadImages
+   ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
+
+2. Select the **hands-on-lab-SUFFIX** resource group from the list.
+
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
+
+3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
+
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
+
+4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
+
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
+
+5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
+
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
+
+6. Select **Connect** on the Remote Desktop Connection dialog.
+
+   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection.png "Remote Desktop Connection dialog")
+
+7. Enter the following credentials when prompted, and then select **OK**:
+
+   - **User name**: demouser
+   - **Password**: Password.1!!
+
+   ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials.png "Enter your credentials")
+
+8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
+
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+
+### Task 2: Open the starter solution in Visual Studio
+
+1. On the LabVM, open File Explorer and navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\lab-files\src\TollBooth`
+
+2. From the **TollBooth** folder, open the Visual Studio Solution by double-clicking the `TollBooth.sln` file.
+
+    ![In the TollBooth folder in File Explorer, TollBooth.sln is highlighted.](media/file-explorer-toll-booth-sln.png "File Explorer")
+
+3. If prompted about how to open the file, select **Visual Studio 2019** and then select **OK**.
+
+   ![Visual Studio 2019 is highlighted in the How do you want to open this file? dialog.](media/solution-file-open-with.png "Visual Studio 2019")
+
+4. Sign in to Visual Studio using your Azure account credentials.
+
+   ![The Sign in button is highlighted on the Visual Studio Welcome screen.](media/visual-studio-sign-in.png "Visual Studio 2019")
+
+5. IF prompted with a security warning, uncheck **Ask me for every project in this solution**, and then select **OK**.
+
+6. Notice the solution contains the following projects:
+
+   - `TollBooth`
+   - `UploadImages`
 
    > **Note**: The UploadImages project is used for uploading a handful of car photos for testing scalability of the serverless architecture.
 
-3. Switch to Windows explorer, navigate back to the **starter** subfolder and open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the photos is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The **copyfrom** folder is used by the UploadImages project as a basis for the 1,000 photo upload option for testing scalability.
+   ![The two projects listed above are highlighted in Solution Explorer.](media/visual-studio-solution-explorer-projects.png "Solution Explorer")
 
-## Task 13: Validate connectivity to Azure
-
-1. From within the virtual machine, launch Visual Studio (select **Continue without code** link) and validate that you can log in with your Microsoft Account when prompted.
-
-2. To validate connectivity to your Azure subscription, open **Cloud Explorer** from the **View** menu, and ensure that you can connect to your Azure subscription.
+7. To validate connectivity to your Azure subscription from Visual Studio, open **Cloud Explorer** from the **View** menu, and ensure that you can connect to your Azure subscription.
 
    ![In Cloud Explorer, the list of Azure subscriptions is shown. A single subscription is highlighted and expanded in the list.](media/vs-cloud-explorer.png 'Cloud Explorer')
 
-### Task 4: Finish the ProcessImage function
+   > **Note**: You may need to select the account icon and log in with your Azure account before seeing the resources below your subscription.
 
-There are a few components within the starter project that must be completed, marked as TODO in the code. The first set of TODO items we will address are in the ProcessImage function, the FindLicensePlateText class that calls the Computer Vision API, and finally the SendToEventGrid.cs class, which is responsible for sending processing results to the Event Grid topic you created earlier.
+TODO: Remove this next step?
+
+8. Return to the open File Explorer window and navigate back to the **src** subfolder. From there, open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the photos is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The **copyfrom** folder is used by the UploadImages project as a basis for the 1,000 photo upload option for testing scalability.
+
+### Task 3: Finish the ProcessImage function
+
+There are a few components within the starter project that must be completed, which are marked as `TODO` in the code. The first set of `TODO` items we address are in the `ProcessImage` function. We will make updates to the `FindLicensePlateText` class that calls the Computer Vision service and the `SendToEventGrid` class, which is responsible for sending processing results to the Event Grid topic you created earlier.
 
 > **Note:** Do **NOT** update the version of any NuGet package. This solution is built to function with the NuGet package versions currently defined within. Updating these packages to newer versions could cause unexpected results.
 
 > **Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as  `C:\Users\workshop\Downloads\`, then you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters.`
 
-1. Navigate to the **TollBooth** project (`C:\ServerlessMCW\MCW-Serverless-architecture-master\hands-on-lab\starter\TollBooth\TollBooth.sln`) using the Solution Explorer of Visual Studio.
-
-2. From the Visual Studio **View** menu, select **Task List**.
+1. From the Visual Studio **View** menu, select **Task List**.
 
     ![The Visual Studio Menu displays, with View and Task List selected.](media/vs-task-list-link.png 'Visual Studio Menu')
 
-3. There you will see a list of TODO tasks, where each task represents one line of code that needs to be completed.
+2. There you will see a list of `TODO` tasks, where each task represents one line of code that needs to be completed.
 
     ![A list of TODO tasks, including their description, project, file, and line number are displayed.](media/vs-task-list.png 'TODO tasks')
 
-4. Open **ProcessImage.cs**. Notice that the Run method is decorated with the FunctionName attribute, which sets the name of the Azure Function to "ProcessImage". This is triggered by HTTP requests sent to it from the Event Grid service. You tell Event Grid that you want to get these notifications at your function's URL by creating an event subscription, which you will do in a later task, in which you subscribe to blob-created events. The function's trigger watches for new blobs being added to the images container of the storage account that was created in Exercise 1. The data passed to the function from the Event Grid notification includes the URL of the blob. That URL is in turn passed to the input binding to obtain the uploaded image from Blob storage.
+3. In the Visual Studio Solution Explorer, expand the **TollBooth** project, and double-click `ProcessImage.cs` to open the file.
 
-5. The following code represents the completed task in ProcessImage.cs:
+    > Notice the Run method is decorated with the FunctionName attribute, which sets the name of the Azure Function to "ProcessImage". This is triggered by HTTP requests sent to it from the Event Grid service. You tell Event Grid that you want to get these notifications at your function's URL by creating an event subscription, which you will do in a later task, in which you subscribe to blob-created events. The function's trigger watches for new blobs being added to the images container of the data lake storage account that was created by the ARM template in the Before the hands-on lab guide. The data passed to the function from the Event Grid notification includes the URL of the blob. That URL is in turn passed to the input binding to obtain the uploaded image from data lake storage.
+
+    ![The ProcessImage.cs file is highlighted within the TollBooth project in the Visual Studio Solution Explorer.](media/visual-studio-solution-explorer-process-image.png "Solution Explorer")
+
+4. In the **Task List** pane at the bottom of the Visual Studio window, double-click the `TODO 1` item, which will take you to the first `TODO` task.
+
+    ![TODO 1 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-1.png "Task List")
+
+5. Update the code on the line below the `TODO 1` comment, using the following code:
 
     ```csharp
     // **TODO 1: Set the licensePlateText value by awaiting a new FindLicensePlateText.GetLicensePlate method.**
-
     licensePlateText = await new FindLicensePlateText(log, _client).GetLicensePlate(licensePlateImage);
     ```
 
-6. Open **FindLicensePlateText.cs**. This class is responsible for contacting the Computer Vision API to find and extract the license plate text from the photo, using OCR. Notice that this class also shows how you can implement a resilience pattern using [Polly](https://github.com/App-vNext/Polly), an open source .NET library that helps you handle transient errors. This is useful for ensuring that you do not overload downstream services, in this case, the Computer Vision API. This will be demonstrated later on when visualizing the Function's scalability.
+6. Double-click `TODO 2` in the Task List to open the `FindLicensePlateText.cs` file.
+
+    > This class is responsible for contacting the Computer Vision service's Read API to find and extract the license plate text from the photo, using OCR. Notice that this class also shows how you can implement a resilience pattern using [Polly](https://github.com/App-vNext/Polly), an open source .NET library that helps you handle transient errors. This is useful for ensuring that you do not overload downstream services, in this case, the Computer Vision service. This will be demonstrated later on when visualizing the Function's scalability.
+
+    ![TODO 2 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-2.png "Task List")
 
 7. The following code represents the completed task in FindLicensePlateText.cs:
 
@@ -179,9 +241,13 @@ There are a few components within the starter project that must be completed, ma
     var apiKey = Environment.GetEnvironmentVariable("computerVisionApiKey");
     ```
 
-8. Open **SendToEventGrid.cs**. This class is responsible for sending an Event to the Event Grid topic, including the event type and license plate data. Event listeners will use the event type to filter and act on the events they need to process. Make note of the event types defined here (the first parameter passed into the Send method), as they will be used later on when creating new functions in the second Function App you provisioned earlier.
+8. Double-click `TODO 3` in the Task List to open `SendToEventGrid.cs`.
 
-9. The following code represents the completed tasks in `SendToEventGrid.cs`:
+    > This class is responsible for sending an Event to the Event Grid topic, including the event type and license plate data. Event listeners will use the event type to filter and act on the events they need to process. Make note of the event types defined here (the first parameter passed into the Send method), as they will be used later on when creating new functions in the second Function App you provisioned earlier.
+
+    ![TODO 3 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-3.png "Task List")
+
+9. `TODOs` 3 and 4 are next to each other in the `SendToEventGrid.cs` file, so use the following code to completed the two tasks in `SendToEventGrid.cs`:
 
     ```csharp
     // TODO 3: Modify send method to include the proper eventType name value for saving plate data.
@@ -191,9 +257,9 @@ There are a few components within the starter project that must be completed, ma
     await Send("queuePlateForManualCheckup", "TollBooth/CustomerService", data);
     ```
 
-    > **Note**: TODOs 5, 6, and 7 will be completed in later steps of the guide.
+    > **Note**: `TODOs` 5, 6, and 7 will be completed in later steps of the guide.
 
-### Task 5: Publish the Function App from Visual Studio
+### Task 4: Publish the Function App from Visual Studio
 
 In this task, you will publish the Function App from the starter project in Visual Studio to the existing Function App you provisioned in Azure.
 
@@ -209,55 +275,52 @@ In this task, you will publish the Function App from the starter project in Visu
 
     > **Note**: If you do not see the ability to publish to an Azure Function, you may need to update your Visual Studio instance.
 
-4. In the App Service form, select your **Subscription**, select **Resource Group** under **View**, then expand your **ServerlessArchitecture** resource group and select the Function App whose name ends with **FunctionApp**. Finally, **uncheck the `Run from package file` option**.
+4. In the App Service form, select your **Subscription**, select **Resource Group** under **View**, then expand your **hands-on-lab-SUFFIX** resource group and select the Function App whose name ends with **FunctionApp**. Finally, **uncheck the `Run from package file` option**.
 
 5. Whatever you named the Function App when you provisioned it is fine. Just make sure it is the same one to which you applied the Application Settings in Task 1 of this exercise.
 
     ![In the App Service form, Resource Group displays in the View field, and in the tree-view below, the ServerlessArchitecture folder is expanded, and TollBoothFunctionApp is selected.](media/vs-publish-function2.png 'Publish window')
 
-    > **Note**: We do not want to run from a package file, because when we deploy from GitHub later on, the build process will be skipped if the Function App is configured for a zip deployment.
+    > **Important**: We do not want to run from a package file, because when we deploy from GitHub later on, the build process will be skipped if the Function App is configured for a zip deployment.
 
 6. After you select the Function App, select **Finish**.
 
-    > **Note**: If prompted to update the functions version on Azure, select **Yes**.
-
 7. Select **Publish** to start the process. Watch the Output window in Visual Studio as the Function App publishes. When it is finished, you should see a message that says, `========== Publish: 1 succeeded, 0 failed, 0 skipped ==========`.
+
+    > **Note**: If prompted to update the functions version on Azure, select **Yes**.
 
     ![The Publish button is selected.](media/vs-publish-function3.png "Publish")
 
 8. Using a new tab or instance of your browser navigate to the Azure portal, <http://portal.azure.com>.
 
-9. Open the **ServerlessArchitecture** resource group, then select the Azure Function App to which you just published.
+9. Open the **hands-on-lab-SUFFIX** resource group, then select the **TollBoothFunctions** Azure Function App, to which you just published.
 
-10. Select **Functions** in the left-hand menu. You should see both functions you just published from the Visual Studio solution listed.
+10. Select **Functions** in the left-hand navigation menu. You should see both functions you just published from the Visual Studio solution listed.
 
     ![In the Function Apps blade, in the left tree-view both TollBoothFunctionApp, and Functions (Read Only) are expanded. Beneath Functions (Read Only), two functions ExportLicensePlates and ProcessImage are highlighted.](media/dotnet-functions.png 'TollBoothFunctionApp blade')
 
-11. Now we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to blob storage. Select the **ProcessImage** function, select **Integration** on the left-hand menu, select **Event Grid Trigger (eventGridEvent)**, then select **Create Event Grid subscription**.
+11. Now we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to the data lake storage container. Select the **ProcessImage** function, select **Integration** on the left-hand menu, select **Event Grid Trigger (eventGridEvent)**, and then select **Create Event Grid subscription**.
 
     ![In the TollboothFunctionApp tree-view, the ProcessImage function is selected. In the code window pane, the Add Event Grid subscription link is highlighted.](media/processimage-add-eg-sub.png 'ProcessImage function')
 
 12. On the **Create Event Subscription** blade, specify the following configuration options:
 
-    a. **Name**: Unique value for the App name similar to **processimagesub** (ensure the green check mark appears).
+    - **Name**: Enter a unique value, similar to **processimagesub** (ensure the green check mark appears).
+    - **Event Schema**: Select **Event Grid Schema**.
+    - **Topic Types**: Select **Storage Accounts (Blob & GPv2)**.
+    - **Subscription**: Select the subscription you are using for this hands-on lab.
+    - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
+    - **Resource**: Select your data lake storage account. This should be the only account listed, and will start with `datalake`.
+    - **System Topic Name**: Enter **processimagesubtopic**.
+    - **Filter to Event Types**: Select only the **Blob Created** from the event types dropdown list.
+    - **Endpoint Type**: Leave Azure Function as the Endpoint Type.
+    - **Endpoint**: Leave as ProcessImage.
 
-    b. **Event Schema**: Select Event Grid Schema.
+    ![In the Create event subscription form, the fields are set to the previously defined values.](media/process-image-sub-topic.png)
 
-    c. For **Topic Type**, select **Storage Accounts (Blob & GPv2)**.
+13. Select **Create**.
 
-    d. Select your **subscription** and **ServerlessArchitecture** resource group.
-
-    e. For resource, select your recently created storage account. Enter **processimagesubtopic** into the **System Topic Name** field.
-
-    f. Select only the **Blob Created** from the event types dropdown list.
-
-    g. Leave Azure Function as the Endpoint Type.
-
-13. Leave the remaining fields at their default values and select **Create**.
-
-    ![In the Create event subscription form, the fields are set to the previously defined values.](media/processimage-eg-sub.png)
-
-## Exercise 3: Create functions in the portal
+## Exercise 2: Create functions in the portal
 
 **Duration**: 45 minutes
 
