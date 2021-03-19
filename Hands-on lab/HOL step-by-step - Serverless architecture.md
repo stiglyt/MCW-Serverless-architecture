@@ -33,7 +33,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Requirements](#requirements)
   - [Exercise 1: Develop and publish the photo processing and data export functions](#exercise-1-develop-and-publish-the-photo-processing-and-data-export-functions)
     - [Help references](#help-references)
-  - [Task 1: Connect to the Lab VM](#task-1-connect-to-the-lab-vm)
+    - [Task 1: Connect to the Lab VM](#task-1-connect-to-the-lab-vm)
     - [Task 2: Open the starter solution in Visual Studio](#task-2-open-the-starter-solution-in-visual-studio)
     - [Task 3: Finish the ProcessImage function](#task-3-finish-the-processimage-function)
     - [Task 4: Publish the Function App from Visual Studio](#task-4-publish-the-function-app-from-visual-studio)
@@ -118,7 +118,7 @@ Use Visual Studio and its integrated Azure Functions tooling to develop and debu
 | **Description**                       | **Link**                                                              |
 | Code and test Azure Functions locally | <https://docs.microsoft.com/azure/azure-functions/functions-run-local> |
 
-## Task 1: Connect to the Lab VM
+### Task 1: Connect to the Lab VM
 
 In this task, you create an RDP connection to your Lab virtual machine (VM).
 
