@@ -100,6 +100,7 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
   - `cosmosDBAuthorizationKey`
   - `dataLakeConnectionString`
   - `eventGridTopicKey`
+- Azure Logic App
 
 > **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](./Manual-resource-setup.md).
 
