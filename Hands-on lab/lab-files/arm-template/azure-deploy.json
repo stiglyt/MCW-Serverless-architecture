@@ -289,7 +289,7 @@
       "name": "[variables('logicAppName')]",
       "type": "Microsoft.Logic/workflows",
       "apiVersion": "2019-05-01",
-      "identity": "[json('null')]",
+      "location": "[variables('location')]",
       "properties": {
           "parameters": {},
           "state": "Enabled",
