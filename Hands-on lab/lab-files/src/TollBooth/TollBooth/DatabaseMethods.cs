@@ -41,6 +41,7 @@ namespace TollBooth
                 // MaxItemCount value tells the document query to retrieve 100 documents at a time until all are returned.
                 // TODO 5: Retrieve a List of LicensePlateDataDocument objects from the collectionLink where the exported value is false.
                 // COMPLETE: licensePlates = _client.CreateDocumentQuery ...
+                
                 // TODO 6: Remove the line below.
                 licensePlates = new List<LicensePlateDataDocument>();
             }

@@ -744,7 +744,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
 **Duration**: 40 minutes
 
-In this exercise, configure your Function App that contains the ProcessImage function for continuous deployment. You will first set up a GitHub source code repository, then set that as the deployment source for the Function App.
+In this exercise, configure your Function App that contains the ProcessImage function for continuous deployment. You will first set up a GitHub source code repository and then set that as the Function App's deployment source.
 
 ### Help references
 
@@ -756,119 +756,163 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 ### Task 1: Add git repository to your Visual Studio solution and deploy to GitHub
 
-1. Open the **TollBooth** project in Visual Studio.
+1. Return to the LabVM and in Visual Studio and select the **Git** menu item and then **Settings**.
 
-2. Right-click the **TollBooth** solution in Solution Explorer, then select **Create Git Repository...**.
+2. In the **Options** dialog, ensure you are on the **Git Global Settings** tab under Source Control and enter your GitHub user name and email address into the `User name` and `Email` fields and then select **OK**
+
+    ![The Visual Studio Git Global Settings page is displayed with the user name and email fields highlighted.](media/git-global-settings.png "Git Global Settings")
+
+3. Next, look below the Solution Explorer and select the **Git Changes** tab.
+
+    ![The Git Changes tab is highlighted below the Solution Explorer pane in Visual Studio.](media/git-changes-tab.png "Git Changes")
+
+4. On the Git Changes panel, select **Create Git Repository...**.
 
     ![In Solution Explorer, TollBooth solution is selected. From its right-click context menu, the Create Git Repository item is selected.](media/vs-create-git-repo.png 'Solution Explorer')
 
-3. Click **Sign in...** next to Account under `Create a new GitHub repository`, then select GitHub account.
+5. Select **Sign in...** next to Account under `Create a new GitHub repository`, then select GitHub account.
 
     ![The sign in button is highlighted.](media/vs-create-git-repo-sign-in.png "Create a Git repository")
 
-4. In the web page that appears, select **Authorize github** to grant Visual Studio additional permissions to work with your GitHub account.
+6. In the web page that appears, select **Authorize github** to grant Visual Studio additional permissions to work with your GitHub account.
+
+    > **Note**: If you did not make Microsoft Edge the default browser on the LabVM, the Authorize github button will be disabled. You will need to enter **Default apps** into the Windows Search bar and change the default web browser to Microsoft Edge.
 
     ![The authorize github button is highlighted.](media/vs-create-git-repo-allow.png "Allow additional permissions")
 
-5. Sign in to your GitHub account. After a few moments, you will see a Success page appear, stating that your authorization was successful. When you see this, go back to Visual Studio.
+7. Sign in to your GitHub account. After a few moments, you will see a Success page appear, stating that your authorization was successful. When you see this, go back to Visual Studio.
 
     ![The success page is displayed.](media/vs-github-auth-successful.png "Your authorization was successful")
 
-6. Complete the form with the following information, then click **Create and Publish**:
+8. On the Create a Git repository dialog, select the browse button next to the **Local path** field to change the directory.
 
-    a. **Repository Name**: Enter `serverless-architecture-lab`, or other unique name.
+    ![The browse button is highlighted next to the local path for the GitHub repo.](media/create-a-git-repo-browse.png "Change local path")
 
-    b. **Private**: Uncheck this option.
+9. In the Browse dialog, select the `TollBooth` folder with the `TollBooth` folder. This will select only the **TollBooth** project to add to source control and exclude the **UploadImages** project.
+
+    ![In the Browse dialog, the TollBooth/TollBooth folder is highlighted.](media/browse-tollbooth.png "Browse")
+
+10. Complete the form with the following information:
+
+    - **Repository Name**: Enter `serverless-architecture-lab`.
+    - **Private**: Uncheck this option.
 
     ![The form is completed as described.](media/vs-create-git-repo-create.png "Create a Git repository")
 
-7. Refresh your GitHub repository page in your browser. You should see that the project files have been added. Navigate to the **TollBooth** folder of your repo. Notice that the local.settings.json file has not been uploaded. That's because the .gitignore file of the TollBooth project explicitly excludes that file from the repository, making sure you don't accidentally share your application secrets.
+11. Select **Create and Push**.
+
+12. Refresh your GitHub repository page in your browser. You should see that the project files have been added. Navigate to the **TollBooth** folder of your repo. Notice that the local.settings.json file has not been uploaded. That's because the .gitignore file of the TollBooth project explicitly excludes that file from the repository, making sure you don't accidentally share your application secrets.
 
     ![On the GitHub Repository webpage for serverless-architecture-lab, on the Code tab, the project files are displayed.](media/github-repo-page.png 'GitHub Repository page')
 
 ### Task 2: Configure your Function App to use your GitHub repository for continuous deployment
 
-1. Open the Azure Function App you created whose name ends with **FunctionApp**, or the name you specified for the Function App containing the ProcessImage function.
+1. In the [Azure portal](https://portal.azure.com), navigate to the **hands-on-lab-SUFFIX** resource group.
 
-2. Select **Deployment Center** underneath Deployment in the left-hand menu.
+   > You can get to the resource group by selecting **Resource groups** under **Azure services** on the Azure portal home page and then select the resource group from the list. If there are many resource groups in your Azure account, you can filter the list for **hands-on-lab** to reduce the resource groups listed.
 
-    ![The Platform features tab is displayed, under Code Deployment, Container settings is selected.](media/functionapp-menu-deployment-center-link.png 'TollBoothFunctionApp blade')
+2. On your resource group blade, select the **TollBoothFunctions** Function App resource in the resource group's list of services available.
 
-3. Select **GitHub** in the **Deployment Center** blade. Enter your GitHub credentials if prompted. Select **Continue**.
+3. Select **Deployment Center** under Deployment in the left-hand navigation menu.
 
-    ![The GitHub tile is selected from a list of repository options.](media/functionapp-dc-github.png 'Deployment Center blade')
+    ![The Platform features tab is displayed, under Code Deployment, Container settings is selected.](media/functionapp-menu-deployment-center-link.png 'TollBoothFunctions blade')
 
-4. Select **App Service build service**, then select **Continue**.
+4. Select **Go to Settings**.
 
-    ![Under the Build Provider step, App Service build service tile is selected.](media/functionapp-dc-build-provider.png 'Deployment Center blade')
+    ![The Go to Settings button is highlighted on the Deployment Center blade.](media/go-to-settings-ci-cd.png "Go to Settings")
 
-5. **Choose your organization**.
+5. Select the **Source** drop-down list and choose **GitHub** from the list.
 
-6. Choose your new repository under **Choose project**. Make sure the **master branch** is selected.
+    ![GitHub is highlighted in the select code source drop-down list.](media/deployment-center-select-code-source.png "Select code source")
 
-    ![Fields in the Deployment option blade set to the following settings: Choose your organization, obscured; Choose repository, serverless-architecture-lab; Choose branch, master.](media/functionapp-dc-configure.png 'Deployment Center blade')
+6. Select **Authorize** and enter your GitHub credentials.
 
-7. Select **Continue**.
+    ![The Authorize button is highlighted under GitHub in the Deployment Center.](media/deployment-center-github-authorize.png "GitHub Authorize")
 
-8. On the Summary page, select **Finish**.
+7. On the Authorize Azure App Service page, select **Authorize AzureAppService** and enter your password if prompted.
 
-9. After continuous deployment is configured, all file changes in your deployment source are copied to the function app and a full site deployment is triggered. The site is redeployed when files in the source are updated.
+    ![The Authorize Azure App Service button is highlighted.](media/authorize-azure-app-service.png "Authorize Azure App Service")
 
-    ![The Deployment Center tab is shown with a pending build.](media/functionapp-dc.png 'Function App Deployment Center')
+8. After your account authorizes, you can configure the following to connect to your GitHub repo:
+
+    - **Organization**: Select the GitHub account organization in which you created the repo.
+    - **Repository**: Select the **serverless-architecture-lab**, or whatever name you chose for the repo.
+    - **Branch**: Select **master**.
+    - **Runtime stack**: Leave set to .NET.
+    - **Version**: Leave set to .NET Core 3.1.
+
+    ![The GitHub settings specified above are entered into the Settings dialog.](media/deployment-center-github-settings.png "GitHub settings")
+
+9. Select **Save**.
 
 ### Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment
 
-1. Navigate to the **TollBooth** project using the Solution Explorer of Visual Studio.
+1. Return to the LabVM and within Visual Studio navigate to the **TollBooth** project using the Solution Explorer.
 
 2. From the Visual Studio **View** menu, select **Task List**.
 
-    ![Task List is selected from the Visual Studio View menu.](media/image37.png 'Visual Studio View menu')
+    ![Task List is selected from the Visual Studio View menu.](media/vs-task-list.png 'Visual Studio View menu')
 
-3. There you will see a list of TODO tasks, where each task represents one line of code that needs to be completed.
+3. In the **Task List** pane at the bottom of the Visual Studio window, double-click the `TODO 5` item, which will take you to the associated `TODO` task.
 
-4. Open **DatabaseMethods.cs**.
+    ![TODO 5 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-5.png "Task List")
 
-5. The following code represents the completed task in DatabaseMethods.cs:
+4. In the **DatabaseMethods.cs** file that is opened, update the code on the line below the `TODO 5` comment, using the following code:
 
     ```csharp
-        // TODO 5: Retrieve a List of LicensePlateDataDocument objects from the collectionLink where the exported value is false.
-        licensePlates = _client.CreateDocumentQuery<LicensePlateDataDocument>(collectionLink,
-                new FeedOptions() { EnableCrossPartitionQuery=true,MaxItemCount = 100 })
-            .Where(l => l.exported == false)
-            .ToList();
-        // TODO 6: Remove the line below.
+    // TODO 5: Retrieve a List of LicensePlateDataDocument objects from the collectionLink where the exported value is false.
+    licensePlates = _client.CreateDocumentQuery<LicensePlateDataDocument>(collectionLink,
+            new FeedOptions() { EnableCrossPartitionQuery=true,MaxItemCount = 100 })
+        .Where(l => l.exported == false)
+        .ToList();
     ```
 
-6. Make sure that you deleted the following line under TODO 6: `licensePlates = new List<LicensePlateDataDocument>();`.
+5. Next, return to the `TODO` list and double-click `TODO 6`.
 
-7. Save your changes then open **FileMethods.cs**.
+    ![TODO 6 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-6.png "Task List")
 
-8. The following code represents the completed task in DatabaseMethods.cs:
+6. This is immediately below the `TODO 5` code you just updated. For this one, delete the line of code below the `// TODO 6` comment.
 
     ```csharp
-    // TODO 7: Asyncronously upload the blob from the memory stream.
+    // TODO 6: Remove the line below.
+    ```
+
+7. Make sure that you deleted the following line under `TODO 6`: `licensePlates = new List<LicensePlateDataDocument>();`.
+
+8. Save your changes to the **DatabaseMethods.cs** file.
+
+9. Return to the `TODO` list and double-click `TODO 7`.
+
+    ![TODO 7 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-7.png "Task List")
+
+10. In the **FileMethods.cs** file that is opened, update the code on the line below the `TODO 7` comment, using the following code:
+
+    ```csharp
+    // TODO 7: Asynchronously upload the blob from the memory stream.
     await blob.UploadFromStreamAsync(stream);
     ```
 
-9. Save your changes.
+11. Save your changes to the **FileMethods.cs** file.
 
-10. Click the **Git** menu in Visual Studio, then select **Commit or Stash...**.
+12. Select the **Git** menu in Visual Studio and then select **Commit or Stash...**.
 
     ![The Git menu is displayed.](media/vs-commit-or-stash.png "Commit or Stash")
 
-11. Enter a commit message, then select **Commit All**.
+13. Enter a commit message, then select **Commit All**.
 
     ![In the Team Explorer - Changes window, "Finished the ExportLicensePlates function" displays in the message box, and the Commit All button is selected.](media/vs-git-commit-all.png 'Team Explorer - Changes window')
 
-12. After committing, select the **Push** button to push your changes to the GitHub repo.
+    > **Note**: You may receive a message that your local copy is behind the master branch. If you get this, select **Pull and Push** to sync the repos and commit your changes.
+
+14. After committing, select the **Push** button to push your changes to the GitHub repo.
 
     ![The Push button is highlighted.](media/vs-git-push.png "Push changes")
 
-    Afterward, you should see a message stating that you successfully pushed your changes to the GitHub repository.
+15. Afterward, you should see a message stating that you successfully pushed your changes to the GitHub repository.
 
     ![The message is displayed.](media/vs-git-push-success.png "Successfully pushed")
 
-13. Go back to Deployment Center for your Function App in the portal. You should see an entry for the deployment kicked off by this last commit. Check the timestamp on the message to verify that you are looking at the latest one. **Make sure the deployment completes before continuing**.
+16. Go back to Deployment Center for your Function App in the portal. You should see an entry for the deployment kicked off by this last commit. Check the timestamp on the message to verify that you are looking at the latest one. **Make sure the deployment completes before continuing**.
 
     ![The latest deployment is displayed in the Deployment Center.](media/functionapp-dc-latest.png 'Deployment Center')
 
@@ -880,23 +924,23 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
 ### Task 1: Run the Logic App
 
-1. Open your hands-on-lab-SUFFIX resource group in the Azure portal, then select your Logic App.
+1. Open your **hands-on-lab-SUFFIX** resource group in the Azure portal, then select your **logicapp** Logic App resource from the list.
 
-2. From the **Overview** blade, select **Enable**.
+2. From the **Overview** blade, select **Enable** (if you disabled the Logic App previously).
 
     ![In the TollBoothLogic Logic app blade, Overview is selected in the left menu, and the Enable enable button is selected in the right pane.](media/image113.png 'TollBoothLogic blade')
 
-3. Now select **Run Trigger**, then select **Recurrence** to immediately execute your workflow.
+3. Now select **Run Trigger**, then select **Recurrence** to execute your workflow immediately.
 
     ![In the TollBoothLogic Logic app blade, Run Trigger and Recurrence are selected.](media/image114.png 'TollBoothLogic blade')
 
-4. Select the **Refresh** button next to the Run Trigger button to refresh your run history. Select the latest run history item. If the expression result for the condition is **true**, then that means the CSV file should've been exported to Blob storage. Be sure to disable the Logic App so it doesn't keep sending you emails every 15 minutes. Please note that it may take longer than expected to start running, in some cases.
+4. Select the **Refresh** button next to the Run Trigger button to refresh your run history. Select the latest run history item. If the expression result for the condition is **true**, then that means the CSV file should've been exported to data lake storage. Be sure to disable the Logic App, so it doesn't keep sending you emails every 15 minutes. Please note that it may take longer than expected to start running in some cases.
 
     ![In Logic App Designer, in the Condition section, under Inputs, true is highlighted.](media/image115.png 'Logic App Designer ')
 
 ### Task 2: View the exported CSV file
 
-1. Open your hands-on-lab-SUFFIX resource group in the Azure portal, then select your **Storage account** you had provisioned to store uploaded photos and exported CSV files.
+1. Open your **hands-on-lab-SUFFIX** resource group in the Azure portal, then select the **datalake** Storage account resource you provisioned to store uploaded photos and exported CSV files.
 
 2. In the Overview pane of your storage account, select **Containers**.
 
@@ -914,11 +958,11 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
     ![In the Blob properties blade, the Download button is selected.](media/blob-download.png 'Blob properties blade')
 
-    The CSV file should look similar to the following:
+6. The CSV file should look similar to the following:
 
     ![A CSV file displays with the following columns: FileName, LicensePlateText, TimeStamp, and LicensePlateFound.](media/csv.png 'CSV file')
 
-6. The ExportLicensePlates function updates all of the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. Verify this by re-executing the script in Azure Cosmos DB that counts the number of documents in the Processed collection where exported is false. It should return 0 unless you've subsequently uploaded new photos.
+7. The ExportLicensePlates function updates all of the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. Verify this by re-executing the script in Azure Cosmos DB that counts the number of documents in the Processed collection where exported is false. It should return 0 unless you've subsequently uploaded new photos.
 
 ## After the hands-on lab
 
