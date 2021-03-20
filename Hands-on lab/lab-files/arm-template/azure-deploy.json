@@ -291,11 +291,15 @@
       "apiVersion": "2019-05-01",
       "location": "[variables('location')]",
       "properties": {
-          "parameters": {},
-          "state": "Enabled",
-          "sku": {
-            "name": "Standard"
-          }
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {},
+        "state": "Enabled",
+        "sku": {
+          "name": "Standard"
+        }
       }
     },
     {
