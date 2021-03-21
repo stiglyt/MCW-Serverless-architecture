@@ -15,7 +15,7 @@ function Disable-InternetExplorerESC {
 Disable-InternetExplorerESC
 
 # Download and extract the starter solution files
-Invoke-WebRequest 'https://github.com/kylebunting/MCW-Serverless-architecture/archive/master.zip' -OutFile 'C:\MCW.zip'
+Invoke-WebRequest 'https://github.com/microsoft/MCW-Serverless-architecture/archive/master.zip' -OutFile 'C:\MCW.zip'
 Expand-Archive -LiteralPath 'C:\MCW.zip' -DestinationPath 'C:\ServerlessMCW' -Force
 
 # Download and istall Microsoft Edge
