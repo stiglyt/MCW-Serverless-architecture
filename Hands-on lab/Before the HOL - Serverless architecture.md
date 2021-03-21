@@ -146,13 +146,7 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
 
    ![On the Review + create blade for the custom deployment, the Validation passed message is highlighted, and the Create button is highlighted.](media/azure-custom-deployment-review-create.png "Review + create custom deployment")
 
-8. You can monitor the deployment's progress on the **Deployment** blade that opens when you start the ARM template deployment. When the deployment completes, select **Outputs** from the left-hand menu.
-
-   ![The Microsoft Template Deployment page is displayed, and the Outputs item is highlighted in the left-hand menu.](media/microsoft-template-deployment.png "Template deployment")
-
-9.  The deployment **Outputs** page contains the output values from running the deployment, including the endpoints for various services and the **Secret Uris** for the secrets added to Key Vault. Leave this page open for the next task, as you will be copying the **Secret Uri** values into the configuration for one of the Azure Function Apps.
-
-   ![The Outputs page of the template deployment is displayed. Outputs is selected and highlighted in the left-hand menu, and the four secret Uri values are highlighted in the list of outputs.](media/microsoft-template-deployment-outputs.png "Deployment outputs")
+8. You can monitor the deployment's progress on the **Deployment** blade that opens when you start the ARM template deployment.
 
 ### Task 3: Add your IP address to the Cosmos DB firewall
 
