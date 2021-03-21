@@ -399,7 +399,7 @@
             },
             {
               "name": "computerVisionApiKey",
-              "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('cosmosDbAuthKeySecretName'))).secretUriWithVersion, ')')]"
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('computerVisionSecretName'))).secretUriWithVersion, ')')]"
             },
             {
               "name": "cosmosDBEndpointUrl",
