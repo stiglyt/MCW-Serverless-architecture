@@ -218,33 +218,39 @@ As a stretch goal, Contoso would like to know that the license processing pipeli
 
 ### Customer needs
 
-1. Replace manual process with a reliable, automated solution using serverless components.
+1. Replace its manual process with a reliable, automated solution using serverless components.
 
-2. Take advantage of a machine learning service that would allow them to accurately detect license plate numbers without needing artificial intelligence expertise.
+2. Take advantage of a machine learning service that would accurately detect license plate numbers without needing artificial intelligence expertise.
 
-3. Mechanism for manually entering license plate images that could not be processed.
+3. Provide a mechanism to manually enter license plate data from images that failed processing with the automated system.
 
 4. Have a solution that can scale to any number of cars that pass through all toll booths, handling unforeseen traffic conditions that cause unexpected spikes in processed images.
 
-5. Establish an automated workflow that periodically exports processed license plate data on a regular interval, and sends an alert email when no items are exported.
+5. Establish an automated workflow that periodically exports processed license plate data on a regular interval and sends an alert email when no items are exported.
 
-6. Would like to locally develop the serverless components and establish an automated deployment pipeline from source control.
+6. Would like to develop the serverless components locally and establish an automated deployment pipeline from source control.
 
-7. Use a monitoring dashboard that can provide a real-time view of serverless components, historical telemetry data for deeper analysis, and supports custom alerts.
+7. Use a monitoring dashboard that can provide a real-time view of serverless components, historical telemetry data for deeper analysis and supports custom alerts.
 
 8. Design an extensible solution that could support serverless batch and real-time analytics, as well as other scenarios in the future.
+
+9. **Need about API Management**
 
 ### Customer objections
 
 1. We are concerned about how individual serverless components will be able to "talk" to each other and reliably pass messages through the pipeline.
 
-2. Will a serverless architecture that has the capacity to infinitely scale put us at risk for huge monthly bills?
+2. Will a serverless architecture that can infinitely scale put us at risk for substantial monthly bills?
 
-3. How do we make sure that erroneous image processing does not make certain toll bills fall through the cracks or, even worse, send a bill to the wrong person?
+3. How do we make sure that erroneous image processing does not make specific toll bills fall through the cracks or, even worse, send an invoice to the wrong person?
 
-4. Is it possible to add a secure API that allows our customers to retrieve information about their vehicles plus captured photos? How do we protect our system from unauthorized access or an excessive number of requests?
+4. Is it possible to add a secure API that allows our customers to retrieve information about their vehicles plus captured photos? **How do we protect our system from unauthorized access or an excessive number of requests? How can we stay on top of our API inventory and manage discoverability, security, lifecycle, and monitoring into the future? Is there something we could use to develop a proof of concept quickly?**
 
 5. What is our best option to protect application secrets, such as connection strings, from being viewed by unauthorized users in the portal?
+
+6. **When to use Logics App versus Azure Functions? Help use understand when to use what.**
+
+7. We have read about the possibility of increased latency due to **cold starts** when using Azure Functions... TODO: Figure out exactly what this questions should be.
 
 ### Infographic for common scenarios
 
