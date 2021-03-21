@@ -2,6 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.3.0.0",
   "parameters": {
+    "signedInUserObjectId": {
+      "type": "string",
+      "metadata":{
+        "description": "The Object Id associated with the account you used to sign into the Azure portal. Retrieve this using the Azure CLI and 'az ad signed-in-user show --query objectId -o tsv'."
+      }
+    },
     "vmUsername": {
       "defaultValue": "demouser",
       "type": "string",
@@ -74,11 +80,30 @@
         "tenantId": "[subscription().tenantId]",
         "accessPolicies": [
           {
+            "objectId": "[parameters('signedInUserObjectId')]",
+            "permissions": {
+              "secrets": ["all"]
+            },
+            "tenantId": "[subscription().tenantId]"
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(variables('keyVaultName'), '/add')]",
+      "type": "Microsoft.KeyVault/vaults/accessPolicies",
+      "apiVersion": "2019-09-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+      ],
+      "properties": {
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
             "objectId": "[reference(resourceId('Microsoft.Web/sites', variables('tollBoothFunctionAppName')), '2019-08-01', 'Full').identity.principalId]",
             "permissions": {
               "secrets": ["get"]
-            },
-            "tenantId": "[subscription().tenantId]"
+            }
           }
         ]
       }
@@ -296,80 +321,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {},
-        "state": "Enabled",
-        "sku": {
-          "name": "Standard"
-        }
+        "triggers": {},
+        "actions": {}
       }
-    },
-    {
-      "name": "[variables('vmName')]",
-      "type": "Microsoft.Compute/virtualMachines",
-      "apiVersion": "2020-06-01",
-      "location": "[variables('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces/', variables('vmNetworkInterfaceName'))]"
-      ],
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "[variables('vmSize')]"
-        },
-        "storageProfile": {
-          "osDisk": {
-            "createOption": "FromImage",
-            "managedDisk": {
-              "storageAccountType": "Premium_LRS"
-            }
-          },
-          "imageReference": {
-            "publisher": "microsoftvisualstudio",
-            "offer": "visualstudio2019latest",
-            "sku": "vs-2019-comm-latest-ws2019",
-            "version": "latest"
-          }
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNetworkInterfaceName'))]"
-            }
-          ]
-        },
-        "osProfile": {
-          "computerName": "[variables('vmName')]",
-          "adminUsername": "[parameters('vmUsername')]",
-          "adminPassword": "[parameters('vmPassword')]",
-          "windowsConfiguration": {
-            "enableAutomaticUpdates": true,
-            "provisionVmAgent": true
-          }
-        }
-      },
-      "resources": [
-        {
-          "name": "SetupLabVm",
-          "type": "extensions",
-          "apiVersion": "2020-06-01",
-          "location": "[variables('location')]",
-          "properties": {
-            "publisher": "Microsoft.Compute",
-            "type": "CustomScriptExtension",
-            "protectedSettings": {},
-            "typeHandlerVersion": "1.9",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "fileUris": ["[variables('vmCustomScriptUri')]"],
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('vmCustomScriptFileName'))]"
-            }
-          },
-          "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
-          ],
-          "tags": {
-            "displayName": "SetupLabVm"
-          }
-        }
-      ]
     },
     {
       "type": "Microsoft.Insights/components",
@@ -445,7 +399,7 @@
             },
             {
               "name": "computerVisionApiKey",
-              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{computerVisionApiKeySecretUri}', ')')]"
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('cosmosDbAuthKeySecretName'))).secretUriWithVersion, ')')]"
             },
             {
               "name": "cosmosDBEndpointUrl",
@@ -453,7 +407,7 @@
             },
             {
               "name": "cosmosDBAuthorizationKey",
-              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{cosmosDBAuthorizationKeySecretUri}', ')')]"
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('cosmosDbAuthKeySecretName'))).secretUriWithVersion, ')')]"
             },
             {
               "name": "cosmosDBDatabaseId",
@@ -465,7 +419,7 @@
             },
             {
               "name": "dataLakeConnection",
-              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{dataLakeConnectionSecretUri}', ')')]"
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('dataLakeConnectionSecretName'))).secretUriWithVersion, ')')]"
             },
             {
               "name": "eventGridTopicEndpoint",
@@ -473,7 +427,7 @@
             },
             {
               "name": "eventGridTopicKey",
-              "value": "[concat('@Microsoft.KeyVault(SecretUri=', '{eventGridTopicKeySecretUri}', ')')]"
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('eventGridTopicKeySecretName'))).secretUriWithVersion, ')')]"
             },
             {
               "name": "exportCsvContainerName",
@@ -571,6 +525,75 @@
       }
     },
     {
+      "name": "[variables('vmName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2020-06-01",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces/', variables('vmNetworkInterfaceName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('vmSize')]"
+        },
+        "storageProfile": {
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            }
+          },
+          "imageReference": {
+            "publisher": "microsoftvisualstudio",
+            "offer": "visualstudio2019latest",
+            "sku": "vs-2019-comm-latest-ws2019",
+            "version": "latest"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNetworkInterfaceName'))]"
+            }
+          ]
+        },
+        "osProfile": {
+          "computerName": "[variables('vmName')]",
+          "adminUsername": "[parameters('vmUsername')]",
+          "adminPassword": "[parameters('vmPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": true,
+            "provisionVmAgent": true
+          }
+        }
+      },
+      "resources": [
+        {
+          "name": "SetupLabVm",
+          "type": "extensions",
+          "apiVersion": "2020-06-01",
+          "location": "[variables('location')]",
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "protectedSettings": {},
+            "typeHandlerVersion": "1.9",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": ["[variables('vmCustomScriptUri')]"],
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('vmCustomScriptFileName'))]"
+            }
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+          ],
+          "tags": {
+            "displayName": "SetupLabVm"
+          }
+        }
+      ]
+    },
+    {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "apiVersion": "2020-06-01",
@@ -656,6 +679,10 @@
     }
   ],
   "outputs": {
+    "ComputerVisionEndpoint": {
+      "type": "string",
+      "value": "[concat(reference(concat('Microsoft.CognitiveServices/accounts/', variables('computerVisionName'))).endpoint, 'vision/v3.0/ocr')]"
+    },
     "CosmosDbEndpoint": {
       "type": "string",
       "value": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbAccountName'))).documentEndpoint]"
@@ -664,9 +691,9 @@
       "type": "string",
       "value": "[reference(concat('Microsoft.EventGrid/topics/', variables('eventGridTopicName'))).endpoint]"
     },
-    "ComputerVisionEndpoint": {
+    "ComputerVisionKeySecretUri": {
       "type": "string",
-      "value": "[concat(reference(concat('Microsoft.CognitiveServices/accounts/', variables('computerVisionName'))).endpoint, 'vision/v3.0/ocr')]"
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('computerVisionSecretName'))).secretUriWithVersion]"
     },
     "CosmosDbAuthKeySecretUri": {
       "type": "string",
@@ -675,10 +702,6 @@
     "DataLakeConnectionSecretUri": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('dataLakeConnectionSecretName'))).secretUriWithVersion]"
-    },
-    "ComputerVisionKeySecretUri": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), variables('computerVisionSecretName'))).secretUriWithVersion]"
     },
     "EventGridTopicKeySecretUri": {
       "type": "string",

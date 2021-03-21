@@ -29,7 +29,8 @@ The names of manufacturers, products, or URLs are provided for informational pur
     - [Task 2: Run ARM template to provision lab resources](#task-2-run-arm-template-to-provision-lab-resources)
     - [Task 3: Configure application settings on the ToolBoothFunctions Function App](#task-3-configure-application-settings-on-the-toolboothfunctions-function-app)
     - [Task 4: Add your IP address to the Cosmos DB firewall](#task-4-add-your-ip-address-to-the-cosmos-db-firewall)
-    - [Task 5: Create a GitHub account](#task-5-create-a-github-account)
+    - [Task 5: Set the default web browser to Microsoft Edge on the Lab VM](#task-5-set-the-default-web-browser-to-microsoft-edge-on-the-lab-vm)
+    - [Task 6: Create a GitHub account](#task-6-create-a-github-account)
 
 # Serverless architecture before the hands-on lab setup guide
 
@@ -42,7 +43,7 @@ The names of manufacturers, products, or URLs are provided for informational pur
 
 ## Before the hands-on lab
 
-**Duration**: 15 minutes
+**Duration**: 20 minutes
 
 In this exercise, you set up your environment for use in the rest of the hands-on lab. You should follow all steps provided _before_ attending the hands-on lab.
 
@@ -95,12 +96,12 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
 - Application Insights
 - Azure Computer Vision service
 - Azure Event Grid Topic
+- Azure Logic App
 - Azure Key Vault plus secrets for:
   - `computerVisionApiKey`
   - `cosmosDBAuthorizationKey`
   - `dataLakeConnectionString`
   - `eventGridTopicKey`
-- Azure Logic App
 
 > **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](./Manual-resource-setup.md).
 
@@ -113,30 +114,47 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
       <img src="http://azuredeploy.net/deploybutton.png"/>
    </a>
 
-2. On the custom deployment screen in the Azure portal, enter the following:
+2. On the custom deployment screen, the first parameter you need to populate is the `ObjectId` associated with the account you used to log into the Azure portal. To retrieve this, select the **Cloud Shell** icon on the Azure portal toolbar to open an Azure command line interface (CLI) terminal window at the bottom of your open browser window.
+
+   ![The Cloud Shell icon is highlighted on the Azure portal toolbar.](media/azure-toolbar-cloud-shell.png "Azure toolbar")
+
+3. In the PowerShell terminal window that opens in the Azure portal, enter the following command at the prompt:
+
+   ```powershell
+   az ad signed-in-user show --query objectId -o tsv
+   ```
+
+   ![At the cloud shell prompt, the az ad signed-in-user show command is entered and highlighted.](media/azure-cli-az-ad-signed-in-user-show.png "Azure CLI")
+
+4. Execute the command and copy the output value.
+
+   ![In the cloud shell, the output from the az ad signed-in-user show command is highlighted.](media/azure-cli-az-ad-signed-in-user-show-output.png "Azure CLI")
+
+5. Now, on the custom deployment screen in the Azure portal, enter the following:
 
    - **Subscription**: Select the subscription you are using for this hands-on lab.
    - **Resource group**: Select the hands-on-lab-SUFFIX resource group from the dropdown list.
+   - **Signed In User Object Id**: Paste the value you copied above from the cloud shell terminal command output.
    - **Vm Username**: Accept the default value, **demouser**.
    - **Vm Password**: Accept the default value, **Password.1!!**.
 
    ![The Custom deployment blade is displayed, and the information above is entered on the Custom deployment blade.](media/azure-custom-deployment.png "Custom deployment blade")
 
-3. Select **Review + create** to review the custom deployment.
+6. Select **Review + create** to review the custom deployment.
 
    > **Note**: The ARM template will append a hyphen followed by a 13-digit string at the end of resource names. This suffix ensures globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
 
-4. On the Review + create blade, ensure the _Validation passed_ message is displayed and then select **Create** to begin the custom deployment.
+7. On the Review + create blade, ensure the _Validation passed_ message is displayed and then select **Create** to begin the custom deployment.
 
    > **Note**: The deployment of the custom ARM template should finish in about 5 minutes.
 
    ![On the Review + create blade for the custom deployment, the Validation passed message is highlighted, and the Create button is highlighted.](media/azure-custom-deployment-review-create.png "Review + create custom deployment")
 
-5. You can monitor the deployment's progress on the **Deployment** blade that opens when you start the ARM template deployment. When the deployment completes, select **Outputs** from the left-hand menu.
+8. You can monitor the deployment's progress on the **Deployment** blade that opens when you start the ARM template deployment. When the deployment completes, select **Outputs** from the left-hand menu.
 
    ![The Microsoft Template Deployment page is displayed, and the Outputs item is highlighted in the left-hand menu.](media/microsoft-template-deployment.png "Template deployment")
 
-6. The deployment **Outputs** page contains the output values from running the deployment, including the endpoints for various services and the **Secret Uris** for the secrets added to Key Vault. Leave this page open for the next task, as you will be copying the **Secret Uri** values into the configuration for one of the Azure Function Apps.
+9.  The deployment **Outputs** page contains the output values from running the deployment, including the endpoints for various services and the **Secret Uris** for the secrets added to Key Vault. Leave this page open for the next task, as you will be copying the **Secret Uri** values into the configuration for one of the Azure Function Apps.
 
    ![The Outputs page of the template deployment is displayed. Outputs is selected and highlighted in the left-hand menu, and the four secret Uri values are highlighted in the list of outputs.](media/microsoft-template-deployment-outputs.png "Deployment outputs")
 
@@ -220,7 +238,60 @@ In this task, you copy the Secret Uri values from the ARM template deployment's 
 
 5. Select **Save**.
 
-### Task 5: Create a GitHub account
+### Task 5: Set the default web browser to Microsoft Edge on the Lab VM
+
+In this task, you create an RDP connection to your Lab virtual machine (VM) and change the default web browser to Microsoft Edge. This will ensure Microsoft Edge is used when launching a web browser from Visual Studio and prevent the functionality issues encountered if using Internet Explorer.
+
+1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
+
+   ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
+
+2. Select the **hands-on-lab-SUFFIX** resource group from the list.
+
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
+
+3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
+
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
+
+4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
+
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
+
+5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
+
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
+
+6. Select **Connect** on the Remote Desktop Connection dialog.
+
+   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection.png "Remote Desktop Connection dialog")
+
+7. Enter the following credentials when prompted, and then select **OK**:
+
+   - **User name**: demouser
+   - **Password**: Password.1!!
+
+   ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials.png "Enter your credentials")
+
+8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
+
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+
+9. Once logged in, select the **Search** icon on the start bar, enter **default apps** into the search box, and select **Default apps** in the search results.
+
+    ![The search icon is highlighted on the Windows start bar. In the search dialog, "default apps" is entered into the search box and highlighted. In the search results, Default apps is highlighted.](media/search-default-apps.png "Windows Search")
+
+10. In the Default apps dialog, select **Internet Explorer** under **Web browser**.
+
+    ![In the Default apps dialog, Internet Explorer is highlighted under Web browser.](media/default-apps-web-browser.png "Default apps")
+
+11. In the **Choose an app** dialog, select **Microsoft Edge**
+
+    ![In the Choose an App dialog, Microsoft Edge is highlighted.](media/default-apps-web-browser-choose-an-app.png "Choose an app")
+
+12. Close the **Default apps** dialog**.
+
+### Task 6: Create a GitHub account
 
 In this task, you sign up for a free GitHub account, which is used for hosting a copy of the sample application used throughout this lab. This account will be integrated into the CI/CD workflow for pushing updates to the Function Apps in Azure.
 
