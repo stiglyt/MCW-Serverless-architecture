@@ -29,7 +29,6 @@ The names of manufacturers, products, or URLs are provided for informational pur
     - [Task 2: Run ARM template to provision lab resources](#task-2-run-arm-template-to-provision-lab-resources)
     - [Task 3: Add your IP address to the Cosmos DB firewall](#task-3-add-your-ip-address-to-the-cosmos-db-firewall)
     - [Task 4: Set the default web browser to Microsoft Edge on the Lab VM](#task-4-set-the-default-web-browser-to-microsoft-edge-on-the-lab-vm)
-    - [Task 5: Create a GitHub account](#task-5-create-a-github-account)
 
 # Serverless architecture before the hands-on lab setup guide
 
@@ -38,7 +37,7 @@ The names of manufacturers, products, or URLs are provided for informational pur
 - Microsoft Azure subscription (non-Microsoft subscription)
 - Office 365 account. If required, you can sign up for an Office 365 trial at:
   - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
-- GitHub account. You can create a free account at <https://github.com>.
+- GitHub account. You can [create a free account](https://github.com/join?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home) at <https://github.com>.
 
 ## Before the hands-on lab
 
@@ -218,23 +217,3 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
     ![In the Choose an App dialog, Microsoft Edge is highlighted.](media/default-apps-web-browser-choose-an-app.png "Choose an app")
 
 12. Close the **Default apps** dialog**.
-
-### Task 5: Create a GitHub account
-
-In this task, you sign up for a free GitHub account, which is used for hosting a copy of the sample application used throughout this lab. This account will be integrated into the CI/CD workflow for pushing updates to the Function Apps in Azure.
-
-> **Note**: If you already have a GitHub account and wish to use that account, you can skip this task.
-
-1. Navigate to <https://github.com> in a web browser.
-
-2. In the form on the page, enter a **username**, your **email** address, and a **password**, then select **Sign up for GitHub**.
-
-    ![This is a screenshot of the sign-up form on github.com.](media/github-sign-up.png "Sign up for GitHub")
-
-3. On the Create your account screen, complete the account verification and select **Join a free plan**.
-
-4. On the Welcome to GitHub screen, answer the questions and then select **Complete setup**.
-
-5. Verify your email address by opening your email and selecting the **Verify email address** link in the email you receive from GitHub (noreply@github.com).
-
-You should follow all steps provided _before_ performing the Hands-on lab.
