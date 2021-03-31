@@ -54,7 +54,7 @@
     "tollBoothFunctionAppName": "[concat('TollBoothFunctions-', uniqueString(resourceGroup().id))]",
     "tollBoothFunctionsHostingPlanName": "[concat('tollbooth-asp-', uniqueString(resourceGroup().id))]",
     "tollBoothEventsFunctionAppName": "[concat('TollBoothEvents-', uniqueString(resourceGroup().id))]",
-    "tollBoothEventsHostingPlanName": "[concat('eventsasp-', uniqueString(resourceGroup().id))]",
+    "tollBoothEventsHostingPlanName": "[concat('events-asp-', uniqueString(resourceGroup().id))]",
     "appInsightsName": "[concat('appinsights-', uniqueString(resourceGroup().id))]",
 
     "eventGridTopicName": "[concat('eventgridtopic-', uniqueString(resourceGroup().id))]",
@@ -313,16 +313,14 @@
     {
       "name": "[variables('logicAppName')]",
       "type": "Microsoft.Logic/workflows",
-      "apiVersion": "2019-05-01",
+      "apiVersion": "2016-06-01",
       "location": "[variables('location')]",
       "properties": {
         "definition": {
           "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
           "contentVersion": "1.0.0.0"
         },
-        "parameters": {},
-        "triggers": {},
-        "actions": {}
+        "parameters": {}
       }
     },
     {
