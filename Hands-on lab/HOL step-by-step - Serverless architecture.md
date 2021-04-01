@@ -159,7 +159,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 ### Task 2: Open the starter solution in Visual Studio
 
-1. On the LabVM, open File Explorer and navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\lab-files\src\TollBooth`
+1. On the LabVM, open File Explorer and navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\lab-files\src\TollBooth`.
 
 2. From the **TollBooth** folder, open the Visual Studio Solution by double-clicking the `TollBooth.sln` file.
 
@@ -182,7 +182,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
    > **Note**: The UploadImages project is used for uploading a handful of car photos for testing the scalability of the serverless architecture.
 
-   ![The two projects listed above are highlighted in Solution Explorer.](media/visual-studio-solution-explorer-projects.png "Solution Explorer")
+   ![The two projects listed above are highlighted in Solution Explorer.](media/visual-studio-solution-explorer-projects.png 'Solution Explorer')
 
 7. To validate connectivity to your Azure subscription from Visual Studio, open **Cloud Explorer** from the **View** menu and ensure that you can connect to your Azure subscription.
 
@@ -198,7 +198,7 @@ A few components within the starter project must be completed, which are marked 
 
 > **Note:** Do **NOT** update the version of any NuGet package. This solution is built to function with the NuGet package versions currently defined within. Updating these packages to newer versions could cause unexpected results.
 
-> **Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as  `C:\Users\workshop\Downloads\`, you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters.`
+> **Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as  `C:\Users\workshop\Downloads\`, you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters`.
 
 1. From the Visual Studio **View** menu, select **Task List**.
 
@@ -245,7 +245,7 @@ A few components within the starter project must be completed, which are marked 
 
     ![TODO 3 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-3.png "Task List")
 
-9. `TODOs` 3 and 4 are next to each other in the `SendToEventGrid.cs` file, so use the following code to completed the two tasks in `SendToEventGrid.cs`:
+9. `TODOs` 3 and 4 are next to each other in the `SendToEventGrid.cs` file, so use the following code to complete the two tasks in `SendToEventGrid.cs`:
 
     ```csharp
     // TODO 3: Modify send method to include the proper eventType name value for saving plate data.
@@ -265,7 +265,7 @@ In this task, you will publish the Function App from the starter project in Visu
 
 2. Right-click the **TollBooth** project, and select **Publish** from the context menu.
 
-    ![In Solution Explorer, the TollBooth is selected, and within its context menu, the Publish item is selected.](media/image39.png 'Solution Explorer ')
+    ![In Solution Explorer, the TollBooth is selected, and within its context menu, the Publish item is selected.](media/image39.png "Solution Explorer")
 
 3. In the Publish window, select **Azure**, then select **Next**.
 
