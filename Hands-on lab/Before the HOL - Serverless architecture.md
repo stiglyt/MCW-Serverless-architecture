@@ -212,7 +212,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
 
     ![In the Default apps dialog, Internet Explorer is highlighted under Web browser.](media/default-apps-web-browser.png "Default apps")
 
-11. In the **Choose an app** dialog, select **Microsoft Edge**
+11. In the **Choose an app** dialog, select **Microsoft Edge**.
 
     ![In the Choose an App dialog, Microsoft Edge is highlighted.](media/default-apps-web-browser-choose-an-app.png "Choose an app")
 
