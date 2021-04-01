@@ -216,4 +216,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
 
     ![In the Choose an App dialog, Microsoft Edge is highlighted.](media/default-apps-web-browser-choose-an-app.png "Choose an app")
 
-12. Close the **Default apps** dialog**.
+12. Close the **Default apps** dialog.
+
+You should follow all steps provided *before* performing the Hands-on lab.
+
