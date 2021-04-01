@@ -1,4 +1,4 @@
-![Microsoft Cloud Workshops](https://github.com/Microsoft/MCW-Template-Cloud-Workshop/raw/master/Media/ms-cloud-workshop.png 'Microsoft Cloud Workshops')
+![Microsoft Cloud Workshops](https://github.com/Microsoft/MCW-Template-Cloud-Workshop/raw/master/Media/ms-cloud-workshop.png "Microsoft Cloud Workshops")
 
 <div class="MCWHeader1">
 Serverless architecture
@@ -9,7 +9,7 @@ Before the hands-on lab setup guide
 </div>
 
 <div class="MCWHeader3">
-June 2020
+April 2021
 </div>
 
 Information in this document, including URL and other Internet Web site references, is subject to change without notice. Unless otherwise noted, the example companies, organizations, products, domain names, e-mail addresses, logos, people, places, and events depicted herein are fictitious, and no association with any real company, organization, product, domain name, e-mail address, logo, person, place or event is intended or should be inferred. Complying with all applicable copyright laws is the responsibility of the user. Without limiting the rights under copyright, no part of this document may be reproduced, stored in or introduced into a retrieval system, or transmitted in any form or by any means (electronic, mechanical, photocopying, recording, or otherwise), or for any purpose, without the express written permission of Microsoft Corporation.
@@ -18,155 +18,205 @@ Microsoft may have patents, patent applications, trademarks, copyrights, or othe
 
 The names of manufacturers, products, or URLs are provided for informational purposes only and Microsoft makes no representations and warranties, either expressed, implied, or statutory, regarding these manufacturers or the use of the products with any Microsoft technologies. The inclusion of a manufacturer or product does not imply endorsement of Microsoft of the manufacturer or product. Links may be provided to third party sites. Such sites are not under the control of Microsoft and Microsoft is not responsible for the contents of any linked site or any link contained in a linked site, or any changes or updates to such sites. Microsoft is not responsible for webcasting or any other form of transmission received from any linked site. Microsoft is providing these links to you only as a convenience, and the inclusion of any link does not imply endorsement of Microsoft of the site or the products contained therein.
 
-© 2020 Microsoft Corporation. All rights reserved.
+© 2021 Microsoft Corporation. All rights reserved.
 
 **Contents**
 
 - [Serverless architecture before the hands-on lab setup guide](#serverless-architecture-before-the-hands-on-lab-setup-guide)
   - [Requirements](#requirements)
   - [Before the hands-on lab](#before-the-hands-on-lab)
-    - [Task 1: Create a new Azure Resource group](#task-1-create-a-new-azure-resource-group)
-    - [Task 2: Set up a development environment](#task-2-set-up-a-development-environment)
-    - [Task 3: Disable IE Enhanced Security](#task-3-disable-ie-enhanced-security)
-    - [Task 4: Install Microsoft Edge](#task-4-install-microsoft-edge)
-    - [Task 5: Validate connectivity to Azure](#task-5-validate-connectivity-to-azure)
-    - [Task 6: Download and explore the TollBooth starter solution](#task-6-download-and-explore-the-tollbooth-starter-solution)
+    - [Task 1: Create a resource group](#task-1-create-a-resource-group)
+    - [Task 2: Run ARM template to provision lab resources](#task-2-run-arm-template-to-provision-lab-resources)
+    - [Task 3: Add your IP address to the Cosmos DB firewall](#task-3-add-your-ip-address-to-the-cosmos-db-firewall)
+    - [Task 4: Set the default web browser to Microsoft Edge on the Lab VM](#task-4-set-the-default-web-browser-to-microsoft-edge-on-the-lab-vm)
 
 # Serverless architecture before the hands-on lab setup guide
 
 ## Requirements
 
 - Microsoft Azure subscription (non-Microsoft subscription)
-- Local machine or a virtual machine configured with (**complete the day before the lab!**):
-  - Visual Studio Community 2019 or greater
-    - <https://www.visualstudio.com/vs/>
-  - Azure development workload for Visual Studio 2019
-    - <https://docs.microsoft.com/azure/azure-functions/functions-develop-vs#prerequisites>
-  - .NET Framework 4.7 runtime (or higher) and .NET Core 3.1
-    - <https://www.microsoft.com/net/download/windows>
 - Office 365 account. If required, you can sign up for an Office 365 trial at:
   - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
-- GitHub account. You can create a free account at <https://github.com>.
+- GitHub account. You can [create a free account](https://github.com/join?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home) at <https://github.com>.
 
 ## Before the hands-on lab
 
-**Duration**: 10 minutes
+**Duration**: 20 minutes
 
-In this exercise, you will set up your environment you will use for the rest of the exercises. This will involve downloading the sample application and creating your Azure resource group for the lab.
+In this exercise, you set up your environment for use in the rest of the hands-on lab. You should follow all steps provided _before_ attending the hands-on lab.
 
-### Task 1: Create a new Azure Resource group
+> **Important**: Many Azure resources require globally unique names. Throughout these steps, the word "SUFFIX" appears as part of resource names. You should replace this with your Microsoft alias, initials, or another value to ensure uniquely named resources.
 
-1. Open the [Azure Portal](https://portal.azure.com).
+### Task 1: Create a resource group
 
-2. Within the Azure Management Portal, open the **Resource groups** tile and select **Add**.
+1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
 
-   ![In the menu of the Azure Portal, Resource groups is selected. In the Resource Groups blade, the Add button is selected.](images/Setup/image9.png 'Azure Portal')
+   ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
 
-3. Specify the name of the resource group as **ServerlessArchitecture**, and choose the Azure region to which you want to deploy the lab. This resource group will be used throughout the rest of the lab. Select **Review + Create**. This will show you a summary of changes. Select **Create** to create the resource group.
+2. On the Resource groups blade, select **+Add**.
 
-   ![In the Create a resource group blade, the Resource group field displays ServerlessArchitecture.](images/Setup/image10.png 'Resource group blade')
+   ![+Add is highlighted in the toolbar on Resource groups blade.](media/resource-groups-add.png "Resource groups")
 
-### Task 2: Set up a development environment
+3. On the Create a resource group **Basics** tab, enter the following:
 
-If you do not have a machine with Visual Studio Community 2019 (or greater) and the Azure development workload, complete this task.
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource group**: Enter `hands-on-lab-SUFFIX` as the name of the new resource group.
+   - **Region**: Select the region you are using for this hands-on lab.
 
-1. Create a virtual machine (VM) in Azure using the Visual Studio Community 2019 on Windows Server 2019 (x64) image. A Windows 10 image will work as well. **Note:** Your Azure subscription must include MSDN offers to create a VM with Visual Studio pre-loaded.
+   ![The values specified above are entered into the Create a resource group Basics tab.](media/create-resource-group.png "Create resource group")
 
-   ![In Azure Portal, in the search field, Visual Studio Community 2019 (latest release) on Windows Server 2019 (x64) is selected.](media/select-vs2019-image.png 'Azure Portal')
+4. Select **Review + Create**.
 
-   - Select **+ Create a resource**.
+5. On the **Review + create** tab, ensure the Validation passed message is displayed and then select **Create**.
 
-   - Type **Visual Studio 2019 Latest**.
+### Task 2: Run ARM template to provision lab resources
 
-   - Select the **Visual Studio Community 2019 (latest) on Windows Server 2019 (x64)**.
+In this task, you run an Azure Resource Manager (ARM) template to create the hands-on lab's resources. In addition to creating resources, the ARM template also executes a PowerShell script on the `LabVM` to install software and configure the server. The resources created by the ARM template include:
 
-   - Select **Create**.
+- Azure Data Lake Storage Gen2 account
+  - Blob and File services
+  - Containers named `images` and `export`
+- Azure Cosmos DB
+  - Database named `LicensePlates`
+  - Containers named `Processed` and `NeedsManualReview`
+- Virtual network with `default` subnet
+- Virtual machine using the Visual Studio 2019 (Latest) Community Edition image
+  - Uses custom script extension to
+    - Install Microsoft Edge browser
+    - Download starter solution from Serverless architecture MCW GitHub repo
+    - Disable **IE Enhanced Security Configuration**
+- Network security group for VM
+- Network interface for VM
+- Public IP address for VM
+- Azure Function Apps
+  - `TollBoothFunctions`
+  - `TollBoothEvents`
+- Application Insights
+- Azure Computer Vision service
+- Azure Event Grid Topic
+- Azure Logic App
+- Azure Key Vault plus secrets for:
+  - `computerVisionApiKey`
+  - `cosmosDBAuthorizationKey`
+  - `dataLakeConnectionString`
+  - `eventGridTopicKey`
 
-   - Select your subscription and recently created resource group.
+> **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](./Manual-resource-setup.md).
 
-   - For Virtual machine name, type **MainVM**, or a different name that is unique.
+1. You are now ready to begin the ARM template deployment. To open a custom deployment screen in the Azure portal, select the Deploy to Azure button below:
 
-   - Leave availability option as **No infrastructure redundancy required**.
+   <a href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FMCW-Serverless-architecture%2Fmaster%2FHands-on%20lab%2Flab-files%2Farm-template%2Fazure-deploy.json" target="_blank" title="Deploy to Azure">
+      <img src="http://azuredeploy.net/deploybutton.png"/>
+   </a>
 
-   - Ensure the image is **Visual Studio Community 2019 (latest) on Windows Server 2019 (x64)**.
+2. On the custom deployment screen, the first parameter you need to populate is the `ObjectId` associated with the account you used to log into the Azure portal. To retrieve this, select the **Cloud Shell** icon on the Azure portal toolbar to open an Azure command line interface (CLI) terminal window at the bottom of your open browser window.
 
-   - Select your VM size.
+   ![The Cloud Shell icon is highlighted on the Azure portal toolbar.](media/azure-toolbar-cloud-shell.png "Azure toolbar")
 
-   > **Note**: It is highly recommended to use a D4s or DS2_v2 instance size for this VM.
+3. In the PowerShell terminal window that opens in the Azure portal, enter the following command at the prompt:
 
-   - For username, type **demouser**
+   ```powershell
+   az ad signed-in-user show --query objectId -o tsv
+   ```
 
-   - For password, type **Password.1!!**
+   ![At the cloud shell prompt, the az ad signed-in-user show command is entered and highlighted.](media/azure-cli-az-ad-signed-in-user-show.png "Azure CLI")
 
-   - Select **Allow selected ports**.
+4. Execute the command and copy the output value.
 
-   - For the inbound ports, select **RDP (3389)**.
+   ![In the cloud shell, the output from the az ad signed-in-user show command is highlighted.](media/azure-cli-az-ad-signed-in-user-show-output.png "Azure CLI")
 
-   - Select **Review + create**.
+5. Now, on the custom deployment screen in the Azure portal, enter the following:
 
-   - Select **Create**.
+   - **Subscription**: Select the subscription you are using for this hands-on lab.
+   - **Resource group**: Select the hands-on-lab-SUFFIX resource group from the dropdown list.
+   - **Signed In User Object Id**: Paste the value you copied above from the cloud shell terminal command output.
+   - **Vm Username**: Accept the default value, **demouser**.
+   - **Vm Password**: Accept the default value, **Password.1!!**.
 
-### Task 3: Disable IE Enhanced Security
+   ![The Custom deployment blade is displayed, and the information above is entered on the Custom deployment blade.](media/azure-custom-deployment.png "Custom deployment blade")
 
-> **Note**: Sometimes this image has IE ESC disabled. Sometimes it does not.
+6. Select **Review + create** to review the custom deployment.
 
-1. Login to the newly created VM using RDP and the username and password you supplied earlier.
+   > **Note**: The ARM template will append a hyphen followed by a 13-digit string at the end of resource names. This suffix ensures globally unique names for resources. We will ignore that string when referring to resources throughout the lab.
 
-2. After the VM loads, the Server Manager should open.
+7. On the Review + create blade, ensure the _Validation passed_ message is displayed and then select **Create** to begin the custom deployment.
 
-3. Select **Local Server**.
+   > **Note**: The deployment of the custom ARM template should finish in about 5 minutes.
 
-   ![Local Server is selected from the Server Manager menu.](images/Setup/image5.png 'Server Manager menu')
+   ![On the Review + create blade for the custom deployment, the Validation passed message is highlighted, and the Create button is highlighted.](media/azure-custom-deployment-review-create.png "Review + create custom deployment")
 
-4. On the side of the pane, for **IE Enhanced Security Configuration**, if it displays **On**, select it.
+8. You can monitor the deployment's progress on the **Deployment** blade that opens when you start the ARM template deployment.
 
-   ![The IE Enhanced Security Configuration setting is set to On. The On item is selected.](images/Setup/image6.png 'IE Enhanced Security Configuration')
+### Task 3: Add your IP address to the Cosmos DB firewall
 
-   - Change to **Off** for Administrators and select **OK**.
+1. In the [Azure portal](https://portal.azure.com), navigate to the **hands-on-lab-SUFFIX** resource group you created above.
 
-   ![In the Internet Explorer Enhanced Security Configuration dialog box, under Administrators, the Off button is selected.](images/Setup/image7.png 'Internet Explorer Enhanced Security Configuration dialog box')
+   > You can get to the resource group by selecting **Resource groups** under **Azure services** on the Azure portal home page and then select the resource group from the list. If there are many resource groups in your Azure account, you can filter the list for **hands-on-lab** to reduce the resource groups listed.
 
-### Task 4: Install Microsoft Edge
+2. On your resource group blade, select the **cosmosdb** Azure Cosmos DB account resource in the resource group's list of services available.
 
-> **Note**: Some aspects of this lab require the use of the new Microsoft Edge (Chromium edition) browser. You may find yourself blocked if using Internet Explorer later in the lab.
+   ![The Azure Cosmos DB account resource is highlighted in the list of services in the resource group.](media/resource-group-cosmos-db-account.png "Resources")
 
-1. Launch Internet Explorer and download [Microsoft Edge](https://www.microsoft.com/edge).
+3. Next, select **Firewall and virtual networks** in the left-hand navigation menu of the Cosmos DB blade.
 
-2. Follow the setup instructions and make sure you can run Edge to navigate to any webpage.
+4. Select **+ Add my current IP** to add your IP address to the IP list under Firewall. Next, check the box next to **Accept connections from within public Azure datacenters**. Checking this box enables Azure services, such as your Function Apps, to access your Azure Cosmos DB account.
 
-> **Note**: Edge is needed for one of the labs as Internet Explorer is not supported for some specific activities.
+    ![The checkbox is highlighted.](media/cosmos-db-firewall.png "Firewall and virtual networks")
 
-### Task 5: Validate connectivity to Azure
+5. Select **Save**.
 
-1. From within the virtual machine, launch Visual Studio (select **Continue without code** link) and validate that you can log in with your Microsoft Account when prompted.
+### Task 4: Set the default web browser to Microsoft Edge on the Lab VM
 
-2. To validate connectivity to your Azure subscription, open **Cloud Explorer** from the **View** menu, and ensure that you can connect to your Azure subscription.
+In this task, you create an RDP connection to your Lab virtual machine (VM) and change the default web browser to Microsoft Edge. This will ensure Microsoft Edge is used when launching a web browser from Visual Studio and prevent the functionality issues encountered if using Internet Explorer.
 
-   ![In Cloud Explorer, the list of Azure subscriptions is shown. A single subscription is highlighted and expanded in the list.](media/vs-cloud-explorer.png 'Cloud Explorer')
+1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
 
-### Task 6: Download and explore the TollBooth starter solution
+   ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
 
-1. From your LabVM, download the starter files by downloading a .zip copy of the Cosmos DB real-time advanced analytics GitHub repo.
+2. Select the **hands-on-lab-SUFFIX** resource group from the list.
 
-2. In a web browser, navigate to the [MCW Serverless architecture repo](https://github.com/Microsoft/MCW-Serverless-architecture).
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
 
-3. On the repo page, select **Clone or download**, then select **Download ZIP**.
+3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
 
-   ![On the GitHub Repository web page, the Clone or Download drop down is expanded with the Download ZIP button selected.](images/Setup/github-download-repo.png)
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
 
-4. Unzip the contents to the folder **C:\\ServerlessMCW\\**
+4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
 
-   ![On the Extract Compressed (Zipped) Folders dialog window, the extraction path is highlighted in the Files will be extracted to this folder field.](media/zip-extract.png 'Extract Compressed Folders')
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
 
-5. Navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\starter`
+5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
 
-6. From the **TollBooth** folder, open the Visual Studio Solution file: **TollBooth.sln**. Notice the solution contains the following projects:
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
 
-   - TollBooth
-   - UploadImages
-   
-   > **Note**: The UploadImages project is used for uploading a handful of car photos for testing scalability of the serverless architecture.
+6. Select **Connect** on the Remote Desktop Connection dialog.
 
-7. Switch to windows explorer, navigate back to the **starter** subfolder and open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the photos is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The **copyfrom** folder is used by the UploadImages project as a basis for the 1,000 photo upload option for testing scalability.
+   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection.png "Remote Desktop Connection dialog")
 
-You should follow all steps provided _before_ performing the Hands-on lab.
+7. Enter the following credentials when prompted, and then select **OK**:
+
+   - **User name**: demouser
+   - **Password**: Password.1!!
+
+   ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials.png "Enter your credentials")
+
+8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
+
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+
+9. Once logged in, select the **Search** icon on the start bar, enter **default apps** into the search box, and select **Default apps** in the search results.
+
+    ![The search icon is highlighted on the Windows start bar. In the search dialog, "default apps" is entered into the search box and highlighted. In the search results, Default apps is highlighted.](media/search-default-apps.png "Windows Search")
+
+10. In the Default apps dialog, select **Internet Explorer** under **Web browser**.
+
+    ![In the Default apps dialog, Internet Explorer is highlighted under Web browser.](media/default-apps-web-browser.png "Default apps")
+
+11. In the **Choose an app** dialog, select **Microsoft Edge**.
+
+    ![In the Choose an App dialog, Microsoft Edge is highlighted.](media/default-apps-web-browser-choose-an-app.png "Choose an app")
+
+12. Close the **Default apps** dialog.
+
+You should follow all steps provided *before* performing the Hands-on lab.
+
