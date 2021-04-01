@@ -20,14 +20,7 @@ Application developers
 
 In this workshop, you learn about setting up and configuring a serverless architecture within Azure using a combination of Azure Functions, Azure Logic Apps, Azure Event Grid, Azure Cosmos DB, and Azure Data Lake Storage. The focus is on removing server management from the equation, breaking down the solution into smaller components that are individually scalable, and allowing the customer to only pay for what they use.
 
-At the end of this workshop, you should be able to
-
-- break business logic down into discrete components using a series of Azure Functions that can independently scale,
-- leverage computer vision algorithms within an Azure Function to accurately detect objects and extract text from images at scale,
-- utilize Azure Cosmos DB as a highly available NoSQL data store,
-- build workflows using Azure Logic Apps and conditionally send alerts based on successful or unsuccessful operations,
-- use Application Insights to monitor the serverless topology, observing how well the solution scales when under load,
-- and implement a Continuous Deployment DevOps process to publish changes to Function Apps automatically.
+At the end of this workshop, you will be able to break business logic down into discrete components that can independently scale and leverage vision algorithms to detect objects and extract text.  You’ll know how to utilize Cosmos DB as a highly available NoSQL data store, build workflows using Azure Logic Apps, and conditionally send alerts based on operations.  Finally, you’ll have the knowledge to monitor a serverless topology and implement a Continuous Deployment DevOps process to publish changes automatically.
 
 ### Whiteboard Design Session
 
@@ -61,7 +54,7 @@ Cloud-Native Apps
 
 - [Serverless Web Application Reference Architecture](https://docs.microsoft.com/azure/architecture/reference-architectures/serverless/web-app)
 - [Serverless event processing using Azure Functions Reference Architecture](https://docs.microsoft.com/azure/architecture/reference-architectures/serverless/event-processing)
-- [MCW](https://github.com/Microsoft/MCW)
+- [MCW](https://microsoftcloudworkshop.com/)
 
 ## Help & Support
 
