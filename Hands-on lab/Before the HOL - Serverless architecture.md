@@ -157,9 +157,9 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
 
    ![The Azure Cosmos DB account resource is highlighted in the list of services in the resource group.](media/resource-group-cosmos-db-account.png "Resources")
 
-3. Next, select **Firewall and virtual networks** in the left-hand navigation menu of the Cosmos DB blade.
+3. Next, select **Firewall and virtual networks** in the left-hand navigation menu of the Cosmos DB blade.   
 
-4. Select **+ Add my current IP** to add your IP address to the IP list under Firewall. Next, check the box next to **Accept connections from within public Azure datacenters**. Checking this box enables Azure services, such as your Function Apps, to access your Azure Cosmos DB account.
+4. Choose **Selected networks (2)**. Select **+ Add my current IP (3)** to add your IP address to the IP list under Firewall. Next, check the box next to **Accept connections from within public Azure datacenters (4)**. Checking this box enables Azure services, such as your Function Apps, to access your Azure Cosmos DB account.
 
     ![The checkbox is highlighted.](media/cosmos-db-firewall.png "Firewall and virtual networks")
 
