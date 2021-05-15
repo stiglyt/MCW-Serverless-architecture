@@ -239,7 +239,7 @@
         "enableAnalyticalStorage": false,
         "enableMultipleWriteLocations": false,
         "networkAclBypass": "AzureServices",
-        "publicNetworkAccess": "Disabled"
+        "publicNetworkAccess": "Enabled"
       },
       "resources": [
         {
