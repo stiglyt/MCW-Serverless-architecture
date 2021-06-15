@@ -397,7 +397,7 @@
             },
             {
               "name": "WEBSITE_CONTENTSHARE",
-              "value": "[concat(variables('dataLakeAccountName'), 'functions']"
+              "value": "[concat(variables('dataLakeAccountName'), 'functions')]"
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -500,7 +500,7 @@
             },
             {
               "name": "WEBSITE_CONTENTSHARE",
-              "value": "[concat(variables('dataLakeAccountName'), 'events']"
+              "value": "[concat(variables('dataLakeAccountName'), 'events')]"
             },
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
