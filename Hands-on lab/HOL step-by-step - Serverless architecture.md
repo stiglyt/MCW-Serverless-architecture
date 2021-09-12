@@ -271,11 +271,11 @@ In this task, you will publish the Function App from the starter project in Visu
 
     ![In the Pick a publish target window, the Azure Functions Consumption Plan is selected in the left pane. The Select Existing radio button is selected in the right pane, and the Run from package file (recommended) checkbox is unchecked. The Create Profile button is also selected.](media/vs-publish-function.png 'Publish window')
 
-    > **Note**: If you do not see the ability to publish to an Azure Function, you may need to update your Visual Studio instance.
+4. Select **Azure Function App (Windows)** for the specific target, then select **Next**.
 
-4. In the App Service form, select your **Subscription**, select **Resource Group** under **View**, then expand your **hands-on-lab-SUFFIX** resource group and select the Function App whose name ends with **FunctionApp**. Finally, **uncheck the `Run from package file` option**.
+    ![The specific target screen of the Publish dialog is shown with the Azure Function App (Windows) item selected and the Next button highlighted.](media/vs-publish-specific-target.png "Publish specific target")
 
-5. Whatever you named the Function App when you provisioned it is okay. Just make sure it is the same one to which you applied the Application Settings in Task 1 of this exercise.
+5. In the App Service form, select your **Subscription**, select **Resource Group** under **View**, then expand your **hands-on-lab-SUFFIX** resource group and select the Function App whose name ends with **FunctionApp**. Finally, **uncheck the `Run from package file` option**.
 
     ![In the App Service form, Resource Group displays in the View field, and in the tree-view below, the hands-on-lab-SUFFIX folder is expanded, and TollBoothFunctionApp is selected.](media/vs-publish-function2.png 'Publish window')
 
@@ -322,7 +322,7 @@ In this task, you will publish the Function App from the starter project in Visu
 
 **Duration**: 45 minutes
 
-Create two new Azure Functions written in Node.js, using the Azure portal. These will be triggered by Event Grid and output to Azure Cosmos DB to save the results of license plate processing done by the ProcessImage function.
+In this exercise, you will create two new Azure Functions written in Node.js, using the Azure portal. These will be triggered by Event Grid and output to Azure Cosmos DB to save the results of license plate processing done by the ProcessImage function.
 
 ### Help references
 
@@ -338,11 +338,11 @@ In this task, you will create a new Node.js function triggered by Event Grid and
 
 1. Using a new tab or instance of your browser, navigate to the Azure portal, <http://portal.azure.com>.
 
-2. Open the **hands-on-lab-SUFFIX** resource group and select the Azure Function App you created whose name begins with **TollBoothEvents**. If you did not use this naming convention, make sure you choose the Function App that you _did not_ deploy to in the previous exercise.
+2. Open the **hands-on-lab-SUFFIX** resource group and select the Azure Function App whose name begins with **TollBoothEvents**.
 
-3. Select **Functions** in the left-hand menu, then select **+ Add**.
+3. Select **Functions** in the left-hand menu, then select **+ Create**.
 
-    ![In the Function Apps blade, the TollBoothEvents application is selected. In the Overview tab, the + New function button is selected.](media/functions-new.png 'TollBoothEvents blade')
+    ![In the Function Apps blade, the TollBoothEvents application is selected. In the Overview tab, the + Create function button is selected.](media/functions-new.png 'TollBoothEvents blade')
 
 4. Enter **event grid** into the **Select a template** filter box, select the **Azure Event Grid trigger** template, and then enter `SavePlateData` into the **New Function** name field.
 
@@ -402,45 +402,35 @@ In this task, you will add an Azure Cosmos DB output binding to the SavePlateDat
 
 1. While still on the **SavePlateData** Integration blade, select **+ Add output** under `Outputs`, and in the `Create Output` blade that appears, select the **Azure Cosmos DB** binding type.
 
+2. Beneath the Cosmos DB account connection drop down, select the **New** link, and choose the connection whose name begins with **cosmosdb-**.
+
     ![The Add Output link is highlighted with an arrow pointing to the highlighted binding type in the Create Output blade.](media/function-output-binding-type.png "Create Output")
 
-2. Specify the following additional configuration options in the Create Output form:
+3. Specify the following additional configuration options in the Create Output form:
 
     - **Document parameter name**: Leave set to **outputDocument**.
     - **Database name**: Enter **LicensePlates**.
     - **Collection name**: Enter **Processed**.
 
-3. Scroll down in the Create Output form, select **New** under the **Cosmos DB account connection** field.
-
-    > **Note**: If you see a notice for "Extensions not installed," select **Install** and wait for the extension installation to complete before proceeding.
-
-    ![A message is displayed indicating the Cosmos DB Extensions are not installed. The Install link is selected.](media/cosmos-extension-install.png 'Cosmos DB Extensions not installed')
-
-4. Select your Cosmos DB account in the Cosmos DB account connection list and then select **OK**.
-
-    ![The new button is selected next to the Azure Cosmos DB account connection field.](media/cosmos-db-account-connection.png 'New button')
-
-5. Select **OK**.
-
-    > **Note**: You should wait for the template dependency to install to complete if you were prompted earlier.
+4. Select **OK**.
 
     ![Under Azure Cosmos DB output the following field values display: Document parameter name, outputDocument; Collection name, Processed; Database name, LicensePlates; Azure Cosmos DB account connection, cosmosdb_DOCUMENTDB.](media/saveplatedata-cosmos-integration.png 'Azure Cosmos DB output section')
 
-6. Close the `SavePlateData` function.
+5. Close the `SavePlateData` function.
 
 ### Task 4: Create a function to save manual verification info to Azure Cosmos DB
 
 In this task, you will create another new function triggered by Event Grid and outputs information about photos that need to be manually verified to Azure Cosmos DB.
 
-1. Select **Functions** in the left-hand menu, then select **+ Add**.
+1. Select **Functions** in the left-hand menu, then select **+ Create**.
 
-    ![In the Function Apps blade, the TollBoothEvents application is selected. In the Overview tab, the + New function button is selected.](media/functions-new.png 'TollBoothEvents blade')
+    ![In the Function Apps blade, the TollBoothEvents application is selected. In the Overview tab, the + Create button is selected.](media/functions-new.png 'TollBoothEvents blade')
 
 2. Enter **event grid** into the **Select a template** filter box, select the **Azure Event Grid trigger** template, and then enter `QueuePlateForManualCheckup` into the **New Function** name field.
 
-    ![In the Add function dialog, event grid is entered into the filter box. The Azure Event Grid trigger template is selected and highlighted, and QueuePlateForManualCheckup is entered in the Name field and highlighted.](media/new-function-manual-checkup.png "Add function form")
+    ![In the Create function dialog, event grid is entered into the filter box. The Azure Event Grid trigger template is selected and highlighted, and QueuePlateForManualCheckup is entered in the Name field and highlighted.](media/new-function-manual-checkup.png "Create function form")
 
-3. Select **Add**.
+3. Select **Create**.
 
 4. On the **QueuePlateForManualCheckup** Function blade, select **Code + Test** from the left-hand menu and replace the code in the new `QueuePlateForManualCheckup` function's `index.js` file with the following:
 
@@ -490,20 +480,18 @@ In this task, you will add an Event Grid subscription to the QueuePlateForManual
 
 In this task, you will add an Azure Cosmos DB output binding to the QueuePlateForManualCheckup function, enabling it to save its data to the NeedsManualReview collection.
 
-1. While still on the **QueuePlateForManualCheckup** Integration blade, select **+ Add output** under `Outputs` within Integrations. In the `Create Output` blade that appears, select the **Azure Cosmos DB** binding type.
-
-    ![The Add Output link is highlighted with an arrow pointing to the highlighted binding type in the Create Output blade.](media/function-output-binding-type.png "Create Output")
+1. While still on the **SavePlateData** Integration blade, select **+ Add output** under `Outputs`, and in the `Create Output` blade that appears, select the **Azure Cosmos DB** binding type.
 
 2. Specify the following additional configuration options in the Create Output form:
 
+    - **Cosmos DB account connection**: Select the **Azure Cosmos DB account connection** you created earlier.
     - **Document parameter name**: Leave set to **outputDocument**.
     - **Database name**: Enter **LicensePlates**.
     - **Collection name**: Enter **NeedsManualReview**.
-    - **Cosmos DB account connection**: Select the **Azure Cosmos DB account connection** you created earlier.
 
 3. Select **OK**.
 
-    ![In the Azure Cosmos DB output form, the following field values display: Document parameter name, outputDocument; Collection name, NeedsManualReview; Database name, LicensePlates; Azure Cosmos DB account connection, cosmosdb_DOCUMENTDB.](media/manual-checkup-cosmos-integration.png 'Azure Cosmos DB output form')
+    ![In the Azure Cosmos DB output form, the following field values display: Document parameter name, outputDocument; Collection name, NeedsManualReview; Database name, LicensePlates; Azure Cosmos DB account connection, cosmosdb-SUFFIX.](media/manual-checkup-cosmos-integration.png 'Azure Cosmos DB output form')
 
 4. Close the `QueuePlateForManualCheckup` function.
 
@@ -537,7 +525,7 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
     ![In Solution Explorer, the UploadImages project is expanded, and Properties is selected from the right-click context menu.](media/vs-uploadimages.png 'Solution Explorer')
 
-5. Select **Debug** in the left-hand menu, then paste the connection string for your Azure Data Lake Storage Gen2 account into the **Command line arguments** text field. This will ensure that the required connection string is added as an argument each time you run the application. Additionally, the combination of adding the value here and the `.gitignore` file included in the project directory will prevent the sensitive connection string from being added to your source code repository in a later step.
+5. Select **Debug** in the left-hand menu, then paste the connection string for your Azure Data Lake Storage Gen2 account into the **Command line arguments** text field. The connection string can be obtained by navigating to the **datalake{SUFFIX}** storage account, selecting **Access keys** from the left menu, and copying the Connection string value of **key1**. Providing this value will ensure that the required connection string is added as an argument each time you run the application. Additionally, the combination of adding the value here and the `.gitignore` file included in the project directory will prevent the sensitive connection string from being added to your source code repository in a later step.
 
     ![The Debug menu item and the command line arguments text field are highlighted.](media/vs-command-line-arguments.png "Properties - Debug")
 
@@ -838,12 +826,38 @@ In this exercise, configure your Function App that contains the ProcessImage fun
     - **Organization**: Select the GitHub account organization in which you created the repo.
     - **Repository**: Select the **serverless-architecture-lab**, or whatever name you chose for the repo.
     - **Branch**: Select **master**.
-    - **Runtime stack**: Leave set to .NET.
-    - **Version**: Leave set to .NET Core 3.1.
 
     ![The GitHub settings specified above are entered into the Settings dialog.](media/deployment-center-github-settings.png "GitHub settings")
 
-9. Select **Save**.
+    > **Note**: there is a current issue where the Build settings are uneditable and set to .NET version 4.0. We will change this to the proper framework version in upcoming steps.
+
+9. Select **Save** from the top toolbar.
+
+10. Return to the **serverless-architecture-lab** repository on the GitHub website in a web browser. From the top menu, select **Actions**.
+
+    ![The serverless-architecture-lab repository displays with the Actions menu item highlighted.](media/githubrepo_actionsmenu.png "GitHub repository screen")
+
+11. From beneath the **All workflows** heading, select the **Build and deploy dotnet core app to Azure Function App - TollBoothFunctions-{SUFFIX}**. Select the **master_TollBooothFunctions-{SUFFIX}** link directly below the title.
+
+    ![The Build and deploy workflow screen is shown with the yml file link highlighted beneath the workflow title.](media/buildanddeployworkflow_landingpage.png "Workflow landing page")
+
+    > **Note**: It is expected that the initial workflow has failed, this is because the incorrect framework is specified in the YML document.
+
+12. On the YML file screen, select the pencil icon to edit the document inline.
+
+    ![The YML file screen displays with the pencil icon highlighted.](media/edit_yml_file_menu.png "YML file")
+
+13. On line 14, change the **DOTNET_VERSION** value to **'3.1.x'**. Be sure not to edit the structure of this file, **ONLY** change the value. Then select **Start commit**.
+
+    ![The YML file screen displays an editor with the DOTNET_VERSION value changed to 3.1.x, the Start commit button is highlighted.](media/yml_edit_dotnetversion.png "Editing a YML file")
+
+14. In the **Commit changes** dialog, enter the comment **Changed .NET version**, then select **Commit changes**.
+
+    ![The Commit changes dialog displays with the Changed .NET version comment and the Commit changes button highlighted.](media/yml_commit_changes.png "Commit changes dialog")
+
+15. Committing the YML file update will trigger a new deployment that will succeed. You can see the status of the currently running or past workflows on the Actions tab of the repository.
+
+    ![A successful deployment workflow displays.](media/successful_workflow_execution.png "Successful workflow run")
 
 ### Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment
 
@@ -908,6 +922,8 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     ![The Push button is highlighted.](media/vs-git-push.png "Push changes")
 
+    > **Note**: You may see a message about the current code being behind. If that is the case, select to pull then push the commit.
+
 15. Afterward, you should see a message stating that you successfully pushed your changes to the GitHub repository.
 
     ![The message is displayed.](media/vs-git-push-success.png "Successfully pushed")
@@ -930,9 +946,9 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
     ![In the TollBoothLogic Logic app blade, Overview is selected in the left menu, and the Enable enable button is selected in the right pane.](media/image113.png 'TollBoothLogic blade')
 
-3. Now select **Run Trigger**, then select **Recurrence** to execute your workflow immediately.
+3. Now select **Run Trigger**, then select **Run** to execute your workflow immediately.
 
-    ![In the TollBoothLogic Logic app blade, Run Trigger and Recurrence are selected.](media/image114.png 'TollBoothLogic blade')
+    ![In the TollBoothLogic Logic app blade, Run Trigger and Run are selected.](media/image114.png 'TollBoothLogic blade')
 
 4. Select the **Refresh** button next to the Run Trigger button to refresh your run history. Select the latest run history item. If the expression result for the condition is **true**, then that means the CSV file should've been exported to data lake storage. Be sure to disable the Logic App, so it doesn't keep sending you emails every 15 minutes. Please note that it may take longer than expected to start running in some cases.
 
@@ -942,27 +958,23 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
 1. Open your **hands-on-lab-SUFFIX** resource group in the Azure portal, then select the **datalake** Storage account resource you provisioned to store uploaded photos and exported CSV files.
 
-2. In the Overview pane of your storage account, select **Containers**.
+2. From the left menu of the storage account, select **Containers**, then choose the **export** container.
 
-    ![In the Overview blade, Containers is selected.](media/storage-containers.png 'Services section')
+    ![The Containers option is selected on the left menu and the export container is highlighted from the container listing.](media/storage-containers.png 'Storage container listing')
 
-3. Select the **export** container.
-
-    ![Export is selected under Name.](media/image117.png 'Export option')
-
-4. You should see at least one recently uploaded CSV file. Select the filename to view its properties.
+3. You should see at least one recently uploaded CSV file. Select the filename to view its properties.
 
     ![In the Export blade, under Name, a .csv file is selected.](media/blob-export.png 'Export blade')
 
-5. Select **Download** in the blob properties window.
+4. Select **Download** in the blob properties window.
 
     ![In the Blob properties blade, the Download button is selected.](media/blob-download.png 'Blob properties blade')
 
-6. The CSV file should look similar to the following:
+5. The CSV file should look similar to the following:
 
     ![A CSV file displays with the following columns: FileName, LicensePlateText, TimeStamp, and LicensePlateFound.](media/csv.png 'CSV file')
 
-7. The ExportLicensePlates function updates all of the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. Verify this by re-executing the script in Azure Cosmos DB that counts the number of documents in the Processed collection where exported is false. It should return 0 unless you've subsequently uploaded new photos.
+6. The ExportLicensePlates function updates all of the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. Verify this by re-executing the script in Azure Cosmos DB that counts the number of documents in the Processed collection where exported is false. It should return 0 unless you've subsequently uploaded new photos.
 
 ## After the hands-on lab
 
