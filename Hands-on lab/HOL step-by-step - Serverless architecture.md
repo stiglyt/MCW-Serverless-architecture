@@ -829,7 +829,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     ![The GitHub settings specified above are entered into the Settings dialog.](media/deployment-center-github-settings.png "GitHub settings")
 
-    > **Note**: there is a current issue where the Build settings are uneditable and set to .NET version 4.0. We will change this to the proper framework version in upcoming steps.
+    > **Note**: There is a current issue where the Build settings are uneditable and set to .NET version 4.0. We will change this to the proper framework version in upcoming steps.
 
 9. Select **Save** from the top toolbar.
 
