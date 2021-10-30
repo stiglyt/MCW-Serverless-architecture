@@ -1,7 +1,3 @@
-## Microsoft Cloud Workshops - Retirement Survey  
-
-As we look to streamline content and improve training, we are considering retiring the Microsoft Cloud Workshop (MCW) program. Please take a moment to fill out the [Microsoft Cloud Workshop Survey](https://forms.office.com/r/834zwtaNtK) and give us your feedback.
-
 # Serverless architecture
 
 Contoso is rapidly expanding its toll booth management business to operate in a much larger area. As this is not their primary business, which is online payment services, they are struggling with scaling up to meet the upcoming demand to extract license plate information from many new tollbooths, using photos of vehicles uploaded to cloud storage. Currently, they have a manual process where they send batches of images to a 3rd-party who manually transcodes the license plates to CSV files that they send back to Contoso to upload to their online processing system.
