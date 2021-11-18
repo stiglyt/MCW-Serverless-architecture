@@ -9,7 +9,7 @@ Whiteboard design session student guide
 </div>
 
 <div class="MCWHeader3">
-April 2021
+November 2021
 </div>
 
 Information in this document, including URL and other Internet Web site references, is subject to change without notice. Unless otherwise noted, the example companies, organizations, products, domain names, e-mail addresses, logos, people, places, and events depicted herein are fictitious, and no association with any real company, organization, product, domain name, e-mail address, logo, person, place or event is intended or should be inferred. Complying with all applicable copyright laws is the responsibility of the user. Without limiting the rights under copyright, no part of this document may be reproduced, stored in or introduced into a retrieval system, or transmitted in any form or by any means (electronic, mechanical, photocopying, recording, or otherwise), or for any purpose, without the express written permission of Microsoft Corporation.
@@ -246,9 +246,9 @@ Directions: Reconvene with the larger group to hear the facilitator/SME share th
 | Monitor Azure Functions using Application Insights  | <https://docs.microsoft.com/azure/azure-functions/functions-monitoring> |
 | Introduction to Azure Event Grid                    | <https://docs.microsoft.com/azure/event-grid/overview> |
 | Azure Event Grid bindings for Azure Functions       | <https://docs.microsoft.com/azure/azure-functions/functions-bindings-event-grid> |
-| Call Azure Functions from logic apps                | <https://docs.microsoft.com/azure/logic-apps/logic-apps-azure-functions%23call-azure-functions-from-logic-apps> |
+| Call Azure Functions from logic apps                | <https://docs.microsoft.com/azure/logic-apps/logic-apps-azure-functions> |
 | Azure Cosmos DB + Azure Functions                   | <https://docs.microsoft.com/azure/cosmos-db/serverless-computing-database> |
 | Continuous deployment of Azure Functions            | <https://docs.microsoft.com/azure/azure-functions/functions-continuous-deployment> |
 | Code and test Azure Functions locally               | <https://docs.microsoft.com/azure/azure-functions/functions-run-local> |
 | What is Azure Key Vault?                            | <https://docs.microsoft.com/azure/key-vault/key-vault-overview> |
-| Use Key Vault references for Azure Functions        | <https://docs.microsoft.com/azure/app-service/app-service-key-vault-references?toc=%2fazure%2fazure-functions%2ftoc.json> |
+| Use Key Vault references for Azure Functions        | <https://docs.microsoft.com/azure/app-service/app-service-key-vault-references> |
