@@ -53,7 +53,7 @@ In this exercise, you set up your environment for use in the rest of the hands-o
 
    ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
 
-2. On the Resource groups blade, select **+Add**.
+2. On the Resource groups blade, select **+Create**.
 
    ![+Add is highlighted in the toolbar on Resource groups blade.](media/resource-groups-add.png "Resource groups")
 
@@ -183,7 +183,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
 
    ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
 
-5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
+5. On the Connect to virtual machine blade, select **Download RDP File**. Open the downloaded RDP file.
 
    ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
 
