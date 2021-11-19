@@ -89,7 +89,7 @@ Below is a diagram of the solution architecture you will build in this lab. Plea
 
 ![The Solution diagram is described in the text following this diagram.](../Whiteboard%20design%20session/media/preferred-solution.png 'Solution diagram')
 
-The solution begins with vehicle photos being uploaded to an Azure Data Lake Storage Gen2 container as they are captured. An Event Grid subscription is created against the data lake storage container. When a new blob is created, an event is triggered that calls the photo processing **Azure Function** endpoint (on the side of the diagram), which in turn sends the photo to the **Cognitive Services Computer Vision API OCR** service to extract the license plate data. If processing is successful and the license plate number is returned. The function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called "savePlateData." However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called "queuePlateForManualCheckup." Two separate functions are configured to trigger when new events are added to the Event Grid topic. Each filtering on a specific event type saves the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place. **Azure Key Vault** is used to securely store secrets, such as connection strings and access keys. Key Vault is accessed by the Function Apps through an access policy within Key Vault, assigned to each Function App's system-assigned managed identity.
+The solution begins with vehicle photos being uploaded to an **Azure Data Lake Storage Gen2** container as they are captured. An **Azure Event Grid** subscription is created against the data lake storage container. When a new blob is created, an event is triggered that calls the photo processing **Azure Function** endpoint, which in turn sends the photo to the **Computer Vision API** service to extract the license plate data. If processing is successful and the license plate number is returned. The function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called "savePlateData." However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called "queuePlateForManualCheckup." Two separate functions are configured to trigger when new events are added to the Event Grid topic. Each filtering on a specific event type saves the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place. **Azure Key Vault** is used to securely store secrets, such as connection strings and access keys. Key Vault is accessed by the Function Apps through an access policy within Key Vault, assigned to each Function App's system-assigned managed identity.
 
 ## Requirements
 
@@ -161,7 +161,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 1. On the LabVM, open File Explorer and navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\lab-files\src\TollBooth`.
 
-2. From the **TollBooth** folder, open the Visual Studio Solution by double-clicking the `TollBooth.sln` file.
+2. From the **TollBooth** folder opened in step 1, open the Visual Studio Solution by double-clicking the `TollBooth.sln` file.
 
     ![In the TollBooth folder in File Explorer, TollBooth.sln is highlighted.](media/file-explorer-toll-booth-sln.png "File Explorer")
 
@@ -245,12 +245,16 @@ A few components within the starter project must be completed, which are marked 
 
     ![TODO 3 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-3.png "Task List")
 
-9. `TODOs` 3 and 4 are next to each other in the `SendToEventGrid.cs` file, so use the following code to complete the two tasks in `SendToEventGrid.cs`:
+9. Use the following code to complete `TODO 3` in `SendToEventGrid.cs`:
 
     ```csharp
     // TODO 3: Modify send method to include the proper eventType name value for saving plate data.
     await Send("savePlateData", "TollBooth/CustomerService", data);
+    ```
 
+10. `TODO 4` is  a couple lines down from step 9 in the `else` block in `SendLicensePlateData(LicensePlateData data)`.  Use the following code to complete `TODO 4` in `SendToEventGrid.cs`:
+
+    ```csharp
     // TODO 4: Modify send method to include the proper eventType name value for queuing plate for manual review.
     await Send("queuePlateForManualCheckup", "TollBooth/CustomerService", data);
     ```
@@ -275,13 +279,18 @@ In this task, you will publish the Function App from the starter project in Visu
 
     ![The specific target screen of the Publish dialog is shown with the Azure Function App (Windows) item selected and the Next button highlighted.](media/vs-publish-specific-target.png "Publish specific target")
 
-5. In the App Service form, select your **Subscription**, select **Resource Group** under **View**, then expand your **hands-on-lab-SUFFIX** resource group and select the Function App whose name ends with **FunctionApp**. Finally, **uncheck the `Run from package file` option**.
+5. In the **Publish** dialog:
+
+    - Select your **Subscription** (1).
+    - Select **Resource Group** under **View** (2).
+    - In the **Function Apps** box (3), expand your **hands-on-lab-SUFFIX** resource group.Select the Function App whose name ends with **Functions**. 
+    - **Uncheck the `Run from package file` option** (4).
 
     ![In the App Service form, Resource Group displays in the View field, and in the tree-view below, the hands-on-lab-SUFFIX folder is expanded, and TollBoothFunctionApp is selected.](media/vs-publish-function2.png 'Publish window')
 
     > **Important**: We do not want to run from a package file because when we deploy from GitHub later on, the build process will be skipped if the Function App is configured for a zip deployment.
 
-6. After you select the Function App, select **Finish**.
+6. Select **Finish**.  This creates an Azure Function App publish XML file with a `.pubxml` extension.
 
 7. Select **Publish** to start the process. Watch the Output window in Visual Studio as the Function App publishes. When it is finished, you should see a message that says, `========== Publish: 1 succeeded, 0 failed, 0 skipped ==========`.
 
@@ -291,13 +300,18 @@ In this task, you will publish the Function App from the starter project in Visu
 
 8. Using a new tab or instance of your browser, navigate to the Azure portal, <http://portal.azure.com>.
 
-9. Open the **hands-on-lab-SUFFIX** resource group, then select the **TollBoothFunctions** Azure Function App, to which you just published.
+9.  Open the **hands-on-lab-SUFFIX** resource group, then select the **TollBoothFunctions** Azure Function App, to which you just published.
 
-10. Select **Functions** in the left-hand navigation menu. You should see both functions you just published from the Visual Studio solution listed.
+10. Select **Functions** (1) in the left-hand navigation menu. You should see both functions you just published from the Visual Studio solution listed (2).
 
     ![In the Function Apps blade, in the left tree-view, both TollBoothFunctionApp and Functions (Read Only) are expanded. Beneath Functions (Read Only), two functions ExportLicensePlates and ProcessImage are highlighted.](media/dotnet-functions.png 'TollBoothFunctionApp blade')
 
-11. Now, we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to the data lake storage container. Select the **ProcessImage** function, select **Integration** on the left-hand menu, select **Event Grid Trigger (eventGridEvent)**, and then select **Create Event Grid subscription**.
+11. Now, we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to the data lake storage container. 
+
+    - Select the **ProcessImage** function.
+    - Select **Integration** on the left-hand menu (1).
+    - Select **Event Grid Trigger (eventGridEvent)** (2).
+    - Select **Create Event Grid subscription** (3).
 
     ![In the TollboothFunctionApp tree-view, the ProcessImage function is selected. In the code window pane, the Add Event Grid subscription link is highlighted.](media/processimage-add-eg-sub.png 'ProcessImage function')
 
@@ -311,8 +325,8 @@ In this task, you will publish the Function App from the starter project in Visu
     - **Resource**: Select your data lake storage account. This should be the only account listed, and will start with `datalake`.
     - **System Topic Name**: Enter **processimagesubtopic**.
     - **Filter to Event Types**: Select only the **Blob Created** from the event types dropdown list.
-    - **Endpoint Type**: Leave Azure Function as the Endpoint Type.
-    - **Endpoint**: Leave as ProcessImage.
+    - **Endpoint Type**: Leave `Azure Function` as the Endpoint Type.
+    - **Endpoint**: Leave as `ProcessImage`.
 
     ![In the Create event subscription form, the fields are set to the previously defined values.](media/process-image-sub-topic.png)
 
@@ -344,13 +358,16 @@ In this task, you will create a new Node.js function triggered by Event Grid and
 
     ![In the Function Apps blade, the TollBoothEvents application is selected. In the Overview tab, the + Create function button is selected.](media/functions-new.png 'TollBoothEvents blade')
 
-4. Enter **event grid** into the **Select a template** filter box, select the **Azure Event Grid trigger** template, and then enter `SavePlateData` into the **New Function** name field.
+4. On the **Create function** form:
 
-    ![In the Add function dialog, event grid is entered into the filter box, the Azure Event Grid trigger template is selected and highlighted, and SavePlateData is entered in the Name field and highlighted.](media/new-function-save-plate-data.png "Add function form")
+   - Enter `event grid` into the **Select a template** filter box (1).
+   - Select the **Azure Event Grid trigger** template (2).
+   - Enter `SavePlateData` into the **New Function** name field (3).
+   - Select the **Create** button (4).
 
-5. Select **Add**.
+    ![In the Create Function form, event grid is entered into the filter box, the Azure Event Grid trigger template is selected and highlighted, and SavePlateData is entered in the Name field and highlighted.](media/new-function-save-plate-data.png "Create Function form")
 
-6. On the **SavePlateData** Function blade, select **Code + Test** from the left-hand menu and replace the code in the new `SavePlateData` function's `index.js` file with the following:
+5. On the **SavePlateData** Function blade, select **Code + Test** from the left-hand menu and replace the code in the new `SavePlateData` function's `index.js` file with the following:
 
     ```javascript
     module.exports = function(context, eventGridEvent) {
@@ -370,7 +387,7 @@ In this task, you will create a new Node.js function triggered by Event Grid and
 
     ![The function code is displayed.](media/saveplatedata-code.png "SavePlateData Code + Test")
 
-7. Select **Save**.
+6. Select **Save**.
 
 ### Task 2: Add an Event Grid subscription to the SavePlateData function
 
@@ -389,8 +406,8 @@ In this task, you will add an Event Grid subscription to the SavePlateData funct
     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
     - **Resource**: Select your Event Grid Topic. This should be the only service listed and will start with `eventgridtopic-`.
     - **Event Types**: Select **Add Event Type** and enter `savePlateData` for the new event type value. This will ensure this Event Grid type only triggers this function.
-    - **Endpoint Type**: Leave Azure Function as the Endpoint Type.
-    - **Endpoint**: Leave as SavePlateData.
+    - **Endpoint Type**: Leave `Azure Function` as the Endpoint Type.
+    - **Endpoint**: Leave as `SavePlateData`.
 
     ![In the Create Event Subscription blade, fields are set to the previously defined values.](media/saveplatedata-eg-sub.png "Create Event Subscription")
 
@@ -400,17 +417,22 @@ In this task, you will add an Event Grid subscription to the SavePlateData funct
 
 In this task, you will add an Azure Cosmos DB output binding to the SavePlateData function, enabling it to save its data to the Processed collection.
 
-1. While still on the **SavePlateData** Integration blade, select **+ Add output** under `Outputs`, and in the `Create Output` blade that appears, select the **Azure Cosmos DB** binding type.
+1. While still on the **SavePlateData** Integration blade, select **+ Add output** under `Outputs`.
 
-2. Beneath the Cosmos DB account connection drop down, select the **New** link, and choose the connection whose name begins with **cosmosdb-**.
+2. In the **Create Output** blade:
+
+   - Select the `Azure Cosmos DB` for **Binding Type** (1). 
+   - Beneath the Cosmos DB account connection drop down, select the **New** link (2). 
+   - Choose the connection whose name begins with `cosmosdb-` (3).  
+   - Select **OK** (4).
 
     ![The Add Output link is highlighted with an arrow pointing to the highlighted binding type in the Create Output blade.](media/function-output-binding-type.png "Create Output")
 
 3. Specify the following additional configuration options in the Create Output form:
 
-    - **Document parameter name**: Leave set to **outputDocument**.
-    - **Database name**: Enter **LicensePlates**.
-    - **Collection name**: Enter **Processed**.
+    - **Document parameter name**: Leave set to `outputDocument`.
+    - **Database name**: Enter `LicensePlates`.
+    - **Collection name**: Enter `Processed`.
 
 4. Select **OK**.
 
@@ -426,13 +448,16 @@ In this task, you will create another new function triggered by Event Grid and o
 
     ![In the Function Apps blade, the TollBoothEvents application is selected. In the Overview tab, the + Create button is selected.](media/functions-new.png 'TollBoothEvents blade')
 
-2. Enter **event grid** into the **Select a template** filter box, select the **Azure Event Grid trigger** template, and then enter `QueuePlateForManualCheckup` into the **New Function** name field.
+2. On the **Create function** form:
 
-    ![In the Create function dialog, event grid is entered into the filter box. The Azure Event Grid trigger template is selected and highlighted, and QueuePlateForManualCheckup is entered in the Name field and highlighted.](media/new-function-manual-checkup.png "Create function form")
+   - Enter `event grid` into the **Select a template** filter box (1).
+   - Select the **Azure Event Grid trigger** template (2).
+   - Enter `QueuePlateForManualCheckup` into the **New Function** name field (3).
+   - Select **Create** (4).
 
-3. Select **Create**.
+    ![In the Create function form, event grid is entered into the filter box. The Azure Event Grid trigger template is selected and highlighted, and QueuePlateForManualCheckup is entered in the Name field and highlighted.](media/new-function-manual-checkup.png "Create function form")
 
-4. On the **QueuePlateForManualCheckup** Function blade, select **Code + Test** from the left-hand menu and replace the code in the new `QueuePlateForManualCheckup` function's `index.js` file with the following:
+3. On the **QueuePlateForManualCheckup** Function blade, select **Code + Test** from the left-hand menu and replace the code in the new `QueuePlateForManualCheckup` function's `index.js` file with the following:
 
     ```javascript
     module.exports = async function(context, eventGridEvent) {
@@ -450,13 +475,13 @@ In this task, you will create another new function triggered by Event Grid and o
     };
     ```
 
-5. Select **Save**.
+4. Select **Save**.
 
 ### Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function
 
 In this task, you will add an Event Grid subscription to the QueuePlateForManualCheckup function. This will ensure that the events sent to the Event Grid topic containing the queuePlateForManualCheckup event type are routed to this function.
 
-1. With the **QueuePlateForManualCheckup** function open, select **Integration** in the left-hand menu, select **Event Grid Trigger (eventGridEvent)**, then select **Create Event Grid subscription**.
+1. With the **QueuePlateForManualCheckup** function open, select **Integration** (1) in the left-hand menu. Select **Event Grid Trigger (eventGridEvent)** (2). On the Edit Trigger form, select **Create Event Grid subscription** (3).
 
     ![In the QueuePlateForManualCheckup Integration blade, the Create Event Grid subscription link is selected.](media/queueplateformanualcheckup-add-eg-sub.png "QueuePlateForManualCheckup blade")
 
@@ -480,20 +505,21 @@ In this task, you will add an Event Grid subscription to the QueuePlateForManual
 
 In this task, you will add an Azure Cosmos DB output binding to the QueuePlateForManualCheckup function, enabling it to save its data to the NeedsManualReview collection.
 
-1. While still on the **SavePlateData** Integration blade, select **+ Add output** under `Outputs`, and in the `Create Output` blade that appears, select the **Azure Cosmos DB** binding type.
+1. While still on the **SavePlateData** Integration blade, select **+ Add output** under **Outputs**.
 
-2. Specify the following additional configuration options in the Create Output form:
+2. In the **Create Output** form, select the following configuration options in the Create Output form:
 
+    - **Binding Type**: Select `Azure Cosmos DB`.
     - **Cosmos DB account connection**: Select the **Azure Cosmos DB account connection** you created earlier.
-    - **Document parameter name**: Leave set to **outputDocument**.
-    - **Database name**: Enter **LicensePlates**.
-    - **Collection name**: Enter **NeedsManualReview**.
+    - **Document parameter name**: Leave set to `outputDocument`.
+    - **Database name**: Enter `LicensePlates`.
+    - **Collection name**: Enter `NeedsManualReview`.
 
 3. Select **OK**.
 
     ![In the Azure Cosmos DB output form, the following field values display: Document parameter name, outputDocument; Collection name, NeedsManualReview; Database name, LicensePlates; Azure Cosmos DB account connection, cosmosdb-SUFFIX.](media/manual-checkup-cosmos-integration.png 'Azure Cosmos DB output form')
 
-4. Close the `QueuePlateForManualCheckup` function.
+4. Close the **QueuePlateForManualCheckup** function.
 
 ## Exercise 3: Monitor your functions with Application Insights
 
