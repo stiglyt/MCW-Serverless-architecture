@@ -28,11 +28,3 @@ $msiArgs = @(
     "/L*v C:\edge-install-log.txt"
 )
 Start-Process msiexec.exe -ArgumentList $msiArgs -Wait -NoNewWindow
-
-# Set Edge as the default browser
-Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice' -Name ProgId -Value "MSEdgeHTM"
-Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https\UserChoice' -Name ProgId -Value "MSEdgeHTM"
-Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.htm\UserChoice' -Name ProgId -Value "MSEdgeHTM"
-Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.html\UserChoice' -Name ProgId -Value "MSEdgeHTM"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\.htm\OpenWithProgIds" -Name MSEdgeHTM -Value ""
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\.html\OpenWithProgIds" -Name MSEdgeHTM -Value ""
