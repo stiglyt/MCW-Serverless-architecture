@@ -35,9 +35,8 @@ The names of manufacturers, products, or URLs are provided for informational pur
 ## Requirements
 
 - Microsoft Azure subscription (non-Microsoft subscription)
-- Office 365 account. If required, you can sign up for an Office 365 trial at:
-  - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
-- GitHub account. You can [create a free account](https://github.com/join?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home) at <https://github.com>.
+- Office 365 account. If you do not have an Office 365 account, you can [sign up for an Office 365 trial](https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1).  
+- GitHub account. You can [create a free account](https://github.com/join).
 
 ## Before the hands-on lab
 
@@ -101,7 +100,7 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
   - `dataLakeConnectionString`
   - `eventGridTopicKey`
 
-> **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](./Manual-resource-setup.md).
+> **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](Manual-resource-setup.md).
 
 1. You are now ready to begin the ARM template deployment. To open a custom deployment screen in the Azure portal, select the Deploy to Azure button below:
 
@@ -173,23 +172,23 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
 
 2. Select the **hands-on-lab-SUFFIX** resource group from the list.
 
-   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](media/resource-groups.png "Resource groups list")
 
 3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
 
-   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](media/resource-group-resources-labvm.png "LabVM in resource group list")
 
 4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
 
-   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](media/connect-vm-rdp.png "Connect to Lab VM")
 
 5. On the Connect to virtual machine blade, select **Download RDP File**. Open the downloaded RDP file.
 
-   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](media/connect-to-virtual-machine.png "Connect to virtual machine")
 
 6. Select **Connect** on the Remote Desktop Connection dialog.
 
-   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](media/remote-desktop-connection.png "Remote Desktop Connection dialog")
 
 7. Enter the following credentials when prompted, and then select **OK**:
 
@@ -200,7 +199,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
 
 8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
 
-   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
 
 9. Once logged in, select the **Search** icon on the start bar, enter **default apps** into the search box, and select **Default apps** in the search results.
 
