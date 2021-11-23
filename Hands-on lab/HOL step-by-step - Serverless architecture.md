@@ -89,7 +89,7 @@ Below is a diagram of the solution architecture you will build in this lab. Plea
 
 ![The Solution diagram is described in the text following this diagram.](../Whiteboard%20design%20session/media/preferred-solution.png 'Solution diagram')
 
-The solution begins with vehicle photos being uploaded to an **Azure Data Lake Storage Gen2** container as they are captured. An **Azure Event Grid** subscription is created against the data lake storage container. When a new blob is created, an event is triggered that calls the photo processing **Azure Function** endpoint, which in turn sends the photo to the **Computer Vision API** service to extract the license plate data. If processing is successful and the license plate number is returned. The function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called "savePlateData." However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called "queuePlateForManualCheckup." Two separate functions are configured to trigger when new events are added to the Event Grid topic. Each filtering on a specific event type saves the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place. **Azure Key Vault** is used to securely store secrets, such as connection strings and access keys. Key Vault is accessed by the Function Apps through an access policy within Key Vault, assigned to each Function App's system-assigned managed identity.
+The solution begins with vehicle photos being uploaded to an **Azure Data Lake Storage Gen2** container as they are captured. An **Azure Event Grid** subscription is created against the data lake storage container. When a new blob is created, an event is triggered that calls the photo processing **Azure Function** endpoint, which in turn sends the photo to the **Computer Vision API** service to extract the license plate data. If processing is successful and the license plate number is returned. The function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called `savePlateData`. However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called `queuePlateForManualCheckup`. Two separate functions are configured to trigger when new events are added to the Event Grid topic. Each filtering on a specific event type saves the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place. **Azure Key Vault** is used to securely store secrets, such as connection strings and access keys. Key Vault is accessed by the Function Apps through an access policy within Key Vault, assigned to each Function App's system-assigned managed identity.
 
 ## Requirements
 
@@ -99,7 +99,7 @@ The solution begins with vehicle photos being uploaded to an **Azure Data Lake S
     - <https://www.visualstudio.com/vs/>
   - Azure development workload for Visual Studio.
     - <https://docs.microsoft.com/azure/azure-functions/functions-develop-vs#prerequisites>
-  - .NET Framework 4.7 runtime (or higher) and .NET Core 3.1 SDK.
+  - .NET Core 3.1 SDK.
     - <https://www.microsoft.com/net/download/windows>
 - Office 365 account. If required, you can sign up for an Office 365 trial at:
   - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
@@ -128,23 +128,23 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 2. Select the **hands-on-lab-SUFFIX** resource group from the list.
 
-   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](media/resource-groups.png "Resource groups list")
 
 3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
 
-   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](media/resource-group-resources-labvm.png "LabVM in resource group list")
 
 4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
 
-   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](media/connect-vm-rdp.png "Connect to Lab VM")
 
 5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
 
-   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](media/connect-to-virtual-machine.png "Connect to virtual machine")
 
 6. Select **Connect** on the Remote Desktop Connection dialog.
 
-   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](media/remote-desktop-connection.png "Remote Desktop Connection dialog")
 
 7. Enter the following credentials when prompted, and then select **OK**:
 
@@ -155,11 +155,13 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
 
-   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
 
 ### Task 2: Open the starter solution in Visual Studio
 
 1. On the LabVM, open File Explorer and navigate to `C:\ServerlessMCW\MCW-Serverless-architecture-master\Hands-on lab\lab-files\src\TollBooth`.
+
+    > **Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as  `C:\Users\workshop\Downloads\`, you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters`.
 
 2. From the **TollBooth** folder opened in step 1, open the Visual Studio Solution by double-clicking the `TollBooth.sln` file.
 
@@ -198,8 +200,6 @@ A few components within the starter project must be completed, which are marked 
 
 > **Note:** Do **NOT** update the version of any NuGet package. This solution is built to function with the NuGet package versions currently defined within. Updating these packages to newer versions could cause unexpected results.
 
-> **Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as  `C:\Users\workshop\Downloads\`, you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters`.
-
 1. From the Visual Studio **View** menu, select **Task List**.
 
     ![The Visual Studio Menu displays, with View and Task List selected.](media/vs-task-list-link.png 'Visual Studio Menu')
@@ -208,9 +208,11 @@ A few components within the starter project must be completed, which are marked 
 
     ![A list of TODO tasks, including their description, project, file, and line number are displayed.](media/vs-task-list.png 'TODO tasks')
 
+    > **Note**: If the TODO ordering is out of order, click on **Description** to sort it in a logical order.
+
 3. In the Visual Studio Solution Explorer, expand the **TollBooth** project and double-click `ProcessImage.cs` to open the file.
 
-    > Notice the Run method is decorated with the FunctionName attribute, which sets the name of the Azure Function to "ProcessImage." This is triggered by HTTP requests sent to it from the Event Grid service. You tell Event Grid that you want to get these notifications at your function's URL by creating an event subscription, which you will do in a later task, in which you subscribe to blob-created events. The function's trigger watches for new blobs being added to the images container of the data lake storage account that was created by the ARM template in the Before the hands-on lab guide. The data passed to the function from the Event Grid notification includes the URL of the blob. That URL is, in turn, passed to the input binding to obtain the uploaded image from data lake storage.
+    > Notice the Run method is decorated with the **FunctionName** attribute, which sets the name of the Azure Function to `ProcessImage`. This is triggered by HTTP requests sent to it from the Event Grid service. You tell Event Grid that you want to get these notifications at your function's URL by creating an event subscription, which you will do in a later task, in which you subscribe to blob-created events. The function's trigger watches for new blobs being added to the images container of the data lake storage account that was created by the ARM template in the Before the hands-on lab guide. The data passed to the function from the Event Grid notification includes the URL of the blob. That URL is, in turn, passed to the input binding to obtain the uploaded image from data lake storage.
 
     ![The ProcessImage.cs file is highlighted within the TollBooth project in the Visual Studio Solution Explorer.](media/visual-studio-solution-explorer-process-image.png "Solution Explorer")
 
@@ -252,7 +254,7 @@ A few components within the starter project must be completed, which are marked 
     await Send("savePlateData", "TollBooth/CustomerService", data);
     ```
 
-10. `TODO 4` is  a couple lines down from step 9 in the `else` block in `SendLicensePlateData(LicensePlateData data)`.  Use the following code to complete `TODO 4` in `SendToEventGrid.cs`:
+10. `TODO 4` is  a few lines down from step 9 in the `else` block in `SendLicensePlateData(LicensePlateData data)`.  Use the following code to complete `TODO 4` in `SendToEventGrid.cs`:
 
     ```csharp
     // TODO 4: Modify send method to include the proper eventType name value for queuing plate for manual review.
@@ -442,7 +444,7 @@ In this task, you will add an Azure Cosmos DB output binding to the SavePlateDat
 
 ### Task 4: Create a function to save manual verification info to Azure Cosmos DB
 
-In this task, you will create another new function triggered by Event Grid and outputs information about photos that need to be manually verified to Azure Cosmos DB.
+In this task, you will create another new function triggered by Event Grid and outputs information about photos that need to be manually verified to Azure Cosmos DB.  This is in the Azure Function App that starts with **TollBoothEvents**.
 
 1. Select **Functions** in the left-hand menu, then select **+ Create**.
 
@@ -487,15 +489,15 @@ In this task, you will add an Event Grid subscription to the QueuePlateForManual
 
 2. On the **Create Event Subscription** blade, specify the following configuration options:
 
-    - **Name**: Enter a unique value, similar to **queueplateformanualcheckupsub** (ensure the green check mark appears).
+    - **Name**: Enter a unique value, similar to `queueplateformanualcheckupsub` (ensure the green check mark appears).
     - **Event Schema**: Select **Event Grid Schema**.
     - **Topic Type**: Select **Event Grid Topics**.
     - **Subscription**: Select the subscription you are using for this hands-on lab.
     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
     - **Resource**: Select your Event Grid Topic. This should be the only service listed, and will start with `eventgridtopic-`.
     - **Event Types**: Select **Add Event Type** and enter `queuePlateForManualCheckup` for the new event type value. This will ensure this function is only triggered by this Event Grid type.
-    - **Endpoint Type**: Leave Azure Function as the Endpoint Type.
-    - **Endpoint**: Leave as QueuePlateForManualCheckup.
+    - **Endpoint Type**: Leave `Azure Function` as the Endpoint Type.
+    - **Endpoint**: Leave as `QueuePlateForManualCheckup`.
 
     ![In the Create Event Subscription blade, fields are set to the previously defined values.](media/manualcheckup-eg-sub.png)
 
@@ -541,7 +543,7 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
     ![The Application Insights instance is highlighted in the resource group.](media/resource-group-application-insights.png "Application Insights")
 
-2. In Application Insights, select **Live Metrics Stream** under Investigate in the left-hand navigation menu.
+2. In Application Insights, select **Live Metrics Stream** under **Investigate** in the left-hand navigation menu.
 
     ![In the TollBoothMonitor blade, in the pane under Investigate, Live Metrics Stream is selected. ](media/live-metrics-link.png 'TollBoothMonitor blade')
 
@@ -551,7 +553,16 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
     ![In Solution Explorer, the UploadImages project is expanded, and Properties is selected from the right-click context menu.](media/vs-uploadimages.png 'Solution Explorer')
 
-5. Select **Debug** in the left-hand menu, then paste the connection string for your Azure Data Lake Storage Gen2 account into the **Command line arguments** text field. The connection string can be obtained by navigating to the **datalake{SUFFIX}** storage account, selecting **Access keys** from the left menu, and copying the Connection string value of **key1**. Providing this value will ensure that the required connection string is added as an argument each time you run the application. Additionally, the combination of adding the value here and the `.gitignore` file included in the project directory will prevent the sensitive connection string from being added to your source code repository in a later step.
+5. Select **Debug** in the left-hand menu, then paste the connection string for your Azure Data Lake Storage Gen2 account into the **Command line arguments** text field.
+
+   > **Note**: To obtain the connection string:
+   >
+   > 1. In the Azure portal, navigate to the **datalake{SUFFIX}** storage account.
+   > 2. Select **Access keys** from the left menu.
+   > 3. Copy the **Connection string** value of **key1**.
+   >  
+
+   Providing this value will ensure that the required connection string is added as an argument each time you run the application. Additionally, the combination of adding the value here and having the `.gitignore` file included in the project directory will prevent the sensitive connection string from being added to your source code repository in a later step.
 
     ![The Debug menu item and the command line arguments text field are highlighted.](media/vs-command-line-arguments.png "Properties - Debug")
 
@@ -585,11 +596,11 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
 In this task, you will change the Computer Vision API to the Free tier. This will limit the number of requests to the OCR service to 10 per minute. Once changed, run the UploadImages console app to upload 1,000 images again. The resiliency policy is programmed into the FindLicensePlateText.MakeOCRRequest method of the ProcessImage function will begin exponentially backing off requests to the Computer Vision API, allowing it to recover and lift the rate limit. This intentional delay will significantly increase the function's response time, causing the Consumption plan's dynamic scaling to kick in, allocating several more servers. You will watch all of this happen in real-time using the Live Metrics Stream view.
 
-1. Open your Computer Vision API service by opening the **hands-on-lab-SUFFIX** resource group and then selecting the **Cognitive Services** service name.
+1. Open your Computer Vision API service by opening the **hands-on-lab-SUFFIX** resource group and then selecting the resource that starts with **computervision-**.
 
-    ![The computervision Cognitive Service resource is highlighted in the list of services in the resource group.](media/resource-group-computer-vision-resource.png "Resource group")
+    ![The computervision Computer vision resource is highlighted in the list of services in the resource group.](media/resource-group-computer-vision-resource.png "Resource group")
 
-2. Select **Pricing tier** under Resource Management in the menu. Select the **F0 Free** pricing tier, then choose **Select**.
+2. Select **Pricing tier** under **Resource Management** in the menu. Select the **F0 Free** pricing tier, then choose **Select**.
 
     > **Note**: If you already have an **F0** free pricing tier instance, you will not be able to create another one.
 
@@ -696,7 +707,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
     ![Under Recurrence, the Interval field is set to 15, and the + New step button is selected.](media/image83.png 'Logic App Designer Recurrence section')
 
-6. Enter **Functions** in the filter box, then select the **Azure Functions** connector.
+6. Enter `Functions` in the filter box, then select the **Azure Functions** connector.
 
     ![Under Choose an action, Functions is typed in the search box. Under Connectors, Azure Functions is selected.](media/image85.png 'Logic App Designer Choose an action section')
 
@@ -710,7 +721,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
     > This function does not require any parameters that need to be sent when it gets called.
 
-9. Select **+ New step**, then search for **condition**. Select the **Condition** Control option from the Actions search result.
+9. Select **+ New step**, then search for `condition`. Select the **Condition** Control option from the Actions search result.
 
     ![In the logic app designer, in the ExportLicensePlates section, the parameter field is left blank. In the Choose an action box, condition is entered as the search term, and the Condition Control item is selected from the Actions list.](media/logicapp-add-condition.png 'Logic App Designer ExportLicensePlates section')
 
@@ -724,7 +735,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
     ![Under the Conditions field is an If true (green checkmark) section and an if false (red x) section. In the If false section, the Add an action button is selected.](media/logicapp-condition-false-add.png 'Logic App Designer Condition fields if true/false ')
 
-12. Enter **Send an email** in the filter box, then select the **Send an email (V2)** action for Office 365 Outlook.
+12. Enter `Send an email (V2)` in the filter box, then select the **Send an email (V2)** action for Office 365 Outlook.
 
     ![In the Choose an action box, send an email is entered as the search term. From the Actions list, Office 365 Outlook (end an email (V2) item is selected.](media/logicapp-send-email.png 'Office 365 Outlook Actions list')
 
@@ -735,20 +746,20 @@ In this exercise, you create a new Logic App for your data export workflow. This
 14. In the Send an email form, provide the following values:
 
      - Enter your email address in the **To** box.
-     - Provide a **Subject**, such as **Toll Booth license plate export failed**.
+     - Provide a **Subject**, such as `Toll Booth license plate export failed`.
      Please enter a message into the **Body**, and select the **Status code** from the ExportLicensePlates function to add it to the email body.
 
      ![In the Send an email box, fields are set to the previously defined values.](media/logicapp-send-email-form.png 'Logic App Designer, Send an email fields')
 
 15. Select **Save** in the toolbar to save your Logic App.
 
-16. Select **Run** to execute the Logic App. You should start receiving email alerts because the license plate data is not being exported. This is because we need to finish making changes to the ExportLicensePlates function to extract the license plate data from Azure Cosmos DB, generate the CSV file, and upload it to Blob storage.
+16. Select **Run Trigger** to execute the Logic App. You should start receiving email alerts because the license plate data is not being exported. This is because we need to finish making changes to the ExportLicensePlates function to extract the license plate data from Azure Cosmos DB, generate the CSV file, and upload it to Blob storage.
 
     ![The Run button is selected on the Logic Apps Designer blade toolbar.](media/logicapp-start.png 'Logic Apps Designer blade')
 
-17. While in the Logic Apps Designer, you will see the run result of each step of your workflow. A green checkmark is placed next to each step that successfully executed, showing the execution time to complete. This can be used to see how each step is working, and you can select the executed step and see the raw output.
+17. While in the Logic Apps Designer, you will see the run result of each step of your workflow. A green check mark is placed next to each step that successfully executed, showing the execution time to complete. This can be used to see how each step is working, and you can select the executed step and see the raw output.
 
-    ![In the Logic App Designer, green checkmarks display next to Recurrence, ExportLicensePlates, Condition, and Send an email steps of the logic app.](media/image96.png 'Logic App Designer ')
+    ![In the Logic App Designer, green check marks display next to Recurrence, ExportLicensePlates, Condition, and Send an email steps of the logic app.](media/image96.png 'Logic App Designer ')
 
 18. The Logic App will continue to run in the background, executing every 15 minutes (or whichever interval you set) until you disable it. To disable the app, go to the **Overview** blade for the Logic App and select the **Disable** button on the taskbar.
 
@@ -827,27 +838,23 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 2. On your resource group blade, select the **TollBoothFunctions** Function App resource in the resource group's list of services available.
 
-3. Select **Deployment Center** under Deployment in the left-hand navigation menu.
+3. Select **Deployment Center** under **Deployment** in the left-hand navigation menu.
 
     ![The Platform features tab is displayed, under Code Deployment, Container settings is selected.](media/functionapp-menu-deployment-center-link.png 'TollBoothFunctions blade')
 
-4. Select **Go to Settings**.
-
-    ![The Go to Settings button is highlighted on the Deployment Center blade.](media/go-to-settings-ci-cd.png "Go to Settings")
-
-5. Select the **Source** drop-down list and choose **GitHub** from the list.
+4. Select the **Source** drop-down list and choose **GitHub** from the list.
 
     ![GitHub is highlighted in the select code source drop-down list.](media/deployment-center-select-code-source.png "Select code source")
 
-6. Select **Authorize** and enter your GitHub credentials.
+5. Select **Authorize** and enter your GitHub credentials.
 
     ![The Authorize button is highlighted under GitHub in the Deployment Center.](media/deployment-center-github-authorize.png "GitHub Authorize")
 
-7. On the Authorize Azure App Service page, select **Authorize AzureAppService** and enter your password if prompted.
+6. On the Authorize Azure App Service page, select **Authorize AzureAppService** and enter your password if prompted.
 
     ![The Authorize Azure App Service button is highlighted.](media/authorize-azure-app-service.png "Authorize Azure App Service")
 
-8. After your account authorizes, you can configure the following to connect to your GitHub repo:
+7. After your account authorizes, you can configure the following to connect to your GitHub repo:
 
     - **Organization**: Select the GitHub account organization in which you created the repo.
     - **Repository**: Select the **serverless-architecture-lab**, or whatever name you chose for the repo.
@@ -857,31 +864,31 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     > **Note**: There is a current issue where the Build settings are uneditable and set to .NET version 4.0. We will change this to the proper framework version in upcoming steps.
 
-9. Select **Save** from the top toolbar.
+8. Select **Save** from the top toolbar.
 
-10. Return to the **serverless-architecture-lab** repository on the GitHub website in a web browser. From the top menu, select **Actions**.
+9. Return to the **serverless-architecture-lab** repository on the GitHub website in a web browser. From the top menu, select **Actions**.
 
     ![The serverless-architecture-lab repository displays with the Actions menu item highlighted.](media/githubrepo_actionsmenu.png "GitHub repository screen")
 
-11. From beneath the **All workflows** heading, select the **Build and deploy dotnet core app to Azure Function App - TollBoothFunctions-{SUFFIX}**. Select the **master_TollBoothFunctions-{SUFFIX}** link directly below the title.
+10. From beneath the **All workflows** heading, select the **Build and deploy dotnet core app to Azure Function App - TollBoothFunctions-{SUFFIX}**. Select the **master_TollBoothFunctions-{SUFFIX}** link directly below the title.
 
     ![The Build and deploy workflow screen is shown with the yml file link highlighted beneath the workflow title.](media/buildanddeployworkflow_landingpage.png "Workflow landing page")
 
-    > **Note**: It is expected that the initial workflow has failed, this is because the incorrect framework is specified in the YML document.
+    > **Note**: It is expected that the initial workflow has failed. The incorrect framework is specified in the YML document.
 
-12. On the YML file screen, select the pencil icon to edit the document inline.
+11. On the YML file screen, select the pencil icon to edit the document inline.
 
     ![The YML file screen displays with the pencil icon highlighted.](media/edit_yml_file_menu.png "YML file")
 
-13. On line 14, change the **DOTNET_VERSION** value to **'3.1.x'**. Be sure not to edit the structure of this file, **ONLY** change the value. Then select **Start commit**.
+12. On line 14, change the **DOTNET_VERSION** value to **'3.1.x'**. Be sure not to edit the structure of this file, **ONLY** change the value. Then select **Start commit**.
 
     ![The YML file screen displays an editor with the DOTNET_VERSION value changed to 3.1.x, the Start commit button is highlighted.](media/yml_edit_dotnetversion.png "Editing a YML file")
 
-14. In the **Commit changes** dialog, enter the comment **Changed .NET version**, then select **Commit changes**.
+13. In the **Commit changes** dialog, enter the comment **Changed .NET version**, then select **Commit changes**.
 
     ![The Commit changes dialog displays with the Changed .NET version comment and the Commit changes button highlighted.](media/yml_commit_changes.png "Commit changes dialog")
 
-15. Committing the YML file update will trigger a new deployment that will succeed. You can see the status of the currently running or past workflows on the Actions tab of the repository.
+14. Committing the YML file update will trigger a new deployment that will succeed. You can see the status of the currently running or past workflows on the Actions tab of the repository.
 
     ![A successful deployment workflow displays.](media/successful_workflow_execution.png "Successful workflow run")
 
@@ -942,15 +949,16 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     ![In the Team Explorer - Changes window, "Finished the ExportLicensePlates function" displays in the message box, and the Commit All button is selected.](media/vs-git-commit-all.png 'Team Explorer - Changes window')
 
-    > **Note**: You may receive a message that your local copy is behind the master branch. If you get this, select **Pull and Push** to sync the repos and commit your changes.
-
 14. After committing, select the **Push** button to push your changes to the GitHub repo.
 
     ![The Push button is highlighted.](media/vs-git-push.png "Push changes")
 
-    > **Note**: You may see a message about the current code being behind. If that is the case, select to pull then push the commit.
+    > **Note**: You may receive a message that your local copy is behind the remote branch.
+    > ![Git - Push failed dialog appears.](media/git-push-failed.png)
+    >
+    > If you get this, select **Pull then Push** to sync the repos and commit your changes.
 
-15. Afterward, you should see a message stating that you successfully pushed your changes to the GitHub repository.
+15. You should see a message stating that you successfully pushed your changes to the GitHub repository.
 
     ![The message is displayed.](media/vs-git-push-success.png "Successfully pushed")
 
