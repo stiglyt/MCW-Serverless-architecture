@@ -1,15 +1,10 @@
+﻿using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Blobs.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Configuration;
 using System.Net;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.Storage.DataMovement;
 
 namespace UploadImages
 {
@@ -51,13 +46,15 @@ namespace UploadImages
         {
             Console.WriteLine("Uploading images");
             int uploaded = 0;
-            var account = CloudStorageAccount.Parse(BlobStorageConnection);
-            var blobClient = account.CreateCloudBlobClient();
-            var blobContainer = blobClient.GetContainerReference("images");
-            blobContainer.CreateIfNotExists();
 
             // Setup the number of the concurrent operations.
-            TransferManager.Configurations.ParallelOperations = 64;
+            BlobUploadOptions options = new BlobUploadOptions
+            {
+                TransferOptions = new Azure.Storage.StorageTransferOptions
+                {
+                    MaximumConcurrency = 64
+                }
+            };
             // Set ServicePointManager.DefaultConnectionLimit to the number of eight times the number of cores.
             ServicePointManager.DefaultConnectionLimit = Environment.ProcessorCount * 8;
             ServicePointManager.Expect100Continue = false;
@@ -76,10 +73,11 @@ namespace UploadImages
                 {
                     foreach (var image in _sourceImages)
                     {
+                        // Rewind the memory stream
+                        image.Position = 0;
                         var filename = GenerateRandomFileName();
-                        var destBlob = blobContainer.GetBlockBlobReference(filename);
-
-                        var task = TransferManager.UploadAsync(image, destBlob);
+                        var blobBlockClient = new BlockBlobClient(BlobStorageConnection, "images", filename);
+                        var task = blobBlockClient.UploadAsync(image, options);
                         task.Wait();
                         uploaded++;
                         Console.WriteLine($"Uploaded image {uploaded}: {filename}");
@@ -92,9 +90,8 @@ namespace UploadImages
                 foreach (var image in _sourceImages)
                 {
                     var filename = GenerateRandomFileName();
-                    var destBlob = blobContainer.GetBlockBlobReference(filename);
-
-                    var task = TransferManager.UploadAsync(image, destBlob);
+                    var blobBlockClient = new BlockBlobClient(BlobStorageConnection, "images", filename);
+                    var task = blobBlockClient.UploadAsync(image, options);
                     task.Wait();
                     uploaded++;
                     Console.WriteLine($"Uploaded image {uploaded}: {filename}");
@@ -120,14 +117,14 @@ namespace UploadImages
             if (upload1000)
             {
                 _sourceImages =
-                    Directory.GetFiles(@"..\..\..\..\license plates\copyfrom\")
+                    Directory.GetFiles(@"..\..\..\..\..\license plates\copyfrom\")
                         .Select(f => new MemoryStream(File.ReadAllBytes(f)))
                         .ToList();
             }
             else
             {
                 _sourceImages =
-                    Directory.GetFiles(@"..\..\..\..\license plates\")
+                    Directory.GetFiles(@"..\..\..\..\..\license plates\")
                         .Select(f => new MemoryStream(File.ReadAllBytes(f)))
                         .ToList();
             }
