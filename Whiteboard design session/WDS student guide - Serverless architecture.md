@@ -240,15 +240,16 @@ Directions: Reconvene with the larger group to hear the facilitator/SME share th
 | --------------- | --------- |
 | **Description** | **Links** |
 | Introduction to Azure Functions                     | <https://docs.microsoft.com/azure/azure-functions/functions-overview> |
-| What are Logic Apps?                                | <https://docs.microsoft.com/azure/logic-apps/logic-apps-what-are-logic-apps> |
+| What is Azure Logic Apps?                           | <https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-overview> |
 | About Azure Cosmos DB                               | <https://docs.microsoft.com/azure/cosmos-db/introduction> |
 | Choose between Azure services that deliver messages | <https://docs.microsoft.com/azure/event-grid/compare-messaging-services> |
 | Monitor Azure Functions using Application Insights  | <https://docs.microsoft.com/azure/azure-functions/functions-monitoring> |
-| Introduction to Azure Event Grid                    | <https://docs.microsoft.com/azure/event-grid/overview> |
+| What is Azure Event Grid?                           | <https://docs.microsoft.com/azure/event-grid/overview> |
 | Azure Event Grid bindings for Azure Functions       | <https://docs.microsoft.com/azure/azure-functions/functions-bindings-event-grid> |
 | Call Azure Functions from logic apps                | <https://docs.microsoft.com/azure/logic-apps/logic-apps-azure-functions> |
 | Azure Cosmos DB + Azure Functions                   | <https://docs.microsoft.com/azure/cosmos-db/serverless-computing-database> |
-| Continuous deployment of Azure Functions            | <https://docs.microsoft.com/azure/azure-functions/functions-continuous-deployment> |
-| Code and test Azure Functions locally               | <https://docs.microsoft.com/azure/azure-functions/functions-run-local> |
-| What is Azure Key Vault?                            | <https://docs.microsoft.com/azure/key-vault/key-vault-overview> |
+| Continuous deployment for Azure Functions           | <https://docs.microsoft.com/azure/azure-functions/functions-continuous-deployment> |
+| Code and test Azure Functions locally               | <https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local> |
+| About Azure Key Vault                               | <https://docs.microsoft.com/azure/key-vault/key-vault-overview> |
 | Use Key Vault references for Azure Functions        | <https://docs.microsoft.com/azure/app-service/app-service-key-vault-references> |
+| What is Computer Vision?                            | <https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/overview> |
