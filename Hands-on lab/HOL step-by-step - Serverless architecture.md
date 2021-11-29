@@ -285,7 +285,7 @@ In this task, you will publish the Function App from the starter project in Visu
 
     - Select your **Subscription** (1).
     - Select **Resource Group** under **View** (2).
-    - In the **Function Apps** box (3), expand your **hands-on-lab-SUFFIX** resource group.Select the Function App whose name ends with **Functions**. 
+    - In the **Function Apps** box (3), expand your **hands-on-lab-SUFFIX** resource group.Select the Function App whose name ends with **Functions**.
     - **Uncheck the `Run from package file` option** (4).
 
     ![In the App Service form, Resource Group displays in the View field, and in the tree-view below, the hands-on-lab-SUFFIX folder is expanded, and TollBoothFunctionApp is selected.](media/vs-publish-function2.png 'Publish window')
@@ -302,13 +302,13 @@ In this task, you will publish the Function App from the starter project in Visu
 
 8. Using a new tab or instance of your browser, navigate to the Azure portal, <http://portal.azure.com>.
 
-9.  Open the **hands-on-lab-SUFFIX** resource group, then select the **TollBoothFunctions** Azure Function App, to which you just published.
+9. Open the **hands-on-lab-SUFFIX** resource group, then select the **TollBoothFunctions** Azure Function App, to which you just published.
 
 10. Select **Functions** (1) in the left-hand navigation menu. You should see both functions you just published from the Visual Studio solution listed (2).
 
     ![In the Function Apps blade, in the left tree-view, both TollBoothFunctionApp and Functions (Read Only) are expanded. Beneath Functions (Read Only), two functions ExportLicensePlates and ProcessImage are highlighted.](media/dotnet-functions.png 'TollBoothFunctionApp blade')
 
-11. Now, we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to the data lake storage container. 
+11. Now, we need to add an Event Grid subscription to the ProcessImage function, so the function is triggered when new images are added to the data lake storage container.
 
     - Select the **ProcessImage** function.
     - Select **Integration** on the left-hand menu (1).
@@ -423,8 +423,8 @@ In this task, you will add an Azure Cosmos DB output binding to the SavePlateDat
 
 2. In the **Create Output** blade:
 
-   - Select the `Azure Cosmos DB` for **Binding Type** (1). 
-   - Beneath the Cosmos DB account connection drop down, select the **New** link (2). 
+   - Select the `Azure Cosmos DB` for **Binding Type** (1).
+   - Beneath the Cosmos DB account connection drop down, select the **New** link (2).
    - Choose the connection whose name begins with `cosmosdb-` (3).  
    - Select **OK** (4).
 
@@ -507,7 +507,7 @@ In this task, you will add an Event Grid subscription to the QueuePlateForManual
 
 In this task, you will add an Azure Cosmos DB output binding to the QueuePlateForManualCheckup function, enabling it to save its data to the NeedsManualReview collection.
 
-1. While still on the **SavePlateData** Integration blade, select **+ Add output** under **Outputs**.
+1. While still on the **QueuePlateForManualCheckup** Integration blade, select **+ Add output** under **Outputs**.
 
 2. In the **Create Output** form, select the following configuration options in the Create Output form:
 
