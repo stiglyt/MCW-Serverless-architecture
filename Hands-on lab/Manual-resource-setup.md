@@ -9,7 +9,7 @@ Manual resource deployment and setup guide
 </div>
 
 <div class="MCWHeader3">
-April 2021
+November 2021
 </div>
 
 Information in this document, including URL and other Internet Web site references, is subject to change without notice. Unless otherwise noted, the example companies, organizations, products, domain names, e-mail addresses, logos, people, places, and events depicted herein are fictitious, and no association with any real company, organization, product, domain name, e-mail address, logo, person, place or event is intended or should be inferred. Complying with all applicable copyright laws is the responsibility of the user. Without limiting the rights under copyright, no part of this document may be reproduced, stored in or introduced into a retrieval system, or transmitted in any form or by any means (electronic, mechanical, photocopying, recording, or otherwise), or for any purpose, without the express written permission of Microsoft Corporation.
@@ -62,7 +62,7 @@ Ensure all resources use the same resource group for easier cleanup.
     - <https://www.visualstudio.com/vs/>
   - Azure development workload for Visual Studio 2019
     - <https://docs.microsoft.com/azure/azure-functions/functions-develop-vs#prerequisites>
-  - .NET Framework 4.7 runtime (or higher) and .NET Core 3.1
+  - .NET Core 3.1
     - <https://www.microsoft.com/net/download/windows>
 - Office 365 account. If required, you can sign up for an Office 365 trial at:
   - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
@@ -76,7 +76,7 @@ Ensure all resources use the same resource group for easier cleanup.
 
 2. Enter "storage account" into the Search the Marketplace box, select **Storage account** from the results, and then select **Create**.
 
-   !["Storage account" is entered into the Search the Marketplace box. Storage account is selected in the results.](./media/create-resource-storage-account.png "Create Storage account")
+   !["Storage account" is entered into the Search the Marketplace box. Storage account is selected in the results.](media/create-resource-storage-account.png "Create Storage account")
 
 3. On the Create storage account **Basics** tab, enter the following:
 
@@ -562,7 +562,7 @@ In this task, you provision a virtual machine (VM) in Azure. The VM image used h
 
 2. Enter "visual studio 2019" into the Search the Marketplace box and then select **Visual Studio 2019 Latest** from the results.
 
-   !["Visual studio 2019" is entered into the Search the Marketplace box. Visual Studio 2019 latest is selected in the results.](./media/create-resource-visual-studio-vm.png "Visual Studio 2019 Latest")
+   !["Visual studio 2019" is entered into the Search the Marketplace box. Visual Studio 2019 latest is selected in the results.](media/create-resource-visual-studio-vm.png "Visual Studio 2019 Latest")
 
 3. On the Visual Studio 2019 Latest blade, select **Visual Studio 2019 Community (latest release) on Windows Server 2019 (x64)** from the Select a software plan drop-down list, and then select **Create**.
 
@@ -616,23 +616,23 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 2. Select the **hands-on-lab-SUFFIX** resource group from the list.
 
-   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](media/resource-groups.png "Resource groups list")
 
 3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
 
-   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](media/resource-group-resources-labvm.png "LabVM in resource group list")
 
 4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
 
-   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](media/connect-vm-rdp.png "Connect to Lab VM")
 
 5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
 
-   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](media/connect-to-virtual-machine.png "Connect to virtual machine")
 
 6. Select **Connect** on the Remote Desktop Connection dialog.
 
-   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](media/remote-desktop-connection.png "Remote Desktop Connection dialog")
 
 7. Enter the following credentials when prompted, and then select **OK**:
 
@@ -643,7 +643,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
 
-   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
 
 ## Task 12: Disable Internet Explorer Enhanced Security
 
@@ -655,11 +655,11 @@ In this task, you disable Internet Explorer Enhanced Security Configuration (IE 
 
 2. Select **Local Server**, then select **On** next to **IE Enhanced Security Configuration**.
 
-    ![Screenshot of the Server Manager. In the left pane, Local Server is selected. In the right, Properties (For LabVM) pane, the IE Enhanced Security Configuration, which is set to On, is highlighted.](./media/windows-server-manager-ie-enhanced-security-configuration.png "Server Manager")
+    ![Screenshot of the Server Manager. In the left pane, Local Server is selected. In the right, Properties (For LabVM) pane, the IE Enhanced Security Configuration, which is set to On, is highlighted.](media/windows-server-manager-ie-enhanced-security-configuration.png "Server Manager")
 
 3. In the Internet Explorer Enhanced Security Configuration dialog, select **Off** under both Administrators and Users, and then select **OK**.
 
-    ![Screenshot of the Internet Explorer Enhanced Security Configuration dialog box, with Administrators set to Off.](./media/internet-explorer-enhanced-security-configuration-dialog.png "Internet Explorer Enhanced Security Configuration dialog box")
+    ![Screenshot of the Internet Explorer Enhanced Security Configuration dialog box, with Administrators set to Off.](media/internet-explorer-enhanced-security-configuration-dialog.png "Internet Explorer Enhanced Security Configuration dialog box")
 
 4. You can close the Server Manager but leave the connection to the LabVM open for the next task.
 

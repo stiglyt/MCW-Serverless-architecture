@@ -4,7 +4,7 @@ Contoso is rapidly expanding its toll booth management business to operate in a 
 
 They want to automate this process in a way that is cost-effective and scalable. They believe serverless is the best route for them but do not have the expertise to build the solution.
 
-April 2021
+November 2021
 
 ## Target Audience
 

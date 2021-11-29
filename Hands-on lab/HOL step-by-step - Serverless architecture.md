@@ -87,7 +87,7 @@ They want to automate this process in a way that is cost-effective and scalable.
 
 Below is a diagram of the solution architecture you will build in this lab. Please study this carefully to understand the whole of the solution as you are working on the various components.
 
-![The Solution diagram is described in the text following this diagram.](../Whiteboard%20design%20session/media/preferred-solution.png 'Solution diagram')
+![The Solution diagram is described in the text following this diagram.](media/preferred-solution.png 'Solution diagram')
 
 The solution begins with vehicle photos being uploaded to an **Azure Data Lake Storage Gen2** container as they are captured. An **Azure Event Grid** subscription is created against the data lake storage container. When a new blob is created, an event is triggered that calls the photo processing **Azure Function** endpoint, which in turn sends the photo to the **Computer Vision API** service to extract the license plate data. If processing is successful and the license plate number is returned. The function submits a new Event Grid event, along with the data, to an Event Grid topic with an event type called `savePlateData`. However, if the processing was unsuccessful, the function submits an Event Grid event to the topic with an event type called `queuePlateForManualCheckup`. Two separate functions are configured to trigger when new events are added to the Event Grid topic. Each filtering on a specific event type saves the relevant data to the appropriate **Azure Cosmos DB** collection for the outcome, using the Cosmos DB output binding. A **Logic App** that runs on a 15-minute interval executes an Azure Function via its HTTP trigger, responsible for obtaining new license plate data from Cosmos DB and exporting it to a new CSV file saved to Blob storage. If no new license plate records are found to export, the Logic App sends an email notification to the Customer Service department via their Office 365 subscription. **Application Insights** is used to monitor all Azure Functions in real-time as data is being processed through the serverless architecture. This real-time monitoring allows you to observe dynamic scaling first-hand and configure alerts when certain events take place. **Azure Key Vault** is used to securely store secrets, such as connection strings and access keys. Key Vault is accessed by the Function Apps through an access policy within Key Vault, assigned to each Function App's system-assigned managed identity.
 
@@ -208,7 +208,7 @@ A few components within the starter project must be completed, which are marked 
 
     ![A list of TODO tasks, including their description, project, file, and line number are displayed.](media/vs-task-list.png 'TODO tasks')
 
-    > **Note**: If the TODO ordering is out of order, click on **Description** to sort it in a logical order.
+    > **Note**: If the TODO ordering is out of order, select **Description** to sort it in a logical order.
 
 3. In the Visual Studio Solution Explorer, expand the **TollBooth** project and double-click `ProcessImage.cs` to open the file.
 
