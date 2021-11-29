@@ -34,13 +34,13 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Task 5: Provision and configure an Azure Cosmos DB account](#task-5-provision-and-configure-an-azure-cosmos-db-account)
   - [Task 6: Provision the Computer Vision API service](#task-6-provision-the-computer-vision-api-service)
   - [Task 7: Create a Logic App](#task-7-create-a-logic-app)
-  - [Task 7: Provision Azure Key Vault](#task-7-provision-azure-key-vault)
-  - [Task 8: Retrieve the URI for each secret](#task-8-retrieve-the-uri-for-each-secret)
-  - [Task 9: Configure application settings for the TollBoothFunctions Function App](#task-9-configure-application-settings-for-the-tollboothfunctions-function-app)
-  - [Task 10: Set up a development virtual machine](#task-10-set-up-a-development-virtual-machine)
-  - [Task 11: Connect to the Lab VM](#task-11-connect-to-the-lab-vm)
-  - [Task 12: Disable Internet Explorer Enhanced Security](#task-12-disable-internet-explorer-enhanced-security)
-  - [Task 13: Install required software on the LabVM](#task-13-install-required-software-on-the-labvm)
+  - [Task 8: Provision Azure Key Vault](#task-8-provision-azure-key-vault)
+  - [Task 9: Retrieve the URI for each secret](#task-9-retrieve-the-uri-for-each-secret)
+  - [Task 10: Configure application settings for the TollBoothFunctions Function App](#task-10-configure-application-settings-for-the-tollboothfunctions-function-app)
+  - [Task 11: Set up a development virtual machine](#task-11-set-up-a-development-virtual-machine)
+  - [Task 12: Connect to the Lab VM](#task-12-connect-to-the-lab-vm)
+  - [Task 13: Disable Internet Explorer Enhanced Security](#task-13-disable-internet-explorer-enhanced-security)
+  - [Task 14: Install required software on the LabVM](#task-14-install-required-software-on-the-labvm)
 
 <!-- /TOC -->
 
@@ -421,7 +421,7 @@ Ensure all resources use the same resource group for easier cleanup.
 
 5. Select **Review + create**, then select **Create**.
 
-## Task 7: Provision Azure Key Vault
+## Task 8: Provision Azure Key Vault
 
 1. In the [Azure portal](https://portal.azure.com/), select the **Show portal menu** icon and then select **+Create a resource** from the menu.
 
@@ -491,7 +491,7 @@ Ensure all resources use the same resource group for easier cleanup.
 
     ![The listing of secrets is displayed matching the previously defined values.](media/key-vault-keys.png "Key Vault Secrets")
 
-## Task 8: Retrieve the URI for each secret
+## Task 9: Retrieve the URI for each secret
 
 1. Open your Key Vault instance in the portal.
 
@@ -522,7 +522,7 @@ Ensure all resources use the same resource group for easier cleanup.
    @Microsoft.KeyVault(SecretUri=https://tollboothvault.vault.azure.net/secrets/eventGridTopicKey/e310bcd71a72489f89b6112234fed815)
    ```
 
-## Task 9: Configure application settings for the TollBoothFunctions Function App
+## Task 10: Configure application settings for the TollBoothFunctions Function App
 
 1. Navigate to the **TollBoothFunctions** Function App resource in the Azure portal by opening the **hands-on-lab-SUFFIX** resource group and then select the Azure Function App resource whose name begins with **TollBoothFunctions**.
 
@@ -552,7 +552,7 @@ Ensure all resources use the same resource group for easier cleanup.
 
 4. Select **Save** on the Configuration toolbar to save the application settings changes.
 
-## Task 10: Set up a development virtual machine
+## Task 11: Set up a development virtual machine
 
 In this task, you provision a virtual machine (VM) in Azure. The VM image used has the latest version of Visual Studio Community 2019 installed.
 
@@ -606,7 +606,7 @@ In this task, you provision a virtual machine (VM) in Azure. The VM image used h
 
 7. It takes approximately 5 minutes for the VM to finish provisioning.
 
-## Task 11: Connect to the Lab VM
+## Task 12: Connect to the Lab VM
 
 In this task, you create an RDP connection to your Lab virtual machine (VM).
 
@@ -645,7 +645,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
    ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
 
-## Task 12: Disable Internet Explorer Enhanced Security
+## Task 13: Disable Internet Explorer Enhanced Security
 
 In this task, you disable Internet Explorer Enhanced Security Configuration (IE ESC) on the LabVM.
 
@@ -663,7 +663,7 @@ In this task, you disable Internet Explorer Enhanced Security Configuration (IE 
 
 4. You can close the Server Manager but leave the connection to the LabVM open for the next task.
 
-## Task 13: Install required software on the LabVM
+## Task 14: Install required software on the LabVM
 
 In this task, you configure the LabVM with the required software and downloads. First, you download and install the Microsoft Edge web browser. Next, you download a copy of the Visual Studio starter solution and unzip it into a folder named `C:\ServerlessMCW`.
 
