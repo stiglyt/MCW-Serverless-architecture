@@ -553,13 +553,13 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
     ![In Solution Explorer, the UploadImages project is expanded, and Properties is selected from the right-click context menu.](media/vs-uploadimages.png 'Solution Explorer')
 
-5. Select **Debug** in the left-hand menu, then paste the connection string for your Azure Data Lake Storage Gen2 account into the **Command line arguments** text field.
+5. Select **Debug** in the left-hand menu, then paste the connection string for your Azure Data Lake Storage Gen2 account into the **Application arguments** text field.
 
    > **Note**: To obtain the connection string:
    >
-   > 1. In the Azure portal, navigate to the **datalake{SUFFIX}** storage account.
-   > 2. Select **Access keys** from the left menu.
-   > 3. Copy the **Connection string** value of **key1**.
+   > - In the Azure portal, navigate to the **datalake{SUFFIX}** storage account.
+   > - Select **Access keys** from the left menu.
+   > - Copy the **Connection string** value of **key1**.
    >  
 
    Providing this value will ensure that the required connection string is added as an argument each time you run the application. Additionally, the combination of adding the value here and having the `.gitignore` file included in the project directory will prevent the sensitive connection string from being added to your source code repository in a later step.
@@ -568,9 +568,9 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
 6. Save your changes by selecting the Save icon on the Visual Studio toolbar.
 
-7. Right-click the **UploadImages** project in the Solution Explorer, select **Debug**, then **Start new instance** from the context menu.
+7. Right-click the **UploadImages** project in the Solution Explorer, select **Debug**, then **Start New Instance** from the context menu.
 
-    ![In Solution Explorer, the UploadImages project is selected. From the context menu, Debug then Start new instance is selected.](media/vs-debug-uploadimages.png 'Solution Explorer')
+    ![In Solution Explorer, the UploadImages project is selected. From the context menu, Debug then Start New Instance is selected.](media/vs-debug-uploadimages.png 'Solution Explorer')
 
     >**Note:** Ensure the files are located under `C:\ServerlessMCW\`. If the files are located under a longer root path, such as `C:\Users\workshop\Downloads\`, then you will encounter build issues in later steps: `The specified path, file name, or both are too long. The fully qualified file name must be less than 260 characters, and the directory name must be less than 248 characters.`
 
