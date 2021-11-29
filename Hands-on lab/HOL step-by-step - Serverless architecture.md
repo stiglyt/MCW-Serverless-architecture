@@ -116,7 +116,7 @@ Use Visual Studio and its integrated Azure Functions tooling to develop and debu
 |                                       |                                                                        |
 | ------------------------------------- | ---------------------------------------------------------------------- |
 | **Description**                       | **Link**                                                              |
-| Code and test Azure Functions locally | <https://docs.microsoft.com/azure/azure-functions/functions-run-local> |
+| Code and test Azure Functions locally | <https://docs.microsoft.com/en-us/azure/azure-functions/functions-develop-local> |
 
 ### Task 1: Connect to the Lab VM
 
@@ -300,7 +300,7 @@ In this task, you will publish the Function App from the starter project in Visu
 
     ![The Publish button is selected.](media/vs-publish-function3.png "Publish")
 
-8. Using a new tab or instance of your browser, navigate to the Azure portal, <http://portal.azure.com>.
+8. Using a new tab or instance of your browser, navigate to the [Azure portal](https://portal.azure.com).
 
 9. Open the **hands-on-lab-SUFFIX** resource group, then select the **TollBoothFunctions** Azure Function App, to which you just published.
 
@@ -345,14 +345,14 @@ In this exercise, you will create two new Azure Functions written in Node.js, us
 |                  |          |
 | ---------------- | -------- |
 | **Description**  | **Link** |
-| Create your first function in the Azure portal |        <https://docs.microsoft.com/azure/azure-functions/functions-create-first-azure-function> |
+| Create your first function in the Azure portal | <https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal> |
 | Store unstructured data using Azure Functions and Azure Cosmos DB | <https://docs.microsoft.com/azure/azure-functions/functions-integrate-store-unstructured-data-cosmosdb> |
 
 ### Task 1: Create a function to save license plate data to Azure Cosmos DB
 
 In this task, you will create a new Node.js function triggered by Event Grid and that outputs successfully processed license plate data to Azure Cosmos DB.
 
-1. Using a new tab or instance of your browser, navigate to the Azure portal, <http://portal.azure.com>.
+1. Using a new tab or instance of your browser, navigate to the [Azure portal](https://portal.azure.com).
 
 2. Open the **hands-on-lab-SUFFIX** resource group and select the Azure Function App whose name begins with **TollBoothEvents**.
 
@@ -686,8 +686,8 @@ In this exercise, you create a new Logic App for your data export workflow. This
 |                 |           |
 | --------------- |---------- |
 | **Description** | **Links** |
-| What are Logic Apps? | <https://docs.microsoft.com/azure/logic-apps/logic-apps-what-are-logic-apps> |
-| Call Azure Functions from logic apps | <https://docs.microsoft.com/azure/logic-apps/logic-apps-azure-functions%23call-azure-functions-from-logic-apps> |
+| What is Azure Logic Apps? | <https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-overview> |
+| Call Azure Functions from logic apps | <https://docs.microsoft.com/azure/logic-apps/logic-apps-azure-functions> |
 
 ### Task 1: Create the Logic App
 
