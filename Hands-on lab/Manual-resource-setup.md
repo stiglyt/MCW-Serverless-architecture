@@ -636,7 +636,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 7. Enter the following credentials when prompted, and then select **OK**:
 
-   - **User name**: demouser
+   - **Username**: demouser
    - **Password**: Password.1!!
 
    ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials.png "Enter your credentials")
