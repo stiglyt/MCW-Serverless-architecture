@@ -32,13 +32,11 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Solution architecture](#solution-architecture)
   - [Requirements](#requirements)
   - [Exercise 1: Develop and publish the photo processing and data export functions](#exercise-1-develop-and-publish-the-photo-processing-and-data-export-functions)
-    - [Help references](#help-references)
     - [Task 1: Connect to the Lab VM](#task-1-connect-to-the-lab-vm)
     - [Task 2: Open the starter solution in Visual Studio](#task-2-open-the-starter-solution-in-visual-studio)
     - [Task 3: Finish the ProcessImage function](#task-3-finish-the-processimage-function)
     - [Task 4: Publish the Function App from Visual Studio](#task-4-publish-the-function-app-from-visual-studio)
   - [Exercise 2: Create functions in the portal](#exercise-2-create-functions-in-the-portal)
-    - [Help references](#help-references-1)
     - [Task 1: Create a function to save license plate data to Azure Cosmos DB](#task-1-create-a-function-to-save-license-plate-data-to-azure-cosmos-db)
     - [Task 2: Add an Event Grid subscription to the SavePlateData function](#task-2-add-an-event-grid-subscription-to-the-saveplatedata-function)
     - [Task 3: Add an Azure Cosmos DB output to the SavePlateData function](#task-3-add-an-azure-cosmos-db-output-to-the-saveplatedata-function)
@@ -46,17 +44,13 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function](#task-5-add-an-event-grid-subscription-to-the-queueplateformanualcheckup-function)
     - [Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function](#task-6-add-an-azure-cosmos-db-output-to-the-queueplateformanualcheckup-function)
   - [Exercise 3: Monitor your functions with Application Insights](#exercise-3-monitor-your-functions-with-application-insights)
-    - [Help references](#help-references-2)
     - [Task 1: Use the Live Metrics Stream to monitor functions in real-time](#task-1-use-the-live-metrics-stream-to-monitor-functions-in-real-time)
     - [Task 2: Observe your functions dynamically scaling when resource-constrained](#task-2-observe-your-functions-dynamically-scaling-when-resource-constrained)
   - [Exercise 4: Explore your data in Azure Cosmos DB](#exercise-4-explore-your-data-in-azure-cosmos-db)
-    - [Help references](#help-references-3)
     - [Task 1: Use the Azure Cosmos DB Data Explorer](#task-1-use-the-azure-cosmos-db-data-explorer)
   - [Exercise 5: Create the data export workflow](#exercise-5-create-the-data-export-workflow)
-    - [Help references](#help-references-4)
     - [Task 1: Create the Logic App](#task-1-create-the-logic-app)
   - [Exercise 6: Configure continuous deployment for your Function App](#exercise-6-configure-continuous-deployment-for-your-function-app)
-    - [Help references](#help-references-5)
     - [Task 1: Add git repository to your Visual Studio solution and deploy to GitHub](#task-1-add-git-repository-to-your-visual-studio-solution-and-deploy-to-github)
     - [Task 2: Configure your Function App to use your GitHub repository for continuous deployment](#task-2-configure-your-function-app-to-use-your-github-repository-for-continuous-deployment)
     - [Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment](#task-3-finish-your-exportlicenseplates-function-code-and-push-changes-to-github-to-trigger-deployment)
@@ -94,7 +88,7 @@ The solution begins with vehicle photos being uploaded to an **Azure Data Lake S
 ## Requirements
 
 - Microsoft Azure subscription (non-Microsoft subscription).
-- Local machine or a virtual machine configured with (**complete the day before the lab!**):
+- Local machine or a Virtual Machine (VM) configured with (**complete the day before the lab!**):
   - Visual Studio Community 2019 or greater.
     - <https://www.visualstudio.com/vs/>
   - Azure development workload for Visual Studio.
@@ -120,7 +114,7 @@ Use Visual Studio and its integrated Azure Functions tooling to develop and debu
 
 ### Task 1: Connect to the Lab VM
 
-In this task, you create an RDP connection to your Lab virtual machine (VM).
+In this task, you create an RDP connection to your Lab virtual machine.
 
 1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
 
@@ -175,7 +169,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
    ![The Sign in button is highlighted on the Visual Studio Welcome screen.](media/visual-studio-sign-in.png "Visual Studio 2019")
 
-5. IF prompted with a security warning, uncheck **Ask me for every project in this solution**, and then select **OK**.
+5. If prompted with a security warning, uncheck **Ask me for every project in this solution**, and then select **OK**.
 
 6. Notice the solution contains the following projects:
 
@@ -198,7 +192,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
 A few components within the starter project must be completed, which are marked as `TODO` in the code. The first set of `TODO` items we address are in the `ProcessImage` function. We will update the `FindLicensePlateText` class that calls the Computer Vision service and the `SendToEventGrid` class, which is responsible for sending processing results to the Event Grid topic you created earlier.
 
-> **Note:** Do **NOT** update the version of any NuGet package. This solution is built to function with the NuGet package versions currently defined within. Updating these packages to newer versions could cause unexpected results.
+> **Note**: **Do not** update the version of any NuGet package. This solution is built to function with the NuGet package versions currently defined within. Updating these packages to newer versions could cause unexpected results.
 
 1. From the Visual Studio **View** menu, select **Task List**.
 
@@ -783,7 +777,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 1. Return to the LabVM and in Visual Studio and select the **Git** menu item and then **Settings**.
 
-2. In the **Options** dialog, ensure you are on the **Git Global Settings** tab under Source Control and enter your GitHub user name and email address into the `User name` and `Email` fields and then select **OK**
+2. In the **Options** dialog, ensure you are on the **Git Global Settings** tab under Source Control and enter your GitHub user name and email address into the `User name` and `Email` fields and then select **OK**.
 
     ![The Visual Studio Git Global Settings page is displayed with the user name and email fields highlighted.](media/git-global-settings.png "Git Global Settings")
 
