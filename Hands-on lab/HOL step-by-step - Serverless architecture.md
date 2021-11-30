@@ -75,7 +75,7 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
 
 In this hands-on lab, you implement an end-to-end solution using a supplied sample based on Microsoft Azure Functions, Azure Cosmos DB, Azure Event Grid, and related services. The scenario will include implementing compute, storage, workflows, and monitoring using various components of Microsoft Azure. You can implement the hands-on lab on your own. However, it is highly recommended to pair up with other members at the lab to model a real-world experience and to allow each member to share their expertise for the overall solution.
 
-At the end of the hands-on-lab, you will have confidence in designing, developing, and monitoring a serverless solution that is resilient, scalable, and cost-effective.
+At the end of the hands-on lab, you will have confidence in designing, developing, and monitoring a serverless solution that is resilient, scalable, and cost-effective.
 
 ## Overview
 
@@ -167,7 +167,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
     ![In the TollBooth folder in File Explorer, TollBooth.sln is highlighted.](media/file-explorer-toll-booth-sln.png "File Explorer")
 
-3. If prompted about how to open the file, select **Visual Studio 2019** and then select **OK**.
+3. If prompted about how to open the file, select **Visual Studio 2019**, and then select **OK**.
 
    ![Visual Studio 2019 is highlighted in the How do you want to open this file? dialog.](media/solution-file-open-with.png "Visual Studio 2019")
 
@@ -192,7 +192,7 @@ In this task, you create an RDP connection to your Lab virtual machine (VM).
 
    > **Note**: You may need to select the account icon and log in with your Azure account before seeing the resources below your subscription.
 
-8. Return to the open File Explorer window and navigate back to the **src** subfolder. From there, open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the images is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The UploadImages project uses the **copyfrom** folder as a basis for the 1,000 photo upload option for testing scalability.
+8. Return to the open File Explorer window and navigate back to the **src** subfolder. From there, open the **license plates** subfolder. It contains sample license plate photos used for testing out the solution. One of the images is guaranteed to fail OCR processing, which is meant to show how the workload is designed to handle such failures. The UploadImages project uses the **copyfrom** folder as a basis for the 1,000-photo upload option for testing scalability.
 
 ### Task 3: Finish the ProcessImage function
 
@@ -229,7 +229,7 @@ A few components within the starter project must be completed, which are marked 
 
 6. Double-click `TODO 2` in the Task List to open the `FindLicensePlateText.cs` file.
 
-    > This class is responsible for contacting the Computer Vision service's Read API to find and extract the license plate text from the photo using OCR. Notice that this class also shows how you can implement a resilience pattern using [Polly](https://github.com/App-vNext/Polly), an open-source .NET library that helps you handle transient errors. This is useful for ensuring that you do not overload downstream services, in this case, the Computer Vision service. This will be demonstrated later on when visualizing the Function's scalability.
+    > This class is responsible for contacting the Computer Vision service's Read API to find and extract the license plate text from the photo using OCR. Notice that this class also shows how you can implement a resilience pattern using [Polly](https://github.com/App-vNext/Polly), an open-source .NET library that helps you handle transient errors. This is useful for ensuring that you do not overload downstream services, in this case, the Computer Vision service. This will be demonstrated later when visualizing the Function's scalability.
 
     ![TODO 2 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-2.png "Task List")
 
@@ -243,7 +243,7 @@ A few components within the starter project must be completed, which are marked 
 
 8. Double-click `TODO 3` in the Task List to open `SendToEventGrid.cs`.
 
-    > This class is responsible for sending an Event to the Event Grid topic, including the event type and license plate data. Event listeners will use the event type to filter and act on the events they need to process. Please make a note of the event types defined here (the first parameter passed into the Send method), as they will be used later on when creating new functions in the second Function App you provisioned earlier.
+    > This class is responsible for sending an Event to the Event Grid topic, including the event type and license plate data. Event listeners will use the event type to filter and act on the events they need to process. Please make a note of the event types defined here (the first parameter passed into the Send method), as they will be used later when creating new functions in the second Function App you provisioned earlier.
 
     ![TODO 3 is highlighted in the Visual Studio Task List.](media/visual-studio-task-list-todo-3.png "Task List")
 
@@ -269,7 +269,7 @@ In this task, you will publish the Function App from the starter project in Visu
 
 1. Navigate to the **TollBooth** project using the Solution Explorer of Visual Studio.
 
-2. Right-click the **TollBooth** project, and select **Publish** from the context menu.
+2. Right-click the **TollBooth** project and select **Publish** from the context menu.
 
     ![In Solution Explorer, the TollBooth is selected, and within its context menu, the Publish item is selected.](media/image39.png "Solution Explorer")
 
@@ -285,7 +285,7 @@ In this task, you will publish the Function App from the starter project in Visu
 
     - Select your **Subscription** (1).
     - Select **Resource Group** under **View** (2).
-    - In the **Function Apps** box (3), expand your **hands-on-lab-SUFFIX** resource group.Select the Function App whose name ends with **Functions**.
+    - In the **Function Apps** box (3), expand your **hands-on-lab-SUFFIX** resource group. Select the Function App whose name ends with **Functions**.
     - **Uncheck the `Run from package file` option** (4).
 
     ![In the App Service form, Resource Group displays in the View field, and in the tree-view below, the hands-on-lab-SUFFIX folder is expanded, and TollBoothFunctionApp is selected.](media/vs-publish-function2.png 'Publish window')
@@ -324,7 +324,7 @@ In this task, you will publish the Function App from the starter project in Visu
     - **Topic Type**: Select **Storage Accounts (Blob & GPv2)**.
     - **Subscription**: Select the subscription you are using for this hands-on lab.
     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
-    - **Resource**: Select your data lake storage account. This should be the only account listed, and will start with `datalake`.
+    - **Resource**: Select your data lake storage account. This should be the only account listed and will start with `datalake`.
     - **System Topic Name**: Enter **processimagesubtopic**.
     - **Filter to Event Types**: Select only the **Blob Created** from the event types dropdown list.
     - **Endpoint Type**: Leave `Azure Function` as the Endpoint Type.
@@ -350,7 +350,7 @@ In this exercise, you will create two new Azure Functions written in Node.js, us
 
 ### Task 1: Create a function to save license plate data to Azure Cosmos DB
 
-In this task, you will create a new Node.js function triggered by Event Grid and that outputs successfully processed license plate data to Azure Cosmos DB.
+In this task, you will create a new Node.js function triggered by Event Grid that outputs successfully processed license plate data to Azure Cosmos DB.
 
 1. Using a new tab or instance of your browser, navigate to the [Azure portal](https://portal.azure.com).
 
@@ -494,7 +494,7 @@ In this task, you will add an Event Grid subscription to the QueuePlateForManual
     - **Topic Type**: Select **Event Grid Topics**.
     - **Subscription**: Select the subscription you are using for this hands-on lab.
     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
-    - **Resource**: Select your Event Grid Topic. This should be the only service listed, and will start with `eventgridtopic-`.
+    - **Resource**: Select your Event Grid Topic. This should be the only service listed and will start with `eventgridtopic-`.
     - **Event Types**: Select **Add Event Type** and enter `queuePlateForManualCheckup` for the new event type value. This will ensure this function is only triggered by this Event Grid type.
     - **Endpoint Type**: Leave `Azure Function` as the Endpoint Type.
     - **Endpoint**: Leave as `QueuePlateForManualCheckup`.
@@ -582,7 +582,7 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
     ![The Live Metrics Stream window displays information for the two online servers. Displaying line and point graphs including incoming requests, outgoing requests, and overall health. To the side is a list of Sample Telemetry information. ](media/image70.png 'Live Metrics Stream window')
 
-10. Leave the Live Metrics Stream window open once again, and close the console window for the image upload. Debug the UploadImages project again, then enter **2** and press **ENTER**. This will upload 1,000 new photos.
+10. Leave the Live Metrics Stream window open once again and close the console window for the image upload. Debug the UploadImages project again, then enter **2** and press **ENTER**. This will upload 1,000 new photos.
 
     ![The Command prompt window displays with image uploading information.](media/image71.png 'Command prompt window')
 
@@ -747,7 +747,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
      - Enter your email address in the **To** box.
      - Provide a **Subject**, such as `Toll Booth license plate export failed`.
-     Please enter a message into the **Body**, and select the **Status code** from the ExportLicensePlates function to add it to the email body.
+     Please enter a message into the **Body** and select the **Status code** from the ExportLicensePlates function to add it to the email body.
 
      ![In the Send an email box, fields are set to the previously defined values.](media/logicapp-send-email-form.png 'Logic App Designer, Send an email fields')
 
@@ -1008,7 +1008,7 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
     ![A CSV file displays with the following columns: FileName, LicensePlateText, TimeStamp, and LicensePlateFound.](media/csv.png 'CSV file')
 
-6. The ExportLicensePlates function updates all of the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. Verify this by re-executing the script in Azure Cosmos DB that counts the number of documents in the Processed collection where exported is false. It should return 0 unless you've subsequently uploaded new photos.
+6. The ExportLicensePlates function updates all the records it exported by setting the exported value to true. This makes sure that only new records since the last export are included in the next one. Verify this by re-executing the script in Azure Cosmos DB that counts the number of documents in the Processed collection where exported is false. It should return 0 unless you've subsequently uploaded new photos.
 
 ## After the hands-on lab
 
