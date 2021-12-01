@@ -4,7 +4,7 @@ Contoso is rapidly expanding its toll booth management business to operate in a 
 
 They want to automate this process in a way that is cost-effective and scalable. They believe serverless is the best route for them but do not have the expertise to build the solution.
 
-April 2021
+November 2021
 
 ## Target Audience
 
@@ -34,7 +34,7 @@ At the end of the hands-on-lab, you will have confidence in designing, developin
 
 - [Azure Functions](https://docs.microsoft.com/azure/azure-functions/functions-overview)
 - [Azure Cognitive Services](https://docs.microsoft.com/azure/cognitive-services/what-are-cognitive-services)
-- [Azure Computer Vision](https://docs.microsoft.com/azure/cognitive-services/custom-vision-service/overview)
+- [Azure Computer Vision](https://docs.microsoft.com/en-us/azure/cognitive-services/computer-vision/overview)
 - [Azure Event Grid](https://docs.microsoft.com/azure/event-grid/overview)
 - [Azure Data Lake Storage Gen2](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-introduction)
 - [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)

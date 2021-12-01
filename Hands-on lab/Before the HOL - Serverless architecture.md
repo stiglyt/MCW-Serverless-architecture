@@ -9,7 +9,7 @@ Before the hands-on lab setup guide
 </div>
 
 <div class="MCWHeader3">
-April 2021
+November 2021
 </div>
 
 Information in this document, including URL and other Internet Web site references, is subject to change without notice. Unless otherwise noted, the example companies, organizations, products, domain names, e-mail addresses, logos, people, places, and events depicted herein are fictitious, and no association with any real company, organization, product, domain name, e-mail address, logo, person, place or event is intended or should be inferred. Complying with all applicable copyright laws is the responsibility of the user. Without limiting the rights under copyright, no part of this document may be reproduced, stored in or introduced into a retrieval system, or transmitted in any form or by any means (electronic, mechanical, photocopying, recording, or otherwise), or for any purpose, without the express written permission of Microsoft Corporation.
@@ -35,9 +35,8 @@ The names of manufacturers, products, or URLs are provided for informational pur
 ## Requirements
 
 - Microsoft Azure subscription (non-Microsoft subscription)
-- Office 365 account. If required, you can sign up for an Office 365 trial at:
-  - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
-- GitHub account. You can [create a free account](https://github.com/join?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home) at <https://github.com>.
+- Office 365 account. If you do not have an Office 365 account, you can [sign up for an Office 365 trial](https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1).  
+- GitHub account. You can [create a free account](https://github.com/join).
 
 ## Before the hands-on lab
 
@@ -53,7 +52,7 @@ In this exercise, you set up your environment for use in the rest of the hands-o
 
    ![Resource groups is highlighted in the Azure services list.](media/azure-services-resource-groups.png "Azure services")
 
-2. On the Resource groups blade, select **+Add**.
+2. On the Resource groups blade, select **+Create**.
 
    ![+Add is highlighted in the toolbar on Resource groups blade.](media/resource-groups-add.png "Resource groups")
 
@@ -101,15 +100,13 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
   - `dataLakeConnectionString`
   - `eventGridTopicKey`
 
-> **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](./Manual-resource-setup.md).
+> **Note**: You can review the steps to manually provision and configure the lab resources in the [Manual resource setup guide](Manual-resource-setup.md).
 
 1. You are now ready to begin the ARM template deployment. To open a custom deployment screen in the Azure portal, select the Deploy to Azure button below:
 
-   <a href ="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FMCW-Serverless-architecture%2Fmaster%2FHands-on%20lab%2Flab-files%2Farm-template%2Fazure-deploy.json" target="_blank" title="Deploy to Azure">
-      <img src="http://azuredeploy.net/deploybutton.png"/>
-   </a>
+   [![Deploy to azure](media/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FMCW-Serverless-architecture%2Fmaster%2FHands-on%20lab%2Flab-files%2Farm-template%2Fazure-deploy.json)
 
-2. On the custom deployment screen, the first parameter you need to populate is the `ObjectId` associated with the account you used to log into the Azure portal. To retrieve this, select the **Cloud Shell** icon on the Azure portal toolbar to open an Azure command line interface (CLI) terminal window at the bottom of your open browser window.
+2. On the custom deployment screen, the first parameter you need to populate is the `ObjectId` associated with the account you used to log into the Azure portal. To retrieve this, select the **Cloud Shell** icon on the Azure portal toolbar to open an Azure Command Line Interface (CLI) terminal window at the bottom of your open browser window.
 
    ![The Cloud Shell icon is highlighted on the Azure portal toolbar.](media/azure-toolbar-cloud-shell.png "Azure toolbar")
 
@@ -157,7 +154,7 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
 
    ![The Azure Cosmos DB account resource is highlighted in the list of services in the resource group.](media/resource-group-cosmos-db-account.png "Resources")
 
-3. Next, select **Firewall and virtual networks** in the left-hand navigation menu of the Cosmos DB blade.   
+3. Next, select **Firewall and virtual networks** in the left-hand navigation menu of the Cosmos DB blade.
 
 4. Choose **Selected networks (2)**. Select **+ Add my current IP (3)** to add your IP address to the IP list under Firewall. Next, check the box next to **Accept connections from within public Azure datacenters (4)**. Checking this box enables Azure services, such as your Function Apps, to access your Azure Cosmos DB account.
 
@@ -175,34 +172,34 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
 
 2. Select the **hands-on-lab-SUFFIX** resource group from the list.
 
-   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](./media/resource-groups.png "Resource groups list")
+   ![The "hands-on-lab-SUFFIX" resource group is highlighted.](media/resource-groups.png "Resource groups list")
 
 3. In the list of resources within your resource group, select the **LabVM Virtual machine** resource.
 
-   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](./media/resource-group-resources-labvm.png "LabVM in resource group list")
+   ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](media/resource-group-resources-labvm.png "LabVM in resource group list")
 
 4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
 
-   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](./media/connect-vm-rdp.png "Connect to Lab VM")
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](media/connect-vm-rdp.png "Connect to Lab VM")
 
-5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
+5. On the Connect to virtual machine blade, select **Download RDP File**. Open the downloaded RDP file.
 
-   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](./media/connect-to-virtual-machine.png "Connect to virtual machine")
+   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](media/connect-to-virtual-machine.png "Connect to virtual machine")
 
 6. Select **Connect** on the Remote Desktop Connection dialog.
 
-   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](./media/remote-desktop-connection.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](media/remote-desktop-connection.png "Remote Desktop Connection dialog")
 
 7. Enter the following credentials when prompted, and then select **OK**:
 
-   - **User name**: demouser
+   - **Username**: demouser
    - **Password**: Password.1!!
 
    ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials.png "Enter your credentials")
 
 8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
 
-   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](./media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
 
 9. Once logged in, select the **Search** icon on the start bar, enter **default apps** into the search box, and select **Default apps** in the search results.
 
@@ -219,4 +216,3 @@ In this task, you create an RDP connection to your Lab virtual machine (VM) and 
 12. Close the **Default apps** dialog.
 
 You should follow all steps provided *before* performing the Hands-on lab.
-
