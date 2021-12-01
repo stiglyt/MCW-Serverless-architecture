@@ -104,7 +104,7 @@ In this task, you run an Azure Resource Manager (ARM) template to create the han
 
 1. You are now ready to begin the ARM template deployment. To open a custom deployment screen in the Azure portal, select the Deploy to Azure button below:
 
-   [![Deploy to azure](media/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FMCW-Serverless-architecture%2Fmaster%2FHands-on%20lab%2Flab-files%2Farm-template%2Fazure-deploy.json)
+   [![Deploy to azure](media/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FMCW-Serverless-architecture%2Fmain%2FHands-on%20lab%2Flab-files%2Farm-template%2Fazure-deploy.json)
 
 2. On the custom deployment screen, the first parameter you need to populate is the `ObjectId` associated with the account you used to log into the Azure portal. To retrieve this, select the **Cloud Shell** icon on the Azure portal toolbar to open an Azure Command Line Interface (CLI) terminal window at the bottom of your open browser window.
 

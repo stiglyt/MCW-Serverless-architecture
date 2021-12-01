@@ -673,7 +673,7 @@ In this task, you configure the LabVM with the required software and downloads. 
 
 2. Run the downloaded installer and follow the setup instruction.
 
-3. Next, [download a copy of the Serverless Architecture MCW GitHub repo](https://github.com/microsoft/MCW-Serverless-architecture/archive/master.zip).
+3. Next, [download a copy of the Serverless Architecture MCW GitHub repo](https://github.com/microsoft/MCW-Serverless-architecture/archive/main.zip).
 
 4. Extract the download ZIP file to `C:\ServerlessMCW`.
 
