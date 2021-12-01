@@ -49,7 +49,7 @@
     "vmNetworkInterfaceName": "[concat(variables('vmName'), '-nic')]",
     "vmPublicIpAddressName": "[concat(variables('vmName'), '-ip')]",
     "vmCustomScriptFileName": "configure-labvm.ps1",
-    "vmCustomScriptUri": "[concat('https://raw.githubusercontent.com/microsoft/MCW-Serverless-architecture/master/Hands-on%20lab/lab-files/arm-template/', variables('vmCustomScriptFileName'))]",
+    "vmCustomScriptUri": "[concat('https://raw.githubusercontent.com/microsoft/MCW-Serverless-architecture/main/Hands-on%20lab/lab-files/arm-template/', variables('vmCustomScriptFileName'))]",
 
     "tollBoothFunctionAppName": "[concat('TollBoothFunctions-', uniqueString(resourceGroup().id))]",
     "tollBoothFunctionsHostingPlanName": "[concat('tollbooth-asp-', uniqueString(resourceGroup().id))]",
