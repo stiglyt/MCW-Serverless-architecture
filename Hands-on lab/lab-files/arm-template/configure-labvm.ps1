@@ -15,10 +15,10 @@ function Disable-InternetExplorerESC {
 Disable-InternetExplorerESC
 
 # Download and extract the starter solution files
-Invoke-WebRequest 'https://github.com/microsoft/MCW-Serverless-architecture/archive/master.zip' -OutFile 'C:\MCW.zip'
+Invoke-WebRequest 'https://github.com/microsoft/MCW-Serverless-architecture/archive/main.zip' -OutFile 'C:\MCW.zip'
 Expand-Archive -LiteralPath 'C:\MCW.zip' -DestinationPath 'C:\ServerlessMCW' -Force
 
-# Download and istall Microsoft Edge
+# Download and install Microsoft Edge
 Invoke-WebRequest 'https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/0a4291f0-226e-4d0a-a702-7aa901f20ff4/MicrosoftEdgeEnterpriseX64.msi' -OutFile 'C:\MicrosoftEdgeEnterpriseX64.msi'
 $msiArgs = @(
     "/i"

@@ -852,7 +852,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     - **Organization**: Select the GitHub account organization in which you created the repo.
     - **Repository**: Select the **serverless-architecture-lab**, or whatever name you chose for the repo.
-    - **Branch**: Select **main**.
+    - **Branch**: Select **master**.
 
     ![The GitHub settings specified above are entered into the Settings dialog.](media/deployment-center-github-settings.png "GitHub settings")
 
