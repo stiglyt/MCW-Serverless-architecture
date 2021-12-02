@@ -28,3 +28,6 @@ $msiArgs = @(
     "/L*v C:\edge-install-log.txt"
 )
 Start-Process msiexec.exe -ArgumentList $msiArgs -Wait -NoNewWindow
+
+# Set the default Git branch to main
+git config --global init.defaultBranch main
