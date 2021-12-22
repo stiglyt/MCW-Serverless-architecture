@@ -18,6 +18,9 @@ Disable-InternetExplorerESC
 Invoke-WebRequest 'https://github.com/microsoft/MCW-Serverless-architecture/archive/main.zip' -OutFile 'C:\MCW.zip'
 Expand-Archive -LiteralPath 'C:\MCW.zip' -DestinationPath 'C:\ServerlessMCW' -Force
 
+# Set the default Git branch to main
+git config --global init.defaultBranch main
+
 # Download and install Microsoft Edge
 Invoke-WebRequest 'https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/0a4291f0-226e-4d0a-a702-7aa901f20ff4/MicrosoftEdgeEnterpriseX64.msi' -OutFile 'C:\MicrosoftEdgeEnterpriseX64.msi'
 $msiArgs = @(
@@ -28,6 +31,3 @@ $msiArgs = @(
     "/L*v C:\edge-install-log.txt"
 )
 Start-Process msiexec.exe -ArgumentList $msiArgs -Wait -NoNewWindow
-
-# Set the default Git branch to main
-git config --global init.defaultBranch main
