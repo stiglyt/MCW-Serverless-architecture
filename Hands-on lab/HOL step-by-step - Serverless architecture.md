@@ -781,46 +781,50 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     ![The Visual Studio Git Global Settings page is displayed with the user name and email fields highlighted.](media/git-global-settings.png "Git Global Settings")
 
-3. Next, look below the Solution Explorer and select the **Git Changes** tab.
+3. Next, we want to set our default branch to `main`.  Select the **View** menu, then select **Terminal**.
+
+4. In the terminal, run the following command: `git config --global init.defaultbranch main`.  This sets all default branches for new Git repositories to `main`.
+
+5. Next, look below the Solution Explorer and select the **Git Changes** tab.
 
     ![The Git Changes tab is highlighted below the Solution Explorer pane in Visual Studio.](media/git-changes-tab.png "Git Changes")
 
-4. On the Git Changes panel, select **Create Git Repository...**.
+6. On the Git Changes panel, select **Create Git Repository...**.
 
     ![In Solution Explorer, TollBooth solution is selected. From its right-click context menu, the Create Git Repository item is selected.](media/vs-create-git-repo.png 'Solution Explorer')
 
-5. Select **Sign in...** next to Account under `Create a new GitHub repository`, then select GitHub account.
+7. Select **Sign in...** next to Account under `Create a new GitHub repository`, then select GitHub account.
 
     ![The sign in button is highlighted.](media/vs-create-git-repo-sign-in.png "Create a Git repository")
 
-6. In the web page that appears, select **Authorize github** to grant Visual Studio additional permissions to work with your GitHub account.
+8. In the web page that appears, select **Authorize github** to grant Visual Studio additional permissions to work with your GitHub account.
 
     > **Note**: If you did not make Microsoft Edge the default browser on the LabVM, the Authorize github button will be disabled. You will need to enter **Default apps** into the Windows Search bar and change the default web browser to Microsoft Edge.
 
     ![The authorize github button is highlighted.](media/vs-create-git-repo-allow.png "Allow additional permissions")
 
-7. Sign in to your GitHub account. After a few moments, you will see a Success page appear, stating that your authorization was successful. When you see this, go back to Visual Studio.
+9. Sign in to your GitHub account. After a few moments, you will see a Success page appear, stating that your authorization was successful. When you see this, go back to Visual Studio.
 
     ![The success page is displayed.](media/vs-github-auth-successful.png "Your authorization was successful")
 
-8. On the Create a Git repository dialog, select the browse button next to the **Local path** field to change the directory.
+10. On the Create a Git repository dialog, select the browse button next to the **Local path** field to change the directory.
 
     ![The browse button is highlighted next to the local path for the GitHub repo.](media/create-a-git-repo-browse.png "Change local path")
 
-9. In the Browse dialog, select the `TollBooth` folder with the `TollBooth` folder. This will select only the **TollBooth** project to add to source control and exclude the **UploadImages** project.
+11. In the Browse dialog, select the `TollBooth` folder with the `TollBooth` folder. This will select only the **TollBooth** project to add to source control and exclude the **UploadImages** project.
 
     ![In the Browse dialog, the TollBooth/TollBooth folder is highlighted.](media/browse-tollbooth.png "Browse")
 
-10. Complete the form with the following information:
+12. Complete the form with the following information:
 
     - **Repository Name**: Enter `serverless-architecture-lab`.
     - **Private**: Uncheck this option.
 
     ![The form is completed as described.](media/vs-create-git-repo-create.png "Create a Git repository")
 
-11. Select **Create and Push**.
+13. Select **Create and Push**.
 
-12. Refresh your GitHub repository page in your browser. You should see that the project files have been added. Navigate to the **TollBooth** folder of your repo. Notice that the local.settings.json file has not been uploaded. That's because the .gitignore file of the TollBooth project explicitly excludes that file from the repository, making sure you don't accidentally share your application secrets.
+14. Refresh your GitHub repository page in your browser. You should see that the project files have been added. Navigate to the **TollBooth** folder of your repo. Notice that the local.settings.json file has not been uploaded. That's because the .gitignore file of the TollBooth project explicitly excludes that file from the repository, making sure you don't accidentally share your application secrets.
 
     ![On the GitHub Repository webpage for serverless-architecture-lab, on the Code tab, the project files are displayed.](media/github-repo-page.png 'GitHub Repository page')
 
