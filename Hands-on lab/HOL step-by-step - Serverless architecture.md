@@ -876,19 +876,19 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 11. On the YML file screen, select the pencil icon to edit the document inline.
 
-    ![The YML file screen displays with the pencil icon highlighted.](media/edit_yml_file_menu.png "YML file")
+    ![The YML file screen displays with the pencil icon highlighted.](media/edit_yml_file_menu_main.png "YML file")
 
 12. On line 14, change the **DOTNET_VERSION** value to **'3.1.x'**. Be sure not to edit the structure of this file, **ONLY** change the value. Then select **Start commit**.
 
-    ![The YML file screen displays an editor with the DOTNET_VERSION value changed to 3.1.x, the Start commit button is highlighted.](media/yml_edit_dotnetversion.png "Editing a YML file")
+    ![The YML file screen displays an editor with the DOTNET_VERSION value changed to 3.1.x, the Start commit button is highlighted.](media/yml_edit_dotnetversion_main.png "Editing a YML file")
 
 13. In the **Commit changes** dialog, enter the comment **Changed .NET version**, then select **Commit changes**.
 
-    ![The Commit changes dialog displays with the Changed .NET version comment and the Commit changes button highlighted.](media/yml_commit_changes.png "Commit changes dialog")
+    ![The Commit changes dialog displays with the Changed .NET version comment and the Commit changes button highlighted.](media/yml_commit_changes_main.png "Commit changes dialog")
 
 14. Committing the YML file update will trigger a new deployment that will succeed. You can see the status of the currently running or past workflows on the Actions tab of the repository.
 
-    ![A successful deployment workflow displays.](media/successful_workflow_execution.png "Successful workflow run")
+    ![A successful deployment workflow displays.](media/successful_workflow_execution_main.png "Successful workflow run")
 
 ### Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment
 
@@ -949,7 +949,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 14. After committing, select the **Push** button to push your changes to the GitHub repo.
 
-    ![The Push button is highlighted.](media/vs-git-push.png "Push changes")
+    ![The Push button is highlighted.](media/vs-git-push-main.png "Push changes")
 
     > **Note**: You may receive a message that your local copy is behind the remote branch.
     > ![Git - Push failed dialog appears.](media/git-push-failed.png)
@@ -958,7 +958,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 15. You should see a message stating that you successfully pushed your changes to the GitHub repository.
 
-    ![The message is displayed.](media/vs-git-push-success.png "Successfully pushed")
+    ![The message is displayed.](media/vs-git-push-success-main.png "Successfully pushed")
 
 16. Go back to Deployment Center for your Function App in the portal. You should see an entry for the deployment kicked off by this last commit. Check the timestamp on the message to verify that you are looking at the latest one. **Make sure the deployment completes before continuing**.
 
