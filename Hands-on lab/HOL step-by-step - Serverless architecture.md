@@ -946,7 +946,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 13. Enter a commit message, then select **Commit All**.
 
-    ![In the Team Explorer - Changes window, "Finished the ExportLicensePlates function" displays in the message box, and the Commit All button is selected.](media/vs-git-commit-all.png 'Team Explorer - Changes window')
+    ![In the Team Explorer - Changes window, "Finished the ExportLicensePlates function" displays in the message box, and the Commit All button is selected.](media/vs-git-commit-all-main.png 'Team Explorer - Changes window')
 
 14. After committing, select the **Push** button to push your changes to the GitHub repo.
 
