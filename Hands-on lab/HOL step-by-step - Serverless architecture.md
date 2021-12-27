@@ -886,7 +886,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 12. On line 14, change the **DOTNET_VERSION** value to **'3.1.x'**. Be sure not to edit the structure of this file, **ONLY** change the value. Then select **Start commit**.
 
-    ![The YML file screen displays an editor with the DOTNET_VERSION value changed to 3.1.x, the Start commit button is highlighted.](media/yml_edit_dotnetversion.png "Editing a YML file")
+    ![The YML file screen displays an editor with the DOTNET_VERSION value changed to 3.1.x, the Start commit button is highlighted.](media/yml_edit_dotnetversion_main.png "Editing a YML file")
 
 13. In the **Commit changes** dialog, enter the comment **Changed .NET version**, then select **Commit changes**.
 
