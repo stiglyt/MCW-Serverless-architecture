@@ -894,7 +894,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 14. Committing the YML file update will trigger a new deployment that will succeed. You can see the status of the currently running or past workflows on the Actions tab of the repository.
 
-    ![A successful deployment workflow displays.](media/successful_workflow_execution.png "Successful workflow run")
+    ![A successful deployment workflow displays.](media/successful_workflow_execution_main.png "Successful workflow run")
 
 ### Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment
 
