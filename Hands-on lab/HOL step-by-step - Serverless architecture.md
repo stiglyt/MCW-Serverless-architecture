@@ -55,8 +55,9 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 2: Configure your Function App to use your GitHub repository for continuous deployment](#task-2-configure-your-function-app-to-use-your-github-repository-for-continuous-deployment)
     - [Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment](#task-3-finish-your-exportlicenseplates-function-code-and-push-changes-to-github-to-trigger-deployment)
   - [Exercise 7: Rerun the workflow and verify data export](#exercise-7-rerun-the-workflow-and-verify-data-export)
-    - [Task 1: Run the Logic App](#task-1-run-the-logic-app)
-    - [Task 2: View the exported CSV file](#task-2-view-the-exported-csv-file)
+    - [Task 1: Rerun Upload Images](#task-1-rerun-upload-images)
+    - [Task 2: Run the Logic App](#task-2-run-the-logic-app)
+    - [Task 3: View the exported CSV file](#task-3-view-the-exported-csv-file)
   - [After the hands-on lab](#after-the-hands-on-lab)
     - [Task 1: Delete the resource group in which you placed your Azure resources](#task-1-delete-the-resource-group-in-which-you-placed-your-azure-resources)
     - [Task 2: Delete the GitHub repo](#task-2-delete-the-github-repo)
@@ -970,7 +971,13 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 With the latest code changes in place, run your Logic App and verify that the files are successfully exported.
 
-### Task 1: Run the Logic App
+### Task 1: Rerun Upload Images
+
+1. In Visual Studio, right-click the **UploadImages** project in the Solution Explorer. Select **Debug**, then **Start New Instance** from the context menu.
+
+2. When the console window appears, enter `2` and press **ENTER**. This action uploads a handful of car photos to the images container of your Blob storage account.  This should get data to trigger the ExportLicensePlates function.
+
+### Task 2: Run the Logic App
 
 1. Open your **hands-on-lab-SUFFIX** resource group in the Azure portal, then select your **logicapp** Logic App resource from the list.
 
@@ -986,7 +993,7 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
     ![In Logic App Designer, in the Condition section, under Inputs, true is highlighted.](media/image115.png 'Logic App Designer ')
 
-### Task 2: View the exported CSV file
+### Task 3: View the exported CSV file
 
 1. Open your **hands-on-lab-SUFFIX** resource group in the Azure portal, then select the **datalake** Storage account resource you provisioned to store uploaded photos and exported CSV files.
 
