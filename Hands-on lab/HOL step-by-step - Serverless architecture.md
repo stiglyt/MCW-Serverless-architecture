@@ -890,7 +890,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 13. In the **Commit changes** dialog, enter the comment **Changed .NET version**, then select **Commit changes**.
 
-    ![The Commit changes dialog displays with the Changed .NET version comment and the Commit changes button highlighted.](media/yml_commit_changes.png "Commit changes dialog")
+    ![The Commit changes dialog displays with the Changed .NET version comment and the Commit changes button highlighted.](media/yml_commit_changes_main.png "Commit changes dialog")
 
 14. Committing the YML file update will trigger a new deployment that will succeed. You can see the status of the currently running or past workflows on the Actions tab of the repository.
 
