@@ -955,7 +955,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 14. After committing, select the **Push** button to push your changes to the GitHub repo.
 
-    ![The Push button is highlighted.](media/vs-git-push.png "Push changes")
+    ![The Push button is highlighted.](media/vs-git-push-main.png "Push changes")
 
     > **Note**: You may receive a message that your local copy is behind the remote branch.
     > ![Git - Push failed dialog appears.](media/git-push-failed.png)
@@ -964,7 +964,7 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 15. You should see a message stating that you successfully pushed your changes to the GitHub repository.
 
-    ![The message is displayed.](media/vs-git-push-success.png "Successfully pushed")
+    ![The message is displayed.](media/vs-git-push-success-main.png "Successfully pushed")
 
 16. Go back to Deployment Center for your Function App in the portal. You should see an entry for the deployment kicked off by this last commit. Check the timestamp on the message to verify that you are looking at the latest one. **Make sure the deployment completes before continuing**.
 
