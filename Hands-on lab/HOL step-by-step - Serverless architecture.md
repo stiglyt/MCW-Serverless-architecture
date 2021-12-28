@@ -741,8 +741,10 @@ In this exercise, you create a new Logic App for your data export workflow. This
 14. In the Send an email form, provide the following values:
 
      - Enter your email address in the **To** box.
-     - Provide a **Subject**, such as `Toll Booth license plate export failed`.
+     - Provide a **Subject**, such as `Toll Booth license plate data export check`.
      Please enter a message into the **Body** and select the **Status code** from the ExportLicensePlates function to add it to the email body.
+
+     >**Note:** If you receive an email with a **204** status code, all of the data has been processed. This is not an error condition. To produce a **200** status code, you will have to slow down the processing and create queued work.
 
      ![In the Send an email box, fields are set to the previously defined values.](media/logicapp-send-email-form.png 'Logic App Designer, Send an email fields')
 
