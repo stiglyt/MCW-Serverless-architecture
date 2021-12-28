@@ -32,11 +32,13 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
   - [Solution architecture](#solution-architecture)
   - [Requirements](#requirements)
   - [Exercise 1: Develop and publish the photo processing and data export functions](#exercise-1-develop-and-publish-the-photo-processing-and-data-export-functions)
+    - [Help references](#help-references)
     - [Task 1: Connect to the Lab VM](#task-1-connect-to-the-lab-vm)
     - [Task 2: Open the starter solution in Visual Studio](#task-2-open-the-starter-solution-in-visual-studio)
     - [Task 3: Finish the ProcessImage function](#task-3-finish-the-processimage-function)
     - [Task 4: Publish the Function App from Visual Studio](#task-4-publish-the-function-app-from-visual-studio)
   - [Exercise 2: Create functions in the portal](#exercise-2-create-functions-in-the-portal)
+    - [Help references](#help-references-1)
     - [Task 1: Create a function to save license plate data to Azure Cosmos DB](#task-1-create-a-function-to-save-license-plate-data-to-azure-cosmos-db)
     - [Task 2: Add an Event Grid subscription to the SavePlateData function](#task-2-add-an-event-grid-subscription-to-the-saveplatedata-function)
     - [Task 3: Add an Azure Cosmos DB output to the SavePlateData function](#task-3-add-an-azure-cosmos-db-output-to-the-saveplatedata-function)
@@ -44,13 +46,17 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 5: Add an Event Grid subscription to the QueuePlateForManualCheckup function](#task-5-add-an-event-grid-subscription-to-the-queueplateformanualcheckup-function)
     - [Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function](#task-6-add-an-azure-cosmos-db-output-to-the-queueplateformanualcheckup-function)
   - [Exercise 3: Monitor your functions with Application Insights](#exercise-3-monitor-your-functions-with-application-insights)
+    - [Help references](#help-references-2)
     - [Task 1: Use the Live Metrics Stream to monitor functions in real-time](#task-1-use-the-live-metrics-stream-to-monitor-functions-in-real-time)
     - [Task 2: Observe your functions dynamically scaling when resource-constrained](#task-2-observe-your-functions-dynamically-scaling-when-resource-constrained)
   - [Exercise 4: Explore your data in Azure Cosmos DB](#exercise-4-explore-your-data-in-azure-cosmos-db)
+    - [Help references](#help-references-3)
     - [Task 1: Use the Azure Cosmos DB Data Explorer](#task-1-use-the-azure-cosmos-db-data-explorer)
   - [Exercise 5: Create the data export workflow](#exercise-5-create-the-data-export-workflow)
+    - [Help references](#help-references-4)
     - [Task 1: Create the Logic App](#task-1-create-the-logic-app)
   - [Exercise 6: Configure continuous deployment for your Function App](#exercise-6-configure-continuous-deployment-for-your-function-app)
+    - [Help references](#help-references-5)
     - [Task 1: Add git repository to your Visual Studio solution and deploy to GitHub](#task-1-add-git-repository-to-your-visual-studio-solution-and-deploy-to-github)
     - [Task 2: Configure your Function App to use your GitHub repository for continuous deployment](#task-2-configure-your-function-app-to-use-your-github-repository-for-continuous-deployment)
     - [Task 3: Finish your ExportLicensePlates function code and push changes to GitHub to trigger deployment](#task-3-finish-your-exportlicenseplates-function-code-and-push-changes-to-github-to-trigger-deployment)
@@ -694,7 +700,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
 3. In the **Logic App Designer**, scroll through the page until you locate the _Start with a common trigger_ section. Select the **Recurrence** trigger.
 
-    ![The Recurrence tile is selected in the Logic App Designer.](media/image82.png 'Logic App Designer')
+    ![The Recurrence tile is selected in the Logic App Designer.](media/logic-app-designer.png 'Logic App Designer')
 
 4. Enter **15** into the **Interval** box, and make sure Frequency is set to **Minute**. This can be set to an hour or some other interval, depending on business requirements.
 
@@ -704,7 +710,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
 6. Enter `Functions` in the filter box, then select the **Azure Functions** connector.
 
-    ![Under Choose an action, Functions is typed in the search box. Under Connectors, Azure Functions is selected.](media/image85.png 'Logic App Designer Choose an action section')
+    ![Under Choose an action, Functions is typed in the search box. Under Connectors, Azure Functions is selected.](media/logic-app-choose-operation-functions.png 'Logic App Designer Choose an action section')
 
 7. Select your **TollBoothFunctions** Function App.
 
