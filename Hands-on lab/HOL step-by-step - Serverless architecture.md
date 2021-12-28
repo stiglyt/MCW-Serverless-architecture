@@ -694,7 +694,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
 3. In the **Logic App Designer**, scroll through the page until you locate the _Start with a common trigger_ section. Select the **Recurrence** trigger.
 
-    ![The Recurrence tile is selected in the Logic App Designer.](media/image82.png 'Logic App Designer')
+    ![The Recurrence tile is selected in the Logic App Designer.](media/logic-app-designer.png 'Logic App Designer')
 
 4. Enter **15** into the **Interval** box, and make sure Frequency is set to **Minute**. This can be set to an hour or some other interval, depending on business requirements.
 
@@ -704,7 +704,7 @@ In this exercise, you create a new Logic App for your data export workflow. This
 
 6. Enter `Functions` in the filter box, then select the **Azure Functions** connector.
 
-    ![Under Choose an action, Functions is typed in the search box. Under Connectors, Azure Functions is selected.](media/image85.png 'Logic App Designer Choose an action section')
+    ![Under Choose an action, Functions is typed in the search box. Under Connectors, Azure Functions is selected.](media/logic-app-choose-operation-functions.png 'Logic App Designer Choose an action section')
 
 7. Select your **TollBoothFunctions** Function App.
 
