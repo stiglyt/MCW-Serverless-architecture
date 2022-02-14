@@ -39,9 +39,9 @@
     "cosmosDbContainerManual": "NeedsManualReview",
 
     "virtualNetworkName": "[concat(resourceGroup().name, '-vnet')]",
-    "addressPrefix": "176.16.0.0/16",
+    "addressPrefix": "172.16.0.0/16",
     "subnetName": "default",
-    "subnetPrefix": "176.16.0.0/24",
+    "subnetPrefix": "172.16.0.0/24",
 
     "vmName": "LabVM",
     "vmSize": "Standard_D4s_v3",
