@@ -19,7 +19,7 @@ Invoke-WebRequest 'https://github.com/microsoft/MCW-Serverless-architecture/arch
 Expand-Archive -LiteralPath 'C:\MCW.zip' -DestinationPath 'C:\ServerlessMCW' -Force
 
 # Download and install Microsoft Edge
-Invoke-WebRequest 'https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/0a4291f0-226e-4d0a-a702-7aa901f20ff4/MicrosoftEdgeEnterpriseX64.msi' -OutFile 'C:\MicrosoftEdgeEnterpriseX64.msi'
+Invoke-WebRequest 'https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/b3ed8b52-ee6b-401e-aa19-85b6f3dbfa0e/MicrosoftEdgeEnterpriseX64.msi' -OutFile 'C:\MicrosoftEdgeEnterpriseX64.msi'
 $msiArgs = @(
     "/i"
     "C:\MicrosoftEdgeEnterpriseX64.msi"
