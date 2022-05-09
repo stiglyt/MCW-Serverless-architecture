@@ -45,7 +45,6 @@ Microsoft and the trademarks listed at <https://www.microsoft.com/legal/intellec
     - [Task 6: Add an Azure Cosmos DB output to the QueuePlateForManualCheckup function](#task-6-add-an-azure-cosmos-db-output-to-the-queueplateformanualcheckup-function)
   - [Exercise 3: Monitor your functions with Application Insights](#exercise-3-monitor-your-functions-with-application-insights)
     - [Task 1: Use the Live Metrics Stream to monitor functions in real-time](#task-1-use-the-live-metrics-stream-to-monitor-functions-in-real-time)
-    - [Task 2: Observe your functions dynamically scaling when resource-constrained](#task-2-observe-your-functions-dynamically-scaling-when-resource-constrained)
   - [Exercise 4: Explore your data in Azure Cosmos DB](#exercise-4-explore-your-data-in-azure-cosmos-db)
     - [Task 1: Use the Azure Cosmos DB Data Explorer](#task-1-use-the-azure-cosmos-db-data-explorer)
   - [Exercise 5: Create the data export workflow](#exercise-5-create-the-data-export-workflow)
