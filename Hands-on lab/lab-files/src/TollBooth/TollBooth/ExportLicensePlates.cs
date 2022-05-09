@@ -52,10 +52,12 @@ namespace TollBooth
             }
             else
             {
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent($"Exported {exportedCount} license plates", Encoding.UTF8, "text/plain"),
-                };
+                req.CreateResponse(HttpStatusCode.OK, $"Exported {exportedCount} license plates");
+                
+//                return new HttpResponseMessage(HttpStatusCode.OK)
+//                {
+//                    Content = new StringContent($"Exported {exportedCount} license plates", Encoding.UTF8, "text/plain"),
+//                };
             }
         }
     }
