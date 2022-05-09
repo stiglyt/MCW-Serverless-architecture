@@ -52,8 +52,8 @@ namespace TollBooth
             }
             else
             {
-                req.CreateResponse(HttpStatusCode.OK, $"Exported {exportedCount} license plates");
-                
+                return req.CreateResponse(HttpStatusCode.OK, $"Exported {exportedCount} license plates");
+
 //                return new HttpResponseMessage(HttpStatusCode.OK)
 //                {
 //                    Content = new StringContent($"Exported {exportedCount} license plates", Encoding.UTF8, "text/plain"),
