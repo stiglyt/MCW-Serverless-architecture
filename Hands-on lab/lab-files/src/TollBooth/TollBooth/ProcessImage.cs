@@ -35,7 +35,8 @@ namespace TollBooth
         }
 
         [FunctionName("ProcessImage")]
-        public static async Task Run([EventGridTrigger]EventGridEvent eventGridEvent,
+        [return: EventGrid(TopicEndpointUri = "eventGridTopicEndpoint", TopicKeySetting = "eventGridTopicKey")]
+        public static async Task<EventGridEvent> Run([EventGridTrigger]EventGridEvent eventGridEvent,
             [Blob(blobPath: "{data.url}", access: FileAccess.Read,
                 Connection = "dataLakeConnection")] Stream incomingPlate,
             ILogger log)
@@ -43,6 +44,10 @@ namespace TollBooth
             var licensePlateText = string.Empty;
             // Reuse the HttpClient across calls as much as possible so as not to exhaust all available sockets on the server on which it runs.
             _client = _client ?? new HttpClient();
+
+//            Event<LicensePlateData> resultEvent = null;
+
+            EventGridEvent resultEvent = null;
 
             try
             {
@@ -60,16 +65,45 @@ namespace TollBooth
                         licensePlateImage = br.ReadBytes((int)incomingPlate.Length);
                     }
 
-                    // TODO 1: Set the licensePlateText value by awaiting a new FindLicensePlateText.GetLicensePlate method.
-                    // COMPLETE: licensePlateText = await new.....
+                    licensePlateText = await new FindLicensePlateText(log, _client).GetLicensePlate(licensePlateImage);
 
                     // Send the details to Event Grid.
+/*                    
                     await new SendToEventGrid(log, _client).SendLicensePlateData(new LicensePlateData()
                     {
                         FileName = name,
                         LicensePlateText = licensePlateText,
                         TimeStamp = DateTime.UtcNow
                     });
+*/
+
+                    string eventType, subject;
+
+                    if(string.IsNullOrWhiteSpace(licensePlateText))
+                    {
+                        eventType = "queuePlateForManualCheckup";
+                        subject = "TollBooth/CustomerService";
+                    }
+                    else
+                    {
+                        eventType = "savePlateData";
+                        subject = "TollBooth/CustomerService";
+                    }
+
+                    resultEvent = new EventGridEvent
+                    {
+                        Data = new LicensePlateData
+                        {
+                            FileName = name,
+                            LicensePlateText = licensePlateText,
+                            TimeStamp = DateTime.UtcNow
+                        },
+                        EventTime = DateTime.UtcNow,
+                        EventType = eventType,
+                        Id = Guid.NewGuid().ToString(),
+                        Subject = subject,
+                        DataVersion = "1.0"
+                    };
                 }
             }
             catch (Exception ex)
@@ -79,6 +113,8 @@ namespace TollBooth
             }
 
             log.LogInformation($"Finished processing. Detected the following license plate: {licensePlateText}");
+
+            return resultEvent;
         }
     }
 }
