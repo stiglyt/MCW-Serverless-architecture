@@ -314,13 +314,13 @@ In this task, you will publish the Function App from the starter project in Visu
 
 12. On the **Create Event Subscription** blade, specify the following configuration options:
 
-    - **Name**: Enter a unique value, similar to **processimagesub** (ensure the green check mark appears).
+    - **Name**: Enter a unique value, similar to **processimagesub-SUFFIX** (ensure the green check mark appears).
     - **Event Schema**: Select **Event Grid Schema**.
     - **Topic Type**: Select **Storage Accounts (Blob & GPv2)**.
     - **Subscription**: Select the subscription you are using for this hands-on lab.
     - **Resource Group**: Select the **hands-on-lab-SUFFIX** resource group from the list of existing resource groups.
     - **Resource**: Select your data lake storage account. This should be the only account listed and will start with `datalake`.
-    - **System Topic Name**: Enter **processimagesubtopic**.
+    - **System Topic Name**: Enter **processimagesubtopic-SUFFIX**.
     - **Filter to Event Types**: Select only the **Blob Created** from the event types dropdown list.
     - **Endpoint Type**: Leave `Azure Function` as the Endpoint Type.
     - **Endpoint**: Leave as `ProcessImage`.
@@ -396,7 +396,7 @@ In this task, you will add an Event Grid subscription to the SavePlateData funct
 
 2. On the **Create Event Subscription** blade, specify the following configuration options:
 
-    - **Name**: Enter a unique value, similar to **saveplatedatasub** (ensure the green checkmark appears).
+    - **Name**: Enter a unique value, similar to **saveplatedatasub-SUFFIX** (ensure the green checkmark appears).
     - **Event Schema**: Select **Event Grid Schema**.
     - **Topic Type**: Select **Event Grid Topics**.
     - **Subscription**: Select the subscription you are using for this hands-on lab.
@@ -484,7 +484,7 @@ In this task, you will add an Event Grid subscription to the QueuePlateForManual
 
 2. On the **Create Event Subscription** blade, specify the following configuration options:
 
-    - **Name**: Enter a unique value, similar to `queueplateformanualcheckupsub` (ensure the green check mark appears).
+    - **Name**: Enter a unique value, similar to `queueplateformanualcheckupsub-SUFFIX` (ensure the green check mark appears).
     - **Event Schema**: Select **Event Grid Schema**.
     - **Topic Type**: Select **Event Grid Topics**.
     - **Subscription**: Select the subscription you are using for this hands-on lab.
@@ -587,41 +587,11 @@ Application Insights can be integrated with Azure Function Apps to provide robus
 
 12. After this has run for a while, close the image upload console window once again, but leave the Live Metrics Stream window open.
 
-### Task 2: Observe your functions dynamically scaling when resource-constrained
-
-In this task, you will change the Computer Vision API to the Free tier. This will limit the number of requests to the OCR service to 10 per minute. Once changed, run the UploadImages console app to upload 1,000 images again. The resiliency policy is programmed into the FindLicensePlateText.MakeOCRRequest method of the ProcessImage function will begin exponentially backing off requests to the Computer Vision API, allowing it to recover and lift the rate limit. This intentional delay will significantly increase the function's response time, causing the Consumption plan's dynamic scaling to kick in, allocating several more servers. You will watch all of this happen in real-time using the Live Metrics Stream view.
-
-1. Open your Computer Vision API service by opening the **hands-on-lab-SUFFIX** resource group and then selecting the resource that starts with **computervision-**.
-
-    ![The computervision Computer vision resource is highlighted in the list of services in the resource group.](media/resource-group-computer-vision-resource.png "Resource group")
-
-2. Select **Pricing tier** under **Resource Management** in the menu. Select the **F0 Free** pricing tier, then choose **Select**.
-
-    > **Note**: If you already have an **F0** free pricing tier instance, you will not be able to create another one.
-
-    ![In the Cognitive Services blade, under Resource Management, the Pricing tier item is selected. In the Choose your pricing tier blade, the F0 Free option is selected.](media/image73.png 'Choose your pricing tier blade')
-
-3. Switch to Visual Studio, debug the **UploadImages** project again, then enter **2** and press **ENTER**. This will upload 1,000 new photos.
-
-    ![The Command prompt window displays image uploading information.](media/image71.png 'Command Prompt window')
-
-4. Switch back to the Live Metrics Stream window and observe the activity as the photos are uploaded. After running for a couple of minutes, you should start to notice a few things. The Request Duration will begin to increase over time. As this happens, you should notice more servers being brought online. Each time a server is brought online, you should see a message in the Sample Telemetry stating that it is "Generating 2 job function(s)", followed by a Starting Host message. You should also see messages logged by the resilience policy that the Computer Vision API server is throttling the requests. This is known by the response codes sent back from the service (429). A sample message is "Computer Vision API server is throttling our requests. Automatically delaying for 16000ms".
-
-    > **Note**: If you select a sample telemetry item and cannot see its details, drag the resize bar at the bottom of the list up to resize the details pane.
-
-    ![In the Live Metrics Stream window, 11 servers are now online.](media/image74.png 'Live Metrics Stream window')
-
-5. After this has run for some time, close the UploadImages console to stop uploading photos.
-
-6. Navigate back to the **Computer Vision** resource in the Azure portal and set the pricing tier back to **S1 Standard**.
-
 ## Exercise 4: Explore your data in Azure Cosmos DB
 
 **Duration**: 15 minutes
 
 In this exercise, you will use the Azure Cosmos DB Data Explorer in the portal to view saved license plate data.
-
-> **Note:** Ensure that your IP address has been added to the IP list under the **Firewall settings** in your Azure Cosmos DB account. If not, you will not see the License Plates data within Azure Cosmos DB. You completed this step in the Before the hands-on lab guide.
 
 ### Help references
 
@@ -977,7 +947,7 @@ With the latest code changes in place, run your Logic App and verify that the fi
 
 1. In Visual Studio, right-click the **UploadImages** project in the Solution Explorer. Select **Debug**, then **Start New Instance** from the context menu.
 
-2. When the console window appears, enter `2` and press **ENTER**. This action uploads a handful of car photos to the images container of your Blob storage account.  This should get data to trigger the ExportLicensePlates function.
+2. When the console window appears, enter `1` and press **ENTER**. This action uploads a handful of car photos to the images container of your Blob storage account.  This should get data to trigger the ExportLicensePlates function.
 
 ### Task 2: Run the Logic App
 
