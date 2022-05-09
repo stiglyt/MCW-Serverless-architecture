@@ -46,9 +46,17 @@ namespace TollBooth
                 log.LogWarning("No license plates to export");
             }
 
-            return exportedCount == 0
-                ? req.CreateResponse(HttpStatusCode.NoContent)
-                : req.CreateResponse(HttpStatusCode.OK, $"Exported {exportedCount} license plates");
+            if (exportedCount == 0)
+            {
+                return req.CreateResponse(HttpStatusCode.NoContent);
+            }
+            else
+            {
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent($"Exported {exportedCount} license plates", Encoding.UTF8, "text/plain"),
+                };
+            }
         }
     }
 }
