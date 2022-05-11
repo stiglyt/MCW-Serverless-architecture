@@ -800,6 +800,8 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
     ![On the GitHub Repository webpage for serverless-architecture-lab, on the Code tab, the project files are displayed.](media/github-repo-page.png 'GitHub Repository page')
 
+15. Close Visual Studio and reopen `TollBooth.sln` in the folder `C:\ServerlessMCW\MCW-Serverless-architecture-main\Hands-on lab\lab-files\src\TollBooth`. This is because Visual Studio closed the solution after adding the `TollBooth\TollBooth` folder as the root folder to the local repository.
+
 ### Task 2: Configure your Function App to use your GitHub repository for continuous deployment
 
 1. In the [Azure portal](https://portal.azure.com), navigate to the **hands-on-lab-SUFFIX** resource group.
