@@ -734,6 +734,8 @@ In this exercise, configure your Function App that contains the ProcessImage fun
 
 ### Task 1: Add git repository to your Visual Studio solution and deploy to GitHub
 
+> **Note**: You need to use your own GitHub account for this step. This is NOT provided in the workshop.
+
 1. Return to the LabVM and in Visual Studio and select the **Git** menu item and then **Settings**.
 
 2. In the **Options** dialog, ensure you are on the **Git Global Settings** tab under Source Control and enter your GitHub user name and email address into the `User name` and `Email` fields and then select **OK**.
