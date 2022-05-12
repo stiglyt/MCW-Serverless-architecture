@@ -88,15 +88,14 @@ The solution begins with vehicle photos being uploaded to an **Azure Data Lake S
 ## Requirements
 
 - Microsoft Azure subscription (non-Microsoft subscription).
-- Local machine or a Virtual Machine (VM) configured with (**complete the day before the lab!**):
+- Local machine or a Virtual Machine (VM) configured with (**provided as as part of this lab**):
   - Visual Studio Community 2019 or greater.
     - <https://www.visualstudio.com/vs/>
   - Azure development workload for Visual Studio.
     - <https://docs.microsoft.com/azure/azure-functions/functions-develop-vs#prerequisites>
   - .NET Core 3.1 SDK.
     - <https://www.microsoft.com/net/download/windows>
-- Office 365 account. If required, you can sign up for an Office 365 trial at:
-  - <https://portal.office.com/Signup/MainSignup15.aspx?Dap=False&QuoteId=79a957e9-ad59-4d82-b787-a46955934171&ali=1>
+- Office 365 account. (**provided as as part of this lab**)
 - GitHub account. You can create a free account at <https://github.com>.
 
 ## Exercise 1: Develop and publish the photo processing and data export functions
@@ -114,7 +113,7 @@ Use Visual Studio and its integrated Azure Functions tooling to develop and debu
 
 ### Task 1: Connect to the Lab VM
 
-In this task, you create an RDP connection to your Lab virtual machine.
+In this task, you use Bastion to connect to your Lab virtual machine.
 
 1. In the [Azure portal](https://portal.azure.com), select **Resource groups** from the Azure services list.
 
@@ -128,28 +127,16 @@ In this task, you create an RDP connection to your Lab virtual machine.
 
    ![The list of resources in the hands-on-lab-SUFFIX resource group are displayed, and LabVM is highlighted.](media/resource-group-resources-labvm.png "LabVM in resource group list")
 
-4. On your LabVM blade, select **Connect** and **RDP** from the top menu.
+4. On your LabVM blade, select **Connect** and **Bastion** from the top menu.
 
-   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](media/connect-vm-rdp.png "Connect to Lab VM")
+   ![The LabVM blade is displayed, with the Connect button highlighted in the top menu.](media/connect-vm-rdp-new.png "Connect to Lab VM")
 
-5. On the Connect to virtual machine blade, select **Download RDP File**, then open the downloaded RDP file.
-
-   ![The Connect to virtual machine blade is displayed, and the Download RDP File button is highlighted.](media/connect-to-virtual-machine.png "Connect to virtual machine")
-
-6. Select **Connect** on the Remote Desktop Connection dialog.
-
-   ![In the Remote Desktop Connection Dialog Box, the Connect button is highlighted.](media/remote-desktop-connection.png "Remote Desktop Connection dialog")
-
-7. Enter the following credentials when prompted, and then select **OK**:
+5. Enter the following credentials when prompted, and then select **Connect**:
 
    - **User name**: demouser
-   - **Password**: Password.1!!
+   - **Password**: [VM password from your teams channel]
 
-   ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials.png "Enter your credentials")
-
-8. Select **Yes** to connect if prompted that the remote computer's identity cannot be verified.
-
-   ![In the Remote Desktop Connection dialog box, a warning states that the remote computer's identity cannot be verified and asks if you want to continue anyway. At the bottom, the Yes button is highlighted.](media/remote-desktop-connection-identity-verification-labvm.png "Remote Desktop Connection dialog")
+   ![The credentials specified above are entered into the Enter your credentials dialog.](media/rdc-credentials-new.png "Enter your credentials")
 
 ### Task 2: Open the starter solution in Visual Studio
 
